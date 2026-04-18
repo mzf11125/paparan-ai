@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod'
-import { PaparanSchema, type Paparan, type Source } from './schema'
+import { type Paparan, type Source, normalizePaparanOutput } from './schema'
 import { searchWithTavily } from './tavily'
 import { generateGLM, type GLMModel } from './glm-client'
 
@@ -28,7 +28,7 @@ export async function expandQuery(
   region: string = 'ASEAN'
 ): Promise<string[]> {
   const result = await generateGLM({
-    model: 'glm-4-flash',
+    model: 'glm-4.6',
     messages: [
       {
         role: 'system',
@@ -64,9 +64,9 @@ export async function generatePaparan(input: GeneratePaparanInput): Promise<Papa
   // 2. Retrieve sources using Tavily
   const sources = await searchWithTavily(queries)
 
-  // 3. Generate Paparan using GLM-4
-  const result = await generateGLM({
-    model: input.model || 'glm-4-flash',
+  // 3. Generate Paparan using GLM-4.6
+  const rawResult = await generateGLM({
+    model: (input.model as any) || 'glm-4.6',
     messages: [
       {
         role: 'system',
@@ -116,10 +116,13 @@ IMPORTANT: Return ONLY the JSON object, no additional text.`,
         }),
       },
     ],
-    schema: PaparanSchema,
   })
 
-  return result as Paparan
+  // Handle nested response from GLM (wraps in "paparan" key)
+  const resultToNormalize = (rawResult as any).paparan ?? rawResult
+
+  // Normalize and validate the output
+  return normalizePaparanOutput(resultToNormalize)
 }
 
 function buildPaparanPrompt(context: {
