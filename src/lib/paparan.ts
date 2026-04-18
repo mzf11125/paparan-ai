@@ -1,6 +1,6 @@
 import { generateText, Output } from 'ai'
-import { convertToModelMessages } from '@ai-sdk/react'
-import { PaparanSchema, type Paparan, type Source } from './schema'
+import { z } from 'zod'
+import { PaparanSchema, type Paparan, type Source, type Development } from './schema'
 import { searchWithTavily } from './tavily'
 
 interface GeneratePaparanInput {
@@ -10,25 +10,15 @@ interface GeneratePaparanInput {
   previousPaparan?: Paparan
 }
 
-interface Development {
-  description: string
-  deltaType: 'NEW' | 'UPDATED' | 'ESCALATED' | 'DE-ESCALATED'
-  impactLevel: 'HIGH' | 'MEDIUM' | 'LOW'
-  entities?: string[]
-}
+const QuerySchema = z.object({
+  queries: z.array(z.string()).min(3).max(5),
+})
 
 export async function expandQuery(topic: string, region: string = 'ASEAN'): Promise<string[]> {
   const { output } = await generateText({
     model: 'anthropic/claude-sonnet-4.6',
     output: Output.object({
-      schema: {
-        queries: {
-          type: 'array',
-          items: { type: 'string' },
-          minItems: 3,
-          maxItems: 5,
-        },
-      } as const,
+      schema: QuerySchema,
     }),
     prompt: `Expand this topic into 3-5 specific search queries for policy intelligence: "${topic}" in the context of ${region}.
 
@@ -42,7 +32,8 @@ Focus on:
 Return only JSON with a "queries" array containing the search query strings.`,
   })
 
-  return output.queries as string[]
+  const result = output as { queries: string[] }
+  return result.queries
 }
 
 export async function generatePaparan(input: GeneratePaparanInput): Promise<Paparan> {

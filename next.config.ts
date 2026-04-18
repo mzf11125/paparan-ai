@@ -1,9 +1,7 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  config: {
-    swcMinify: true,
-  },
+  /* config options */
 }
 
 export default nextConfig

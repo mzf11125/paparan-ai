@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { type Paparan } from '@/lib/schema'
-import { DeltaLabel } from './DeltaLabel'
+import { DeltaLabel } from '../ui/DeltaLabel'
 import { Card } from '../ui/Card'
 import { Button } from '../ui/Button'
 import { Download, Share2 } from 'lucide-react'

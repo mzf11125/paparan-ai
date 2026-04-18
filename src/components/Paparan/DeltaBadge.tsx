@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import type { Development } from '@/lib/paparan'
+import type { Development } from '@/lib/schema'
 import { DeltaLabel } from '../ui/DeltaLabel'
 
 interface DeltaBadgeProps {

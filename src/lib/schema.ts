@@ -26,6 +26,9 @@ export const PaparanSchema = z.object({
 
 export type Paparan = z.infer<typeof PaparanSchema>
 
+// Extract the Development type from Paparan's keyDevelopments
+export type Development = Paparan['keyDevelopments'][number]
+
 export const CreatePaparanInput = z.object({
   topic: z.string().min(1),
   region: z.enum(['ASEAN', 'Indonesia', 'Malaysia', 'Philippines', 'Singapore', 'Thailand', 'Vietnam', 'Myanmar', 'Cambodia', 'Laos', 'Brunei']).default('ASEAN'),

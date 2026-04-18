@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { createSupabaseServerClient } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { PaparanDisplay } from '@/components/Paparan/PaparanDisplay'
 
 export default async function PaparanPage({ params }: { params: { id: string } }) {

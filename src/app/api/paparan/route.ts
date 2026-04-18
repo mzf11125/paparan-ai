@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createSupabaseServerClient } from '@/lib/supabase'
+import { createSupabaseServerClient } from '@/lib/supabase-server'
 import { generatePaparan } from '@/lib/paparan'
 import { CreatePaparanInput } from '@/lib/schema'
 
@@ -21,12 +21,12 @@ export async function POST(req: NextRequest) {
     // Get previous Paparan for delta comparison
     const { data: previous } = await supabase
       .from('paparan_reports')
-      .select('content')
+      .select('id, content')
       .eq('user_id', user.id)
       .eq('topic', input.topic)
       .order('created_at', { ascending: false })
       .limit(1)
-      .single()
+      .maybeSingle()
 
     // Generate Paparan
     const paparan = await generatePaparan({
