@@ -1,66 +1,78 @@
-interface TavilySearchResult {
+/**
+ * Tavily API Integration
+ * Official SDK implementation
+ */
+
+import { tavily } from '@tavily/core'
+
+export interface TavilySearchResult {
   title: string
   url: string
   content: string
   score: number
-  published_date?: string
+  publishedDate?: string
 }
 
-interface TavilyResponse {
-  answer: string
-  query: string
-  results: TavilySearchResult[]
-}
+// Lazy Tavily client creation
+let tvlyClient: ReturnType<typeof tavily> | null = null
 
-interface TavilySearchParams {
-  api_key: string
-  query: string
-  search_depth?: 'basic' | 'advanced'
-  max_results?: number
-  include_domains?: string[]
-  exclude_domains?: string[]
-  days?: number
-}
-
-export async function searchWithTavily(queries: string[]): Promise<TavilySearchResult[]> {
-  const apiKey = process.env.TAVILY_API_KEY
-
-  if (!apiKey) {
-    throw new Error('TAVILY_API_KEY is not set')
+function getTavilyClient() {
+  if (!tvlyClient) {
+    if (!process.env.TAVILY_API_KEY) {
+      throw new Error('TAVILY_API_KEY is not set')
+    }
+    tvlyClient = tavily({
+      apiKey: process.env.TAVILY_API_KEY,
+    })
   }
+  return tvlyClient
+}
+
+/**
+ * Search with Tavily using the official SDK
+ */
+export async function searchWithTavily(queries: string[]): Promise<TavilySearchResult[]> {
+  const client = getTavilyClient()
 
   const searchPromises = queries.map(query =>
-    performTavilySearch({
-      api_key: apiKey,
-      query,
-      search_depth: 'advanced',
-      max_results: 10,
-      days: 30, // Last 30 days
-    })
+    performTavilySearch(query, client)
   )
 
   const results = await Promise.all(searchPromises)
-  const allResults = results.flatMap(r => r.results)
+  const allResults = results.flatMap(r => r || [])
 
   return rankAndDeduplicate(allResults)
 }
 
-async function performTavilySearch(params: TavilySearchParams): Promise<TavilyResponse> {
-  const response = await fetch('https://api.tavily.com/search', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(params),
-  })
+async function performTavilySearch(
+  query: string,
+  client: ReturnType<typeof tavily>
+): Promise<TavilySearchResult[]> {
+  try {
+    const response = await client.search(query, {
+      searchDepth: 'advanced',
+      maxResults: 10,
+      days: 30, // Last 30 days
+    })
 
-  if (!response.ok) {
-    throw new Error(`Tavily API error: ${response.statusText}`)
+    // Transform Tavily results to our format
+    const results = (response.results || []).map((item: any) => ({
+      title: item.title || '',
+      url: item.url || '',
+      content: item.content || '',
+      score: item.score || 0,
+      publishedDate: item.publishedDate,
+    }))
+
+    return results
+  } catch (error) {
+    console.error(`Tavily search error for query "${query}":`, error)
+    return []
   }
-
-  return response.json()
 }
 
 // Priority: government > major news > regional media > blogs
-const DOMAIN_PRIORITY = {
+const DOMAIN_PRIORITY: Record<string, number> = {
   'gov': 4,
   'go': 4,
   'mil': 4,

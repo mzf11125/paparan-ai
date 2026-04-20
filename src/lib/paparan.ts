@@ -1,26 +1,42 @@
-import { generateText, Output } from 'ai'
+/**
+ * Paparan Generation with GLM (Zhipu AI)
+ * Generates structured policy intelligence briefs
+ */
+
 import { z } from 'zod'
-import { PaparanSchema, type Paparan, type Source, type Development } from './schema'
+import { type Paparan, type Source, normalizePaparanOutput } from './schema'
 import { searchWithTavily } from './tavily'
+import { generateGLM, type GLMModel } from './glm-client'
 
 interface GeneratePaparanInput {
   topic: string
   region?: string
   documents?: string[]
   previousPaparan?: Paparan
+  model?: GLMModel
 }
 
 const QuerySchema = z.object({
   queries: z.array(z.string()).min(3).max(5),
 })
 
-export async function expandQuery(topic: string, region: string = 'ASEAN'): Promise<string[]> {
-  const { output } = await generateText({
-    model: 'anthropic/claude-sonnet-4.6',
-    output: Output.object({
-      schema: QuerySchema,
-    }),
-    prompt: `Expand this topic into 3-5 specific search queries for policy intelligence: "${topic}" in the context of ${region}.
+/**
+ * Expand topic into multiple search queries using GLM
+ */
+export async function expandQuery(
+  topic: string,
+  region: string = 'ASEAN'
+): Promise<string[]> {
+  const result = await generateGLM({
+    model: 'glm-4.6',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a research assistant specializing in policy intelligence.',
+      },
+      {
+        role: 'user',
+        content: `Expand this topic into 3-5 specific search queries for policy intelligence: "${topic}" in the context of ${region}.
 
 Focus on:
 - Recent developments (last 30 days)
@@ -30,12 +46,17 @@ Focus on:
 - Relevant policy changes
 
 Return only JSON with a "queries" array containing the search query strings.`,
+      },
+    ],
+    schema: QuerySchema,
   })
 
-  const result = output as { queries: string[] }
   return result.queries
 }
 
+/**
+ * Generate a complete Paparan intelligence brief
+ */
 export async function generatePaparan(input: GeneratePaparanInput): Promise<Paparan> {
   // 1. Expand queries
   const queries = await expandQuery(input.topic, input.region)
@@ -43,24 +64,65 @@ export async function generatePaparan(input: GeneratePaparanInput): Promise<Papa
   // 2. Retrieve sources using Tavily
   const sources = await searchWithTavily(queries)
 
-  // 3. Generate Paparan using Claude
-  const { output } = await generateText({
-    model: 'anthropic/claude-sonnet-4.6',
-    output: Output.object({
-      name: 'Paparan',
-      description: 'Structured policy intelligence brief',
-      schema: PaparanSchema,
-    }),
-    prompt: buildPaparanPrompt({
-      topic: input.topic,
-      region: input.region || 'ASEAN',
-      sources,
-      documents: input.documents,
-      previousPaparan: input.previousPaparan,
-    }),
+  // 3. Generate Paparan using GLM-4.6
+  const rawResult = await generateGLM({
+    model: (input.model as any) || 'glm-4.6',
+    messages: [
+      {
+        role: 'system',
+        content: `You are a senior policy analyst generating a structured intelligence brief ("Paparan") for a government policymaker.
+
+Your output must be valid JSON following this exact structure:
+{
+  "executiveSummary": ["string1", "string2", "string3", "string4", "string5"],
+  "currentSituation": "string",
+  "keyDevelopments": [
+    {
+      "description": "string",
+      "deltaType": "NEW" | "UPDATED" | "ESCALATED" | "DE-ESCALATED",
+      "impactLevel": "HIGH" | "MEDIUM" | "LOW",
+      "entities": ["string1", "string2"]
+    }
+  ],
+  "strategicImplications": "string",
+  "risksAndOpportunities": [
+    {
+      "type": "RISK" | "OPPORTUNITY",
+      "severity": "HIGH" | "MEDIUM" | "LOW",
+      "description": "string"
+    }
+  ],
+  "recommendedActions": ["string1", "string2", "string3"],
+  "sources": [
+    {
+      "title": "string",
+      "url": "string (optional)",
+      "type": "government" | "news" | "research" | "uploaded",
+      "confidence": "HIGH" | "MEDIUM" | "LOW"
+    }
+  ]
+}
+
+IMPORTANT: Return ONLY the JSON object, no additional text.`,
+      },
+      {
+        role: 'user',
+        content: buildPaparanPrompt({
+          topic: input.topic,
+          region: input.region || 'ASEAN',
+          sources,
+          documents: input.documents,
+          previousPaparan: input.previousPaparan,
+        }),
+      },
+    ],
   })
 
-  return output as Paparan
+  // Handle nested response from GLM (wraps in "paparan" key)
+  const resultToNormalize = (rawResult as any).paparan ?? rawResult
+
+  // Normalize and validate the output
+  return normalizePaparanOutput(resultToNormalize)
 }
 
 function buildPaparanPrompt(context: {
@@ -70,9 +132,7 @@ function buildPaparanPrompt(context: {
   documents?: string[]
   previousPaparan?: Paparan
 }): string {
-  let prompt = `You are a senior policy analyst generating a structured intelligence brief ("Paparan") for a government policymaker.
-
-TOPIC: ${context.topic}
+  let prompt = `TOPIC: ${context.topic}
 REGION: ${context.region}
 
 ${context.previousPaparan ? `PREVIOUS BRIEFING (for delta comparison):
@@ -113,24 +173,71 @@ REQUIREMENTS:
 13. Risks and Opportunities: Be specific and actionable
 14. Sources: List all sources referenced with confidence levels
 
-Generate the Paparan brief now.`
+Generate the Paparan brief now. Return ONLY valid JSON.`
 
   return prompt
 }
 
+/**
+ * Detect delta between current and previous developments
+ */
 export function detectDelta(
-  currentDevelopments: Development[],
+  currentDevelopments: Paparan['keyDevelopments'],
   previousPaparan: Paparan
-): Development[] {
-  // Simple delta detection: compare with previous developments
+): Paparan['keyDevelopments'] {
   const previousDescriptions = new Set(
     previousPaparan.keyDevelopments.map(d => d.description)
   )
 
   return currentDevelopments.map(dev => {
     if (!previousDescriptions.has(dev.description)) {
-      return { ...dev, deltaType: 'NEW' }
+      return { ...dev, deltaType: dev.deltaType === 'NEW' ? 'NEW' : 'UPDATED' }
     }
     return dev
   })
+}
+
+/**
+ * Generate a summary of changes (delta) between two Paparan reports
+ */
+export function generateDeltaSummary(
+  current: Paparan,
+  _previous: Paparan // Reserved for future delta analysis
+): string {
+  const newDevelopments = current.keyDevelopments.filter(
+    d => d.deltaType === 'NEW'
+  )
+  const escalated = current.keyDevelopments.filter(
+    d => d.deltaType === 'ESCALATED'
+  )
+  const deescalated = current.keyDevelopments.filter(
+    d => d.deltaType === 'DE-ESCALATED'
+  )
+
+  let summary = `DELTA SUMMARY:\n\n`
+
+  if (newDevelopments.length > 0) {
+    summary += `NEW DEVELOPMENTS (${newDevelopments.length}):\n`
+    newDevelopments.forEach(d => {
+      summary += `• [${d.impactLevel}] ${d.description}\n`
+    })
+    summary += '\n'
+  }
+
+  if (escalated.length > 0) {
+    summary += `ESCALATED (${escalated.length}):\n`
+    escalated.forEach(d => {
+      summary += `• [${d.impactLevel}] ${d.description}\n`
+    })
+    summary += '\n'
+  }
+
+  if (deescalated.length > 0) {
+    summary += `DE-ESCALATED (${deescalated.length}):\n`
+    deescalated.forEach(d => {
+      summary += `• [${d.impactLevel}] ${d.description}\n`
+    })
+  }
+
+  return summary
 }
