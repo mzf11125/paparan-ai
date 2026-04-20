@@ -113,7 +113,7 @@ export function BriefCard({
                 aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
               >
                 {bookmarked ? (
-                  <BookmarkCheck className="w-4 h-4 text-accent" />
+                  <BookmarkCheck className="w-4 h-4 text-primary" />
                 ) : (
                   <Bookmark className="w-4 h-4 text-text-tertiary" />
                 )}
@@ -143,7 +143,7 @@ export function BriefCard({
           </span>
 
           {/* Region Badge */}
-          <span className="px-2.5 py-1 bg-accent-subtle text-accent text-xs font-semibold uppercase tracking-wider rounded-official border border-accent/20">
+          <span className="px-2.5 py-1 bg-primary-lighter text-primary text-xs font-semibold uppercase tracking-wider rounded-official border border-primary/20">
             {brief.region}
           </span>
 
@@ -189,7 +189,7 @@ export function BriefCard({
         </div>
 
         {/* Executive Summary Preview */}
-        <p className="mt-4 text-sm text-text-secondary line-clamp-3 leading-relaxed border-l-2 border-accent/30 pl-3">
+        <p className="mt-4 text-sm text-text-secondary line-clamp-3 leading-relaxed border-l-2 border-primary/30 pl-3">
           {brief.executiveSummary[0]}
         </p>
 
@@ -253,7 +253,7 @@ export function BriefCard({
                   onClick={handleBookmark}
                 >
                   {bookmarked ? (
-                    <BookmarkCheck className="w-4 h-4 text-accent" />
+                    <BookmarkCheck className="w-4 h-4 text-primary" />
                   ) : (
                     <Bookmark className="w-4 h-4 text-text-tertiary" />
                   )}

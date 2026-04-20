@@ -184,7 +184,7 @@ export function BriefEditorPage() {
             <ArrowLeft className="w-5 h-5 text-text-secondary" />
           </Link>
           <div className="flex items-center gap-3">
-            <div className="w-1 h-8 bg-accent rounded-full" />
+            <div className="w-1 h-8 bg-primary rounded-full" />
             <div>
               <h1 className="text-2xl font-display font-bold text-text">
                 {isEditing ? 'Edit Brief' : 'Create New Brief'}
@@ -253,7 +253,7 @@ export function BriefEditorPage() {
           {/* Basic Info */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <FileEdit className="w-4 h-4 text-accent" />
+              <FileEdit className="w-4 h-4 text-primary" />
               <h2 className="text-sm font-semibold uppercase tracking-wider text-text-secondary font-ui">Basic Information</h2>
             </div>
             <div className="grid md:grid-cols-2 gap-6">
@@ -354,7 +354,7 @@ export function BriefEditorPage() {
               <button
                 type="button"
                 onClick={addExecutiveSummaryItem}
-                className="flex items-center gap-1 text-sm text-accent hover:text-accent-dark font-ui"
+                className="flex items-center gap-1 text-sm text-primary hover:text-primary-dark font-ui"
               >
                 <Plus className="w-4 h-4" />
                 Add Item
@@ -384,7 +384,7 @@ export function BriefEditorPage() {
                 <button
                   type="button"
                   onClick={addExecutiveSummaryItem}
-                  className="w-full py-8 border-2 border-dashed border-border rounded-lg text-text-tertiary hover:border-accent hover:text-accent transition-colors font-ui"
+                  className="w-full py-8 border-2 border-dashed border-border rounded-lg text-text-tertiary hover:border-primary hover:text-primary transition-colors font-ui"
                 >
                   Add executive summary item
                 </button>
@@ -417,7 +417,7 @@ export function BriefEditorPage() {
               <button
                 type="button"
                 onClick={addDevelopment}
-                className="flex items-center gap-1 text-sm text-accent hover:text-accent-dark font-ui"
+                className="flex items-center gap-1 text-sm text-primary hover:text-primary-dark font-ui"
               >
                 <Plus className="w-4 h-4" />
                 Add Development
@@ -510,7 +510,7 @@ export function BriefEditorPage() {
               <button
                 type="button"
                 onClick={addRisk}
-                className="flex items-center gap-1 text-sm text-accent hover:text-accent-dark font-ui"
+                className="flex items-center gap-1 text-sm text-primary hover:text-primary-dark font-ui"
               >
                 <Plus className="w-4 h-4" />
                 Add Risk
@@ -549,7 +549,7 @@ export function BriefEditorPage() {
               <button
                 type="button"
                 onClick={addOpportunity}
-                className="flex items-center gap-1 text-sm text-accent hover:text-accent-dark font-ui"
+                className="flex items-center gap-1 text-sm text-primary hover:text-primary-dark font-ui"
               >
                 <Plus className="w-4 h-4" />
                 Add Opportunity

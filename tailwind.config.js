@@ -27,13 +27,13 @@ export default {
           light: '#E0F2FE',
           lighter: '#F0F9FF',
         },
-        // Accent color — Gold (for emphasis, highlights only)
+        // Navy Accent — Single action/accent color for institutional look
         accent: {
-          DEFAULT: '#C8A96A',
-          light: '#D4B87A',
-          lighter: '#E5D4A8',
-          dark: '#A88B4A',
-          subtle: 'rgba(200, 169, 106, 0.1)',
+          DEFAULT: '#0369A1',
+          light: '#0284C7',
+          lighter: '#E0F2FE',
+          dark: '#025380',
+          subtle: 'rgba(3, 105, 161, 0.1)',
         },
         // Classification colors — Security level indicators
         classified: {
@@ -76,7 +76,7 @@ export default {
           DEFAULT: '#E8E4DC',
           strong: '#D4D0C8',
           subtle: '#F2EFE8',
-          accent: '#C8A96A',
+          accent: '#0369A1',
         },
       },
       fontFamily: {

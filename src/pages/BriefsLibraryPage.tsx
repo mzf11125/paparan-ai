@@ -177,7 +177,7 @@ export function BriefsLibraryPage() {
               onClick={() => setShowFilters(!showFilters)}
               className={cn(
                 'p-2.5 border border-border rounded transition-colors flex items-center gap-2 text-sm',
-                showFilters && 'bg-accent-subtle border-accent text-accent'
+                showFilters && 'bg-primary-lighter border-primary text-primary'
               )}
               aria-label="Toggle filters"
             >
@@ -195,7 +195,7 @@ export function BriefsLibraryPage() {
             {activeFilters.map((filter) => (
               <span
                 key={filter}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-accent-subtle text-accent text-sm rounded border border-accent/20"
+                className="inline-flex items-center gap-1 px-2.5 py-1 bg-primary-lighter text-primary text-sm rounded border border-primary/20"
               >
                 {filter}
               </span>

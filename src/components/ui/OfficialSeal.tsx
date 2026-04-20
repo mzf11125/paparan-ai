@@ -18,7 +18,7 @@ export const OfficialSeal = React.forwardRef<SVGSVGElement, OfficialSealProps>(
 
   const colors = monochrome
     ? { stroke: 'currentColor', secondary: 'currentColor' }
-    : { stroke: '#C8A96A', secondary: '#0369A1' }
+    : { stroke: '#0369A1', secondary: '#025380' }
 
   if (variant === 'icon-only') {
     return (

@@ -86,7 +86,7 @@ export function AnalyticsDashboardPage() {
           change={0}
           changeLabel="stable"
           icon={<TrendingUp className="w-5 h-5" />}
-          color="accent"
+          color="primary"
         />
         <StatsCard
           value={highImpactDevelopments}
@@ -123,7 +123,7 @@ export function AnalyticsDashboardPage() {
       <div className="bg-bg-elevated border border-border rounded-lg shadow-sm">
         <div className="px-6 py-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-accent" />
+            <Activity className="w-4 h-4 text-primary" />
             <h3 className="font-display font-semibold text-text">Trending Topics</h3>
           </div>
           <span className="text-xs text-text-tertiary tabular-nums">
@@ -158,7 +158,7 @@ export function AnalyticsDashboardPage() {
       <div className="bg-bg-elevated border border-border rounded-lg shadow-sm">
         <div className="px-6 py-4 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-accent" />
+            <FileText className="w-4 h-4 text-primary" />
             <h3 className="font-display font-semibold text-text">Recently Updated Briefs</h3>
           </div>
           <span className="text-xs text-text-tertiary">

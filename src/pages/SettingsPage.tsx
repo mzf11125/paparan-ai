@@ -47,7 +47,7 @@ export function SettingsPage() {
       {/* Official Page Header */}
       <div className="mb-8 pb-6 border-b border-border">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-1 h-6 bg-accent rounded-full" />
+          <div className="w-1 h-6 bg-primary rounded-full" />
           <h1 className="text-3xl font-display font-bold text-text">Settings</h1>
         </div>
         <p className="text-text-secondary font-ui">

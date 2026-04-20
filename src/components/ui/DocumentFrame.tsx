@@ -36,10 +36,10 @@ export const DocumentFrame = React.forwardRef<HTMLDivElement, DocumentFrameProps
       <div className="absolute inset-0 border border-border-strong pointer-events-none" style={{ top: '4px', left: '4px', right: '4px', bottom: '4px' }} />
 
       {/* Corner decorations */}
-      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-accent" />
-      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-accent" />
-      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-accent" />
-      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-accent" />
+      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary" />
+      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary" />
+      <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary" />
+      <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary" />
 
       <div className="relative z-10">
         {children}

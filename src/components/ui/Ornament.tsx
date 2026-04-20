@@ -19,13 +19,13 @@ interface OrnamentProps {
 interface CornerOrnamentProps extends OrnamentProps {
   position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'all'
   size?: 'sm' | 'md' | 'lg'
-  color?: 'gold' | 'subtle'
+  color?: 'navy' | 'subtle'
 }
 
 export function CornerOrnament({
   position = 'top-left',
   size = 'md',
-  color = 'gold',
+  color = 'navy',
   className = '',
 }: CornerOrnamentProps) {
   const sizeStyles = {
@@ -35,7 +35,7 @@ export function CornerOrnament({
   }
 
   const colorStyles = {
-    gold: 'border-[#C8A96A]',
+    navy: 'border-[#0369A1]',
     subtle: 'border-[#E8E4DC]',
   }
 
@@ -102,13 +102,13 @@ export function CornerOrnament({
 interface SideAccentProps extends OrnamentProps {
   position?: 'left' | 'right' | 'top' | 'bottom'
   thickness?: 'thin' | 'medium' | 'thick'
-  color?: 'gold' | 'subtle'
+  color?: 'navy' | 'subtle'
 }
 
 export function SideAccent({
   position = 'left',
   thickness = 'medium',
-  color = 'gold',
+  color = 'navy',
   className = '',
 }: SideAccentProps) {
   const thicknessStyles = {
@@ -118,7 +118,7 @@ export function SideAccent({
   }
 
   const colorStyles = {
-    gold: 'bg-gradient-to-b from-[#C8A96A] via-[#D4B87A] to-[#C8A96A]',
+    navy: 'bg-gradient-to-b from-[#0369A1] via-[#0284C7] to-[#0369A1]',
     subtle: 'bg-gradient-to-b from-[#E8E4DC] via-[#D4D0C8] to-[#E8E4DC]',
   }
 
@@ -136,7 +136,7 @@ export function SideAccent({
           'absolute',
           position === 'top' ? 'top-0' : 'bottom-0',
           'left-0 right-0',
-          color === 'gold' ? 'h-0.5 bg-gradient-to-r from-transparent via-[#C8A96A] to-transparent' : 'h-px bg-[#E8E4DC]',
+          color === 'navy' ? 'h-0.5 bg-gradient-to-r from-transparent via-[#0369A1] to-transparent' : 'h-px bg-[#E8E4DC]',
           className
         )}
       />
@@ -162,12 +162,12 @@ export function SideAccent({
  * Creates ornamental dividers between sections.
  */
 interface DecorativeDividerProps extends OrnamentProps {
-  variant?: 'gold-line' | 'diamond' | 'double' | 'fade'
+  variant?: 'navy-line' | 'diamond' | 'double' | 'fade'
   fullWidth?: boolean
 }
 
 export function DecorativeDivider({
-  variant = 'gold-line',
+  variant = 'navy-line',
   fullWidth = false,
   className = '',
 }: DecorativeDividerProps) {
@@ -175,25 +175,25 @@ export function DecorativeDivider({
 
   return (
     <div className={cn(containerClass, 'my-8', className)}>
-      {variant === 'gold-line' && (
+      {variant === 'navy-line' && (
         <div className="relative h-px">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#C8A96A] to-transparent" />
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-[#C8A96A] rotate-45" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#0369A1] to-transparent" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-[#0369A1] rotate-45" />
         </div>
       )}
 
       {variant === 'diamond' && (
         <div className="flex items-center justify-center gap-4">
           <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[#E8E4DC]" />
-          <div className="w-2 h-2 bg-[#C8A96A] rotate-45" />
+          <div className="w-2 h-2 bg-[#0369A1] rotate-45" />
           <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[#E8E4DC]" />
         </div>
       )}
 
       {variant === 'double' && (
         <div className="flex gap-2">
-          <div className="flex-1 h-px bg-[#C8A96A]/50" />
-          <div className="flex-1 h-px bg-[#C8A96A]/30" />
+          <div className="flex-1 h-px bg-[#0369A1]/50" />
+          <div className="flex-1 h-px bg-[#0369A1]/30" />
         </div>
       )}
 
@@ -205,21 +205,21 @@ export function DecorativeDivider({
 }
 
 /**
- * GoldUnderline — Decorative text underline
+ * NavyUnderline — Decorative text underline
  *
- * Adds an elegant gold underline to headings.
+ * Adds an elegant navy underline to headings.
  */
-interface GoldUnderlineProps {
+interface NavyUnderlineProps {
   className?: string
   position?: 'center' | 'left' | 'right'
   length?: 'short' | 'medium' | 'full'
 }
 
-export function GoldUnderline({
+export function NavyUnderline({
   className = '',
   position = 'center',
   length = 'short',
-}: GoldUnderlineProps) {
+}: NavyUnderlineProps) {
   const lengthStyles = {
     short: 'w-16',
     medium: 'w-24',
@@ -235,7 +235,7 @@ export function GoldUnderline({
   return (
     <div
       className={cn(
-        'h-0.5 bg-gradient-to-r from-[#C8A96A] via-[#D4B87A] to-[#C8A96A]',
+        'h-0.5 bg-gradient-to-r from-[#0369A1] via-[#0284C7] to-[#0369A1]',
         lengthStyles[length],
         positionStyles[position],
         'mt-4',
@@ -275,7 +275,7 @@ export function SectionHeader({
       )}
       {(variant === 'with-accent' || variant === 'centered') && (
         <div className={cn(
-          'w-12 h-0.5 bg-[#C8A96A] mt-4',
+          'w-12 h-0.5 bg-[#0369A1] mt-4',
           variant === 'centered' && 'mx-auto'
         )} />
       )}
@@ -289,17 +289,17 @@ export function SectionHeader({
  * Creates a subtle animated glow on the border of an element.
  */
 interface BorderGlowProps extends OrnamentProps {
-  color?: 'gold' | 'blue' | 'green'
+  color?: 'navy' | 'blue' | 'green'
   intensity?: 'subtle' | 'medium' | 'strong'
 }
 
 export function BorderGlow({
-  color = 'gold',
+  color = 'navy',
   intensity = 'subtle',
   className = '',
 }: BorderGlowProps) {
   const colorStyles = {
-    gold: 'shadow-[0_0_20px_rgba(200,169,106,0.3)]',
+    navy: 'shadow-[0_0_20px_rgba(3,105,161,0.3)]',
     blue: 'shadow-[0_0_20px_rgba(46,92,138,0.3)]',
     green: 'shadow-[0_0_20px_rgba(45,122,77,0.3)]',
   }
@@ -346,7 +346,7 @@ export function Watermark({
       )}
       style={{ opacity }}
     >
-      <span className="font-display font-bold text-[20vw] text-[#C8A96A] whitespace-nowrap">
+      <span className="font-display font-bold text-[20vw] text-[#0369A1] whitespace-nowrap">
         {text}
       </span>
     </div>
@@ -360,18 +360,18 @@ export function Watermark({
  */
 interface CardFrameProps extends OrnamentProps {
   children: React.ReactNode
-  variant?: 'gold' | 'subtle' | 'none'
+  variant?: 'navy' | 'subtle' | 'none'
   hover?: boolean
 }
 
 export function CardFrame({
   children,
-  variant = 'gold',
+  variant = 'navy',
   hover = false,
   className = '',
 }: CardFrameProps) {
   const variantStyles = {
-    gold: 'border-[#C8A96A]/30 hover:border-[#C8A96A]/60',
+    navy: 'border-[#0369A1]/30 hover:border-[#0369A1]/60',
     subtle: 'border-[#E8E4DC] hover:border-[#D4D0C8]',
     none: 'border-transparent',
   }

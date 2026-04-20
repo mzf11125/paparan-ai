@@ -102,7 +102,7 @@ export function LandingPage() {
         </div>
 
         <div className="absolute bottom-20 right-8 lg:bottom-24 lg:right-16 w-24 h-24 lg:w-40 lg:h-40 opacity-[0.025]">
-          <svg viewBox="0 0 100 100" className="w-full h-full text-accent">
+          <svg viewBox="0 0 100 100" className="w-full h-full text-primary">
             <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="1" />
             <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" strokeWidth="0.5" />
             <rect x="25" y="25" width="50" height="50" fill="none" stroke="currentColor" strokeWidth="1" transform="rotate(45 50 50)" />
@@ -125,9 +125,9 @@ export function LandingPage() {
             className="flex items-center justify-center gap-6 mb-8 lg:mb-10 animate-[fadeIn_0.8s_ease-out]"
             style={{ animationDelay: '100ms' }}
           >
-            <div className="h-px w-16 bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
-            <div className="w-2 h-2 rotate-45 border border-accent/40" />
-            <div className="h-px w-16 bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
+            <div className="h-px w-16 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+            <div className="w-2 h-2 rotate-45 border border-primary/40" />
+            <div className="h-px w-16 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
           </div>
 
           {/* Main headline with beautiful typography */}
@@ -192,7 +192,7 @@ export function LandingPage() {
             style={{ animationDelay: '500ms' }}
           >
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-accent" />
+              <div className="w-2 h-2 rounded-full bg-primary" />
               <span className="font-ui tabular-nums">150+ Briefs</span>
             </div>
             <div className="flex items-center gap-2">
@@ -211,7 +211,7 @@ export function LandingPage() {
             style={{ animationDelay: '600ms' }}
           >
             <div className="h-px w-24 bg-gradient-to-r from-transparent via-border to-transparent" />
-            <div className="w-1.5 h-1.5 rounded-full bg-accent/60" />
+            <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
             <div className="h-px w-24 bg-gradient-to-r from-transparent via-border to-transparent" />
           </div>
         </div>
@@ -222,7 +222,7 @@ export function LandingPage() {
           style={{ animationDelay: '1000ms' }}
         >
           <div className="w-6 h-10 border-2 border-border/30 rounded-full flex items-start justify-center pt-2">
-            <div className="w-1 h-2 bg-accent/60 rounded-full" />
+            <div className="w-1 h-2 bg-primary/60 rounded-full" />
           </div>
         </div>
       </section>
@@ -247,8 +247,8 @@ export function LandingPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Feature 1 */}
             <div className="group p-6 bg-bg-surface border border-border rounded-lg hover:border-primary transition-colors">
-              <div className="w-12 h-12 bg-accent-subtle rounded-lg flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
-                <FileText className="w-6 h-6 text-accent" />
+              <div className="w-12 h-12 bg-primary-lighter rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary-light transition-colors">
+                <FileText className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-lg font-semibold text-text mb-2 font-display">Curated Briefs</h3>
               <p className="text-text-secondary text-sm leading-relaxed">
@@ -297,7 +297,7 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="flex items-center justify-between mb-12">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-accent-subtle text-accent text-xs font-semibold uppercase tracking-wider rounded-official mb-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-lighter text-primary text-xs font-semibold uppercase tracking-wider rounded-official mb-3">
                 <Building className="w-3.5 h-3.5" />
                 Latest Intelligence
               </div>
@@ -348,7 +348,7 @@ export function LandingPage() {
               <div className="text-sm font-medium text-text-secondary uppercase tracking-wide">Regions Covered</div>
             </div>
             <div className="text-center p-6 bg-bg-surface border border-border rounded-lg">
-              <div className="text-4xl lg:text-5xl font-bold text-accent tabular-nums mb-2">500+</div>
+              <div className="text-4xl lg:text-5xl font-bold text-primary tabular-nums mb-2">500+</div>
               <div className="text-sm font-medium text-text-secondary uppercase tracking-wide">Developments Tracked</div>
             </div>
             <div className="text-center p-6 bg-bg-surface border border-border rounded-lg">

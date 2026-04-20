@@ -47,12 +47,12 @@
   --color-primary-light: #E0F2FE;   /* Light blue background */
   --color-primary-lighter: #F0F9FF; /* Very light blue */
 
-  /* Accent Color — Gold (for emphasis, highlights only) */
-  --color-accent: #C8A96A;          /* Muted gold — institutional accent */
-  --color-accent-light: #D4B87A;    /* Lighter gold for hover states */
-  --color-accent-lighter: #E5D4A8;  /* Very light gold */
-  --color-accent-dark: #A88B4A;     /* Darker gold for active states */
-  --color-accent-subtle: rgba(200, 169, 106, 0.1); /* Subtle gold tint */
+  /* Navy Accent — Single action/accent color for institutional look */
+  --color-navy: #0369A1;            /* Navy blue accent — matches primary */
+  --color-navy-light: #0284C7;      /* Lighter navy for hover states */
+  --color-navy-lighter: #E0F2FE;    /* Very light navy background */
+  --color-navy-dark: #025380;       /* Darker navy for active states */
+  --color-navy-subtle: rgba(3, 105, 161, 0.1); /* Subtle navy tint */
 
   /* Classification Colors — Security Level Indicators */
   --color-classified-unclassified: #2D7A4D;  /* Green for UNCLASSIFIED */
@@ -83,7 +83,7 @@
   --color-border: #E8E4DC;          /* Subtle warm border */
   --color-border-strong: #D4D0C8;   /* Stronger border for emphasis */
   --color-border-subtle: #F2EFE8;   /* Very subtle border */
-  --color-border-accent: #C8A96A;   /* Gold accent border */
+  --color-border-accent: #0369A1;   /* Navy accent border */
 
   /* Document Frame Colors */
   --color-document-frame: #1A1A1A;  /* Dark frame for official documents */
@@ -213,16 +213,16 @@
     max-width: 75ch;
   }
 
-  /* Selection Color — Institutional Gold */
+  /* Selection Color — Navy Blue */
   ::selection {
-    background-color: var(--color-accent);
-    background-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+    background-color: var(--color-navy);
+    background-color: color-mix(in srgb, var(--color-navy) 30%, transparent);
     color: var(--color-text);
   }
 
   /* Focus Styles — Accessible & Visible */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-navy);
     outline-offset: 2px;
   }
 
@@ -315,12 +315,12 @@
   }
 
   .document-border {
-    border-left: 3px solid var(--color-accent);
+    border-left: 3px solid var(--color-navy);
     padding-left: var(--space-lg);
   }
 
   .document-border-strong {
-    border-left: 4px solid var(--color-accent);
+    border-left: 4px solid var(--color-navy);
     padding-left: var(--space-xl);
   }
 
@@ -458,7 +458,7 @@
   &[data-impact="HIGH"] {
     opacity: 1;
     filter: none;
-    box-shadow: 0 0 0 2px var(--color-accent);
+    box-shadow: 0 0 0 2px var(--color-navy);
   }
 }
 
@@ -493,9 +493,9 @@
 
 .scroll-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+  background: linear-gradient(90deg, var(--color-navy), var(--color-navy-dark));
   transition: width 0.1s ease-out;
-  box-shadow: 0 0 10px rgba(200, 169, 106, 0.3);
+  box-shadow: 0 0 10px rgba(3, 105, 161, 0.3);
 }
 
 /* ============================================
@@ -564,17 +564,17 @@
     background: linear-gradient(135deg, #FAFAF8 0%, #F5F3F0 100%);
   }
 
-  .bg-gradient-gold {
-    background: linear-gradient(135deg, #C8A96A 0%, #D4B87A 50%, #C8A96A 100%);
+  .bg-gradient-navy {
+    background: linear-gradient(135deg, #0369A1 0%, #0284C7 50%, #0369A1 100%);
   }
 
-  .bg-gradient-gold-subtle {
-    background: linear-gradient(135deg, rgba(200, 169, 106, 0.1) 0%, rgba(212, 184, 122, 0.05) 100%);
+  .bg-gradient-navy-subtle {
+    background: linear-gradient(135deg, rgba(3, 105, 161, 0.1) 0%, rgba(2, 132, 199, 0.05) 100%);
   }
 
   .bg-gradient-mesh {
     background:
-      radial-gradient(at 40% 20%, rgba(200, 169, 106, 0.1) 0px, transparent 50%),
+      radial-gradient(at 40% 20%, rgba(3, 105, 161, 0.1) 0px, transparent 50%),
       radial-gradient(at 80% 0%, rgba(45, 122, 77, 0.05) 0px, transparent 50%),
       radial-gradient(at 0% 50%, rgba(46, 92, 138, 0.05) 0px, transparent 50%);
   }
@@ -662,20 +662,20 @@
      ============================================ */
 
   .focus-ring:focus-visible {
-    outline: 2px solid var(--color-accent);
+    outline: 2px solid var(--color-navy);
     outline-offset: 2px;
     border-radius: var(--radius-sm);
   }
 
   .focus-ring-subtle:focus-visible {
-    outline: 1px solid var(--color-accent);
+    outline: 1px solid var(--color-navy);
     outline-offset: 1px;
     border-radius: var(--radius-sm);
   }
 
   .focus-ring-glow:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(200, 169, 106, 0.3);
+    box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.3);
   }
 
   /* ============================================
@@ -699,12 +699,12 @@
   }
 
   .hover-glow:hover {
-    box-shadow: var(--glow-md);
+    box-shadow: 0 0 16px rgba(3, 105, 161, 0.3);
   }
 
   .hover-border-glow:hover {
-    border-color: var(--color-accent);
-    box-shadow: var(--glow-sm);
+    border-color: var(--color-navy);
+    box-shadow: 0 0 8px rgba(3, 105, 161, 0.2);
   }
 
   /* ============================================
@@ -736,14 +736,14 @@
      ============================================ */
 
   .text-display-gradient {
-    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-accent) 100%);
+    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-navy) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .text-glow {
-    text-shadow: 0 0 20px rgba(200, 169, 106, 0.3);
+    text-shadow: 0 0 20px rgba(3, 105, 161, 0.3);
   }
 
   .text-shadow-sm {
@@ -762,7 +762,7 @@
     background: linear-gradient(
       90deg,
       var(--color-bg-surface) 0%,
-      rgba(200, 169, 106, 0.1) 50%,
+      rgba(3, 105, 161, 0.1) 50%,
       var(--color-bg-surface) 100%
     );
     background-size: 200% 100%;
@@ -778,31 +778,31 @@
      DIVIDER STYLES — ORNAMENTAL
      ============================================ */
 
-  .divider-gold {
+  .divider-navy {
     height: 1px;
     background: linear-gradient(
       90deg,
       transparent 0%,
-      var(--color-accent) 50%,
+      var(--color-navy) 50%,
       transparent 100%
     );
   }
 
-  .divider-gold-left {
+  .divider-navy-left {
     height: 1px;
     background: linear-gradient(
       90deg,
-      var(--color-accent) 0%,
+      var(--color-navy) 0%,
       transparent 100%
     );
   }
 
-  .divider-vertical-gold {
+  .divider-vertical-navy {
     width: 1px;
     background: linear-gradient(
       180deg,
       transparent 0%,
-      var(--color-accent) 50%,
+      var(--color-navy) 50%,
       transparent 100%
     );
   }
@@ -814,24 +814,24 @@
   .border-gradient {
     border: 1px solid transparent;
     background: linear-gradient(var(--color-bg-elevated), var(--color-bg-elevated)) padding-box,
-                linear-gradient(135deg, var(--color-accent-light), var(--color-accent)) border-box;
+                linear-gradient(135deg, var(--color-navy-light), var(--color-navy)) border-box;
   }
 
   .border-glow {
-    border: 1px solid var(--color-accent);
-    box-shadow: 0 0 10px rgba(200, 169, 106, 0.2);
+    border: 1px solid var(--color-navy);
+    box-shadow: 0 0 10px rgba(3, 105, 161, 0.2);
   }
 
   /* ============================================
      SCROLLBAR STYLES — CONTEXTUAL
      ============================================ */
 
-  .scrollbar-gold::-webkit-scrollbar-thumb {
-    background: var(--color-accent);
+  .scrollbar-navy::-webkit-scrollbar-thumb {
+    background: var(--color-navy);
   }
 
-  .scrollbar-gold::-webkit-scrollbar-thumb:hover {
-    background: var(--color-accent-dark);
+  .scrollbar-navy::-webkit-scrollbar-thumb:hover {
+    background: var(--color-navy-dark);
   }
 
   .scrollbar-invisible::-webkit-scrollbar {
@@ -966,7 +966,7 @@
     font-family: var(--font-display);
     font-size: 4rem;
     font-weight: 700;
-    color: rgba(200, 169, 106, 0.05);
+    color: rgba(3, 105, 161, 0.05);
     letter-spacing: 0.2em;
     pointer-events: none;
     z-index: 0;
@@ -1030,7 +1030,7 @@
     gap: 1rem;
     padding: 1rem 1.5rem;
     background: linear-gradient(180deg, var(--color-bg-elevated) 0%, var(--color-bg-subtle) 100%);
-    border-bottom: 3px solid var(--color-accent);
+    border-bottom: 3px solid var(--color-navy);
   }
 
   /* Official Footer Bar */
@@ -1055,7 +1055,7 @@
   .document-corner::after {
     content: '';
     position: absolute;
-    background: var(--color-accent);
+    background: var(--color-navy);
   }
 
   .document-corner::before {
