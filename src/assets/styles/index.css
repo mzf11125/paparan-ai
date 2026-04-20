@@ -1,0 +1,919 @@
+/* ============================================
+   PAPARAN BRIEF — REFINED AUTHORITY DESIGN SYSTEM
+   ============================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   CSS VARIABLES — ENHANCED DESIGN TOKENS
+   ============================================ */
+
+:root {
+  /* Display Font: Libre Baskerville — authoritative, editorial */
+  --font-display: 'Libre Baskerville', 'Georgia', serif;
+
+  /* Body Font: Source Serif 4 — highly readable, document-like */
+  --font-body: 'Source Serif 4', 'Georgia', serif;
+
+  /* UI Font: DM Sans — modern, clean, accessible */
+  --font-ui: 'DM Sans', 'system-ui', sans-serif;
+
+  /* Mono Font: JetBrains Mono — technical, precise */
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+  /* ============================================
+     COLOR SYSTEM — INSTITUTIONAL PALETTE
+     ============================================ */
+
+  /* Primary Colors */
+  --color-bg: #FAFAF8;              /* Warm paper-like background */
+  --color-bg-elevated: #FFFFFF;     /* Pure white for cards */
+  --color-bg-surface: #F5F3F0;      /* Slightly darker paper */
+  --color-text: #2D2D2D;            /* Dark warm gray for primary text */
+  --color-text-secondary: #5A5A5A;  /* Medium gray for secondary text */
+  --color-text-tertiary: #8A8A8A;   /* Light gray for tertiary text */
+  --color-text-inverse: #FFFFFF;    /* White on dark backgrounds */
+
+  /* Accent Colors — Gold Gradient System */
+  --color-accent: #C8A96A;          /* Muted gold — institutional authority */
+  --color-accent-light: #D4B87A;    /* Lighter gold for hover states */
+  --color-accent-lighter: #E5D4A8;  /* Very light gold */
+  --color-accent-dark: #A88B4A;     /* Darker gold for active states */
+
+  /* Semantic Colors — Refined, not saturated */
+  --color-blue: #2E5C8A;            /* Authoritative blue */
+  --color-blue-light: #E8F0F8;      /* Blue background */
+  --color-blue-lighter: #F0F6FC;    /* Very light blue */
+  --color-amber: #B8860B;           /* Warm amber */
+  --color-amber-light: #F8F0E0;     /* Amber background */
+  --color-amber-lighter: #FCF8F0;   /* Very light amber */
+  --color-red: #A83232;             /* Serious red */
+  --color-red-light: #F8E8E8;       /* Red background */
+  --color-red-lighter: #FEF4F4;     /* Very light red */
+  --color-green: #2D7A4D;           /* Calm green */
+  --color-green-light: #E8F0EC;     /* Green background */
+  --color-green-lighter: #F0F8F2;   /* Very light green */
+
+  /* Legacy Paparan Colors (for compatibility) */
+  --color-paparan-deep: #1A3C34;
+  --color-paparan-sage: #2D5A4F;
+  --color-paparan-slate: #6B7280;
+
+  /* Border & Divider Colors */
+  --color-border: #E8E4DC;          /* Subtle warm border */
+  --color-border-strong: #D4D0C8;   /* Stronger border for emphasis */
+
+  /* ============================================
+     SPACING SYSTEM — GENEROUS & STRUCTURED
+     ============================================ */
+
+  --space-xs: 0.25rem;      /* 4px */
+  --space-sm: 0.5rem;       /* 8px */
+  --space-md: 1rem;         /* 16px */
+  --space-lg: 1.5rem;       /* 24px */
+  --space-xl: 2rem;         /* 32px */
+  --space-2xl: 3rem;        /* 48px */
+  --space-3xl: 4rem;        /* 64px */
+  --space-4xl: 6rem;        /* 96px */
+  --space-5xl: 8rem;        /* 128px */
+
+  /* ============================================
+     BORDER RADIUS — SUBTLE & PROFESSIONAL
+     ============================================ */
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* ============================================
+     SHADOWS — LAYERED DEPTH SYSTEM
+     ============================================ */
+
+  --shadow-xs: 0 1px 2px rgba(45, 45, 45, 0.04);
+  --shadow-sm: 0 1px 3px rgba(45, 45, 45, 0.06);
+  --shadow-md: 0 4px 12px rgba(45, 45, 45, 0.08);
+  --shadow-lg: 0 8px 24px rgba(45, 45, 45, 0.10);
+  --shadow-xl: 0 16px 48px rgba(45, 45, 45, 0.12);
+
+  /* Layered shadows for enhanced depth */
+  --shadow-layered-sm: 0 1px 3px rgba(45, 45, 45, 0.06), 0 4px 12px rgba(45, 45, 45, 0.04);
+  --shadow-layered-md: 0 2px 6px rgba(45, 45, 45, 0.08), 0 8px 24px rgba(45, 45, 45, 0.06);
+  --shadow-layered-lg: 0 4px 12px rgba(45, 45, 45, 0.10), 0 16px 32px rgba(45, 45, 45, 0.08);
+  --shadow-layered-xl: 0 8px 24px rgba(45, 45, 45, 0.12), 0 32px 64px rgba(45, 45, 45, 0.10);
+
+  /* Glow effects */
+  --glow-sm: 0 0 8px rgba(200, 169, 106, 0.2);
+  --glow-md: 0 0 16px rgba(200, 169, 106, 0.3);
+  --glow-lg: 0 0 24px rgba(200, 169, 106, 0.4);
+  --glow-xl: 0 0 32px rgba(200, 169, 106, 0.5);
+
+  /* ============================================
+     TRANSITIONS — SPRING PHYSICS
+     ============================================ */
+
+  --transition-instant: 100ms;
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+  --transition-slower: 400ms;
+  --transition-slowest: 500ms;
+
+  /* Spring timing functions */
+  --spring-gentle: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --spring-default: cubic-bezier(0.16, 1, 0.3, 1);
+  --spring-bouncy: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --spring-snappy: cubic-bezier(0.12, 0.95, 0.28, 1);
+}
+
+/* ============================================
+   BASE STYLES — FOUNDATION
+   ============================================ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-background text-text font-sans antialiased;
+    font-family: var(--font-body);
+    font-feature-settings: 'rlig' 1, 'calt' 1, 'kern' 1;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Document Typography — Government-Grade */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-medium;
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+  }
+
+  p {
+    margin-bottom: var(--space-md);
+    max-width: 75ch;
+  }
+
+  /* Selection Color — Institutional Gold */
+  ::selection {
+    background-color: var(--color-accent);
+    background-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+    color: var(--color-text);
+  }
+
+  /* Focus Styles — Accessible & Visible */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* ============================================
+     CUSTOM SCROLLBAR — SUBTLE & REFINED
+     ============================================ */
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: var(--radius-full);
+
+    &:hover {
+      background: var(--color-text-tertiary);
+    }
+  }
+
+  /* ============================================
+     LINK STYLES — CLEAR & PROFESSIONAL
+     ============================================ */
+
+  a {
+    color: var(--color-blue);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-accent);
+    }
+
+    &:focus-visible {
+      border-radius: var(--radius-sm);
+    }
+  }
+}
+
+/* ============================================
+   UTILITY CLASSES — DOCUMENT-LIKE
+   ============================================ */
+
+@layer utilities {
+  /* Document Typography */
+  .text-display {
+    font-family: var(--font-display);
+  }
+
+  .text-body {
+    font-family: var(--font-body);
+  }
+
+  .text-ui {
+    font-family: var(--font-ui);
+  }
+
+  .text-mono {
+    font-family: var(--font-mono);
+  }
+
+  /* Text Balance for Headings */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Leading for Document Reading */
+  .prose-document {
+    line-height: 1.7;
+  }
+
+  /* Smooth Transitions */
+  .transition-smooth {
+    transition: all var(--transition-base) ease-out;
+  }
+
+  /* ============================================
+     DOCUMENT BORDER — GOVERNMENT STYLE
+     ============================================ */
+
+  .border-l-3 {
+    border-left-width: 3px;
+  }
+
+  .document-border {
+    border-left: 3px solid var(--color-accent);
+    padding-left: var(--space-lg);
+  }
+
+  .document-border-strong {
+    border-left: 4px solid var(--color-accent);
+    padding-left: var(--space-xl);
+  }
+
+  /* ============================================
+     PAPER CARD — ELEVATED CONTENT
+     ============================================ */
+
+  .paper-card {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .paper-card-elevated {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* ============================================
+     SECTION STYLES — CLEAR SEPARATION
+     ============================================ */
+
+  .brief-section {
+    padding: var(--space-xl) 0;
+    border-bottom: 1px solid var(--color-border);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .brief-section-compact {
+    padding: var(--space-lg) 0;
+    border-bottom: 1px solid var(--color-border);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+/* ============================================
+   ANIMATIONS — SUBTLE & PROFESSIONAL
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* ============================================
+   DELTA BADGE STYLES — COLOR-CODED
+   ============================================ */
+
+.delta-badge {
+  @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wide;
+  font-family: var(--font-ui);
+  transition: all var(--transition-fast);
+}
+
+.delta-badge-new {
+  background: var(--color-blue-light);
+  color: var(--color-blue);
+  border: 1px solid rgba(46, 92, 138, 0.2);
+}
+
+.delta-badge-updated {
+  background: var(--color-amber-light);
+  color: var(--color-amber);
+  border: 1px solid rgba(184, 134, 11, 0.2);
+}
+
+.delta-badge-escalated {
+  background: var(--color-red-light);
+  color: var(--color-red);
+  border: 1px solid rgba(168, 50, 50, 0.2);
+}
+
+.delta-badge-de-escalated {
+  background: var(--color-green-light);
+  color: var(--color-green);
+  border: 1px solid rgba(45, 122, 77, 0.2);
+}
+
+/* ============================================
+   HIGHLIGHT MODE — EMPHASIS
+   ============================================ */
+
+.highlight-mode .development-item {
+  transition: all var(--transition-base);
+
+  &[data-impact="LOW"],
+  &[data-impact="MEDIUM"] {
+    opacity: 0.4;
+    filter: grayscale(0.3);
+  }
+
+  &[data-impact="HIGH"] {
+    opacity: 1;
+    filter: none;
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+}
+
+/* ============================================
+   COLLAPSIBLE SECTION — SMOOTH
+   ============================================ */
+
+.collapsible-content {
+  overflow: hidden;
+  transition: max-height var(--transition-slow) ease-out,
+              opacity var(--transition-slow) ease-out;
+}
+
+.collapsible-content.collapsed {
+  max-height: 0 !important;
+  opacity: 0;
+}
+
+/* ============================================
+   SCROLL PROGRESS — TOP BAR
+   ============================================ */
+
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  z-index: 9999;
+}
+
+.scroll-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-accent-dark));
+  transition: width 0.1s ease-out;
+  box-shadow: 0 0 10px rgba(200, 169, 106, 0.3);
+}
+
+/* ============================================
+   PRINT STYLES — DOCUMENT EXPORT
+   ============================================ */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .brief-section {
+    page-break-inside: avoid;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================ */
+
+@media (max-width: 1280px) {
+  :root {
+    --space-xl: 1.75rem;
+    --space-2xl: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --space-xl: 1.5rem;
+    --space-2xl: 2rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+}
+
+/* ============================================
+   ENHANCED UTILITY CLASSES
+   ============================================ */
+
+@layer utilities {
+  /* ============================================
+     GRADIENT BACKGROUNDS — ATMOSPHERIC
+     ============================================ */
+
+  .bg-gradient-warm {
+    background: linear-gradient(135deg, #FAFAF8 0%, #F5F3F0 100%);
+  }
+
+  .bg-gradient-gold {
+    background: linear-gradient(135deg, #C8A96A 0%, #D4B87A 50%, #C8A96A 100%);
+  }
+
+  .bg-gradient-gold-subtle {
+    background: linear-gradient(135deg, rgba(200, 169, 106, 0.1) 0%, rgba(212, 184, 122, 0.05) 100%);
+  }
+
+  .bg-gradient-mesh {
+    background:
+      radial-gradient(at 40% 20%, rgba(200, 169, 106, 0.1) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, rgba(45, 122, 77, 0.05) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, rgba(46, 92, 138, 0.05) 0px, transparent 50%);
+  }
+
+  /* ============================================
+     TEXTURE OVERLAYS — PAPER & GRAIN
+     ============================================ */
+
+  .texture-noise::before,
+  .texture-grain::before,
+  .texture-paper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .texture-noise::before {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22 opacity=%220.04%22/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  .texture-grain::before {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22grain%22%3E%3CfeTurbulence type=%22turbulence%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23grain)%22 opacity=%220.08%22/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  .texture-paper::before {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22paper%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.04%22 numOctaves=%225%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23paper)%22 opacity=%220.03%22/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+  }
+
+  /* ============================================
+     GLASSMORPHISM — BLUR & TRANSPARENCY
+     ============================================ */
+
+  .glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .glass-sm {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .glass-lg {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .glass-dark {
+    background: rgba(45, 45, 45, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* ============================================
+     ANIMATION DELAYS — STAGGERED ENTRANCES
+     ============================================ */
+
+  .animation-delay-0 { animation-delay: 0ms; }
+  .animation-delay-1 { animation-delay: 50ms; }
+  .animation-delay-2 { animation-delay: 100ms; }
+  .animation-delay-3 { animation-delay: 150ms; }
+  .animation-delay-4 { animation-delay: 200ms; }
+  .animation-delay-5 { animation-delay: 250ms; }
+  .animation-delay-6 { animation-delay: 300ms; }
+  .animation-delay-7 { animation-delay: 350ms; }
+  .animation-delay-8 { animation-delay: 400ms; }
+  .animation-delay-9 { animation-delay: 450ms; }
+  .animation-delay-10 { animation-delay: 500ms; }
+  .animation-delay-11 { animation-delay: 550ms; }
+  .animation-delay-12 { animation-delay: 600ms; }
+  .animation-delay-13 { animation-delay: 650ms; }
+  .animation-delay-14 { animation-delay: 700ms; }
+  .animation-delay-15 { animation-delay: 750ms; }
+
+  /* ============================================
+     ENHANCED FOCUS STATES — ACCESSIBLE
+     ============================================ */
+
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  .focus-ring-subtle:focus-visible {
+    outline: 1px solid var(--color-accent);
+    outline-offset: 1px;
+    border-radius: var(--radius-sm);
+  }
+
+  .focus-ring-glow:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(200, 169, 106, 0.3);
+  }
+
+  /* ============================================
+     HOVER EFFECTS — MICRO-INTERACTIONS
+     ============================================ */
+
+  .hover-lift {
+    transition: transform var(--transition-fast) var(--spring-default);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+
+  .hover-lift-lg:hover {
+    transform: translateY(-4px);
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+
+  .hover-glow:hover {
+    box-shadow: var(--glow-md);
+  }
+
+  .hover-border-glow:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--glow-sm);
+  }
+
+  /* ============================================
+     CARD ELEVATION — DEPTH LAYERS
+     ============================================ */
+
+  .card-elevated {
+    box-shadow: var(--shadow-md);
+    transition: box-shadow var(--transition-base), transform var(--transition-base);
+  }
+
+  .card-elevated:hover {
+    box-shadow: var(--shadow-layered-lg);
+    transform: translateY(-1px);
+  }
+
+  .card-interactive {
+    cursor: pointer;
+    transition: all var(--transition-base) var(--spring-default);
+  }
+
+  .card-interactive:hover {
+    box-shadow: var(--shadow-layered-md);
+    transform: translateY(-2px);
+  }
+
+  /* ============================================
+     TYPOGRAPHY — DRAMATIC SCALE
+     ============================================ */
+
+  .text-display-gradient {
+    background: linear-gradient(135deg, var(--color-text) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px rgba(200, 169, 106, 0.3);
+  }
+
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(45, 45, 45, 0.1);
+  }
+
+  .text-shadow-md {
+    text-shadow: 0 2px 4px rgba(45, 45, 45, 0.15);
+  }
+
+  /* ============================================
+     SKELETON LOADING — SHIMMER EFFECT
+     ============================================ */
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-bg-surface) 0%,
+      rgba(200, 169, 106, 0.1) 50%,
+      var(--color-bg-surface) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  /* ============================================
+     DIVIDER STYLES — ORNAMENTAL
+     ============================================ */
+
+  .divider-gold {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-accent) 50%,
+      transparent 100%
+    );
+  }
+
+  .divider-gold-left {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      var(--color-accent) 0%,
+      transparent 100%
+    );
+  }
+
+  .divider-vertical-gold {
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      var(--color-accent) 50%,
+      transparent 100%
+    );
+  }
+
+  /* ============================================
+     BORDER STYLES — DECORATIVE
+     ============================================ */
+
+  .border-gradient {
+    border: 1px solid transparent;
+    background: linear-gradient(var(--color-bg-elevated), var(--color-bg-elevated)) padding-box,
+                linear-gradient(135deg, var(--color-accent-light), var(--color-accent)) border-box;
+  }
+
+  .border-glow {
+    border: 1px solid var(--color-accent);
+    box-shadow: 0 0 10px rgba(200, 169, 106, 0.2);
+  }
+
+  /* ============================================
+     SCROLLBAR STYLES — CONTEXTUAL
+     ============================================ */
+
+  .scrollbar-gold::-webkit-scrollbar-thumb {
+    background: var(--color-accent);
+  }
+
+  .scrollbar-gold::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent-dark);
+  }
+
+  .scrollbar-invisible::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
+
+/* ============================================
+   COMPONENT ANIMATIONS
+   ============================================ */
+
+/* Staggered list animation */
+.stagger-list > * {
+  opacity: 0;
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+.stagger-list > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-list > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-list > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-list > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-list > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-list > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-list > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-list > *:nth-child(8) { animation-delay: 350ms; }
+.stagger-list > *:nth-child(n+9) { animation-delay: 400ms; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Reveal animation for scroll-triggered content */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Text reveal animation */
+.text-reveal {
+  overflow: hidden;
+}
+
+.text-reveal span {
+  display: inline-block;
+  transform: translateY(100%);
+  animation: textReveal 0.6s ease-out forwards;
+}
+
+@keyframes textReveal {
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   PRINT STYLES ENHANCED
+   ============================================ */
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  .brief-section {
+    page-break-inside: avoid;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  /* Preserve card shadows in print */
+  .paper-card,
+  .paper-card-elevated {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+  }
+
+  /* Hide glassmorphism in print */
+  .glass,
+  .glass-sm,
+  .glass-lg {
+    background: white !important;
+    backdrop-filter: none !important;
+  }
+}
