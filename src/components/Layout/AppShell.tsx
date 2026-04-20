@@ -10,7 +10,8 @@ import {
   Search,
   Bell,
   ChevronDown,
-  Home
+  Home,
+  Shield,
 } from 'lucide-react'
 import { Logo } from '@/components/Brand/Logo'
 import { cn } from '@/utils/formatters'
@@ -45,33 +46,56 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8]">
-      {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-[#E8E4DC]">
-        <div className="flex items-center justify-between px-4 lg:px-6 h-16">
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Skip Link for Accessibility */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+
+      {/* Top Navigation Bar — Official Style */}
+      <header className="sticky top-0 z-50 bg-bg-elevated/95 backdrop-blur-sm border-b border-border shadow-sm">
+        {/* Classification Banner */}
+        <div className="classification-banner classification-banner-unclassified py-1">
+          <Shield className="w-3 h-3" />
+          <span>Unclassified — For Public Release</span>
+        </div>
+
+        <div className="flex items-center justify-between px-4 lg:px-6 h-14">
           {/* Left: Logo and Mobile Menu */}
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="lg:hidden p-2 rounded-lg hover:bg-bg-surface transition-colors"
               aria-label="Toggle menu"
             >
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
-            <NavLink to="/" className="flex-shrink-0">
+            <NavLink to="/" className="flex-shrink-0" aria-label="Paparan Brief home">
               <Logo variant="compact" size="md" />
             </NavLink>
+
+            {/* Breadcrumb-like path indicator */}
+            <nav className="hidden lg:flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+              <span className="text-text-tertiary">Paparan</span>
+              <span className="text-text-tertiary">/</span>
+              <span className="font-medium text-text">
+                {location.pathname === '/briefs' && 'Briefs Library'}
+                {location.pathname === '/dashboard' && 'Analytics Dashboard'}
+                {location.pathname === '/editor' && 'Brief Editor'}
+                {location.pathname === '/settings' && 'Settings'}
+              </span>
+            </nav>
           </div>
 
           {/* Center: Search (desktop) */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
             <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
               <input
                 type="search"
                 placeholder="Search briefs... (Cmd+K)"
-                className="w-full pl-10 pr-4 py-2 bg-gray-100 border-0 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#C8A96A] focus:bg-white transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-bg-surface border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
               />
             </div>
           </div>
@@ -79,32 +103,32 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
           {/* Right: Actions */}
           <div className="flex items-center gap-2">
             <button
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors relative"
+              className="p-2 rounded-lg hover:bg-bg-surface transition-colors relative"
               aria-label="Notifications"
             >
-              <Bell className="w-5 h-5 text-gray-600" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+              <Bell className="w-5 h-5 text-text-secondary" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-accent rounded-full" />
             </button>
 
             <NavLink
               to="/editor"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#C8A96A] hover:bg-[#A88B4A] text-white rounded-lg text-sm font-medium transition-colors"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
             >
               <PlusCircle className="w-4 h-4" />
               New Brief
             </NavLink>
 
-            <button className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C8A96A] to-[#A88B4A] flex items-center justify-center text-white text-sm font-medium">
+            <button className="flex items-center gap-2 p-2 rounded-lg hover:bg-bg-surface transition-colors">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm font-medium">
                 U
               </div>
-              <ChevronDown className="w-4 h-4 text-gray-400" />
+              <ChevronDown className="w-4 h-4 text-text-tertiary" />
             </button>
           </div>
         </div>
       </header>
 
-      <div className="flex">
+      <div className="flex flex-1">
         {/* Sidebar Navigation */}
         {showSidebar && (
           <>
@@ -113,13 +137,14 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
               <div
                 className="fixed inset-0 bg-black/50 z-40 lg:hidden"
                 onClick={() => setSidebarOpen(false)}
+                aria-hidden="true"
               />
             )}
 
             {/* Sidebar */}
             <aside
               className={cn(
-                'fixed lg:sticky top-16 left-0 z-40 h-[calc(100vh-4rem)] bg-white border-r border-[#E8E4DC] transition-transform duration-200 ease-in-out',
+                'fixed lg:sticky top-0 left-0 z-40 h-[calc(100vh-4rem)] bg-bg-elevated border-r border-border transition-transform duration-200 ease-in-out',
                 sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
                 sidebarCollapsed ? 'w-16' : 'w-64'
               )}
@@ -131,8 +156,8 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
                     cn(
                       'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
                       isActive
-                        ? 'bg-[#C8A96A]/10 text-[#C8A96A]'
-                        : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-primary-light text-primary'
+                        : 'text-text-secondary hover:bg-bg-surface hover:text-text'
                     )
                   }
                 >
@@ -149,8 +174,8 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
                       cn(
                         'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
                         isActive
-                          ? 'bg-[#C8A96A]/10 text-[#C8A96A]'
-                          : 'text-gray-700 hover:bg-gray-100'
+                          ? 'bg-primary-light text-primary'
+                          : 'text-text-secondary hover:bg-bg-surface hover:text-text'
                       )
                     }
                   >
@@ -163,12 +188,12 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
               {/* Collapse toggle (desktop) */}
               <button
                 onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                className="hidden lg:flex absolute bottom-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="hidden lg:flex absolute bottom-4 right-4 p-2 rounded-lg hover:bg-bg-surface transition-colors"
                 aria-label="Toggle sidebar"
               >
                 <ChevronDown
                   className={cn(
-                    'w-4 h-4 text-gray-400 transition-transform',
+                    'w-4 h-4 text-text-tertiary transition-transform',
                     sidebarCollapsed && 'rotate-180'
                   )}
                 />
@@ -179,6 +204,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
 
         {/* Main Content Area */}
         <main
+          id="main-content"
           className={cn(
             'flex-1 min-h-[calc(100vh-4rem)]',
             fullWidth ? 'max-w-none' : 'max-w-6xl mx-auto px-4 lg:px-8 py-6 lg:py-8'
@@ -188,25 +214,32 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
         </main>
       </div>
 
-      {/* Footer */}
+      {/* Footer — Official Style */}
       {showSidebar && (
-        <footer className="border-t border-[#E8E4DC] bg-white py-8 mt-auto">
+        <footer className="border-t border-border-strong bg-bg-elevated py-6 mt-auto">
+          {/* Official Footer Bar */}
           <div className="max-w-6xl mx-auto px-4 lg:px-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
+            <div className="official-footer !py-0">
+              <div className="flex items-center gap-3">
                 <Logo variant="icon" size="sm" color="monochrome" />
-                <span className="text-sm text-gray-600">
-                  Policy intelligence briefs for strategic decision-making
+                <span className="text-text-tertiary">
+                  Policy Intelligence Briefs for Strategic Decision-Making
                 </span>
               </div>
-              <div className="flex items-center gap-6 text-sm text-gray-500">
+              <div className="text-text-tertiary">
+                Last Updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 mt-4 border-t border-border">
+              <div className="flex items-center gap-6 text-sm text-text-secondary">
                 <span>© 2026 Paparan Brief</span>
-                <a href="#" className="hover:text-[#C8A96A] transition-colors">
-                  Privacy
-                </a>
-                <a href="#" className="hover:text-[#C8A96A] transition-colors">
-                  Terms
-                </a>
+                <a href="#" className="hover:text-primary transition-colors">Privacy</a>
+                <a href="#" className="hover:text-primary transition-colors">Terms</a>
+                <a href="#" className="hover:text-primary transition-colors">Contact</a>
+              </div>
+              <div className="text-xs text-text-tertiary">
+                Classification: Unclassified
               </div>
             </div>
           </div>

@@ -2,6 +2,7 @@ export type Impact = "HIGH" | "MEDIUM" | "LOW";
 export type Delta = "NEW" | "UPDATED" | "ESCALATED" | "DE-ESCALATED";
 export type Confidence = "HIGH" | "MEDIUM" | "LOW";
 export type Priority = Impact;
+export type ClassificationLevel = "unclassified" | "official" | "confidential" | "secret";
 
 export interface Development {
   id: string;
@@ -34,6 +35,7 @@ export interface Paparan {
   date: string;
   region: string;
   lastUpdated?: string;
+  classification?: ClassificationLevel;
   executiveSummary: string[];
   currentSituation: string;
   developments: Development[];

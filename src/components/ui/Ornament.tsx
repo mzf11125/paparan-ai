@@ -273,7 +273,7 @@ export function SectionHeader({
           {subtitle}
         </p>
       )}
-      {variant === 'with-accent' && (
+      {(variant === 'with-accent' || variant === 'centered') && (
         <div className={cn(
           'w-12 h-0.5 bg-[#C8A96A] mt-4',
           variant === 'centered' && 'mx-auto'

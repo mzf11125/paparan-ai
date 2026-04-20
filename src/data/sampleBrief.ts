@@ -5,6 +5,7 @@ export const samplePaparan: Paparan = {
   title: "ASEAN Trade Relations — Vietnam-Indonesia Tariff Dispute",
   date: "17 April 2026",
   region: "ASEAN",
+  classification: "official",
   lastUpdated: "17 April 2026 14:30 JKT",
   executiveSummary: [
     "Vietnam imposed 15% tariff on processed food imports from Indonesia, effective 1 April 2026.",

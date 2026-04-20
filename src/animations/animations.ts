@@ -340,7 +340,7 @@ export const getAnimationStyles = (
   const config = animationPresets[preset]
   return {
     animationDuration: `${config.duration}ms`,
-    animationTimingFunction: config.easing,
+    animationTimingFunction: ('easing' in config ? config.easing : 'ease-in-out') as string,
   }
 }
 

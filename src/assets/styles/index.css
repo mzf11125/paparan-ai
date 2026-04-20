@@ -1,5 +1,6 @@
 /* ============================================
-   PAPARAN BRIEF — REFINED AUTHORITY DESIGN SYSTEM
+   PAPARAN BRIEF — GOVERNMENT TECH DESIGN SYSTEM
+   Institutional Authority for Policy Intelligence
    ============================================ */
 
 @tailwind base;
@@ -7,7 +8,7 @@
 @tailwind utilities;
 
 /* ============================================
-   CSS VARIABLES — ENHANCED DESIGN TOKENS
+   CSS VARIABLES — INSTITUTIONAL PALETTE
    ============================================ */
 
 :root {
@@ -23,26 +24,43 @@
   /* Mono Font: JetBrains Mono — technical, precise */
   --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
 
+  /* Tabular Mono: For data displays */
+  --font-tabular: 'DM Mono', 'SF Mono', monospace;
+
   /* ============================================
-     COLOR SYSTEM — INSTITUTIONAL PALETTE
+     COLOR SYSTEM — INSTITUTIONAL DUAL-TONE
      ============================================ */
 
-  /* Primary Colors */
+  /* Primary Colors — Paper-like Foundation */
   --color-bg: #FAFAF8;              /* Warm paper-like background */
   --color-bg-elevated: #FFFFFF;     /* Pure white for cards */
   --color-bg-surface: #F5F3F0;      /* Slightly darker paper */
+  --color-bg-subtle: #F0EEE9;       /* Subtle contrast area */
   --color-text: #2D2D2D;            /* Dark warm gray for primary text */
   --color-text-secondary: #5A5A5A;  /* Medium gray for secondary text */
   --color-text-tertiary: #8A8A8A;   /* Light gray for tertiary text */
   --color-text-inverse: #FFFFFF;    /* White on dark backgrounds */
 
-  /* Accent Colors — Gold Gradient System */
-  --color-accent: #C8A96A;          /* Muted gold — institutional authority */
+  /* Primary Action Color — Navy Blue (for buttons, links, actions) */
+  --color-primary: #0369A1;         /* Government navy blue */
+  --color-primary-dark: #025380;    /* Darker navy for hover */
+  --color-primary-light: #E0F2FE;   /* Light blue background */
+  --color-primary-lighter: #F0F9FF; /* Very light blue */
+
+  /* Accent Color — Gold (for emphasis, highlights only) */
+  --color-accent: #C8A96A;          /* Muted gold — institutional accent */
   --color-accent-light: #D4B87A;    /* Lighter gold for hover states */
   --color-accent-lighter: #E5D4A8;  /* Very light gold */
   --color-accent-dark: #A88B4A;     /* Darker gold for active states */
+  --color-accent-subtle: rgba(200, 169, 106, 0.1); /* Subtle gold tint */
 
-  /* Semantic Colors — Refined, not saturated */
+  /* Classification Colors — Security Level Indicators */
+  --color-classified-unclassified: #2D7A4D;  /* Green for UNCLASSIFIED */
+  --color-classified-official: #0369A1;      /* Blue for OFFICIAL */
+  --color-classified-confidential: #B8860B;  /* Amber for CONFIDENTIAL */
+  --color-classified-secret: #A83232;        /* Red for SECRET */
+
+  /* Semantic Colors — Refined, government-appropriate */
   --color-blue: #2E5C8A;            /* Authoritative blue */
   --color-blue-light: #E8F0F8;      /* Blue background */
   --color-blue-lighter: #F0F6FC;    /* Very light blue */
@@ -64,6 +82,12 @@
   /* Border & Divider Colors */
   --color-border: #E8E4DC;          /* Subtle warm border */
   --color-border-strong: #D4D0C8;   /* Stronger border for emphasis */
+  --color-border-subtle: #F2EFE8;   /* Very subtle border */
+  --color-border-accent: #C8A96A;   /* Gold accent border */
+
+  /* Document Frame Colors */
+  --color-document-frame: #1A1A1A;  /* Dark frame for official documents */
+  --color-document-bg: #FFFEFA;     /* Slightly warm document white */
 
   /* ============================================
      SPACING SYSTEM — GENEROUS & STRUCTURED
@@ -229,14 +253,14 @@
      ============================================ */
 
   a {
-    color: var(--color-blue);
+    color: var(--color-primary);
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 2px;
     transition: color var(--transition-fast);
 
     &:hover {
-      color: var(--color-accent);
+      color: var(--color-primary-dark);
     }
 
     &:focus-visible {
@@ -813,6 +837,324 @@
   .scrollbar-invisible::-webkit-scrollbar {
     width: 0;
     height: 0;
+  }
+
+  /* ============================================
+     INSTITUTIONAL UTILITIES — GOVERNMENT STYLE
+     ============================================ */
+
+  /* Document Frame — Official Border Styling */
+  .document-frame {
+    position: relative;
+    background: var(--color-document-bg);
+    border: 2px solid var(--color-document-frame);
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .document-frame::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    border: 1px solid var(--color-border-strong);
+    pointer-events: none;
+  }
+
+  /* Classification Banner Styles */
+  .classification-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 2px solid;
+  }
+
+  .classification-banner-unclassified {
+    background: var(--color-classified-unclassified);
+    border-color: var(--color-classified-unclassified);
+    color: white;
+  }
+
+  .classification-banner-official {
+    background: var(--color-classified-official);
+    border-color: var(--color-classified-official);
+    color: white;
+  }
+
+  .classification-banner-confidential {
+    background: var(--color-classified-confidential);
+    border-color: var(--color-classified-confidential);
+    color: white;
+  }
+
+  .classification-banner-secret {
+    background: var(--color-classified-secret);
+    border-color: var(--color-classified-secret);
+    color: white;
+  }
+
+  /* Classification Badge — Inline Version */
+  .classification-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    font-family: var(--font-ui);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 2px;
+  }
+
+  .classification-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .classification-badge-unclassified {
+    background: var(--color-green-light);
+    color: var(--color-green);
+    border: 1px solid var(--color-green);
+  }
+
+  .classification-badge-unclassified::before {
+    background: var(--color-green);
+  }
+
+  .classification-badge-official {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+  }
+
+  .classification-badge-official::before {
+    background: var(--color-primary);
+  }
+
+  .classification-badge-confidential {
+    background: var(--color-amber-light);
+    color: var(--color-amber);
+    border: 1px solid var(--color-amber);
+  }
+
+  .classification-badge-confidential::before {
+    background: var(--color-amber);
+  }
+
+  /* Document Watermark */
+  .document-watermark {
+    position: relative;
+  }
+
+  .document-watermark::after {
+    content: 'OFFICIAL';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-family: var(--font-display);
+    font-size: 4rem;
+    font-weight: 700;
+    color: rgba(200, 169, 106, 0.05);
+    letter-spacing: 0.2em;
+    pointer-events: none;
+    z-index: 0;
+    white-space: nowrap;
+  }
+
+  /* Page Number — Official Pagination */
+  .page-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    padding: 0.25rem 0.5rem;
+    font-family: var(--font-tabular);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+  }
+
+  .page-number-active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+  }
+
+  /* Endorsement Stamp */
+  .endorsement-stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-display);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-green);
+    border: 2px solid var(--color-green);
+    border-radius: 4px;
+    transform: rotate(-2deg);
+  }
+
+  .endorsement-stamp-review {
+    color: var(--color-amber);
+    border-color: var(--color-amber);
+  }
+
+  .endorsement-stamp-draft {
+    color: var(--color-text-tertiary);
+    border-color: var(--color-text-tertiary);
+    border-style: dashed;
+  }
+
+  /* Official Header Bar */
+  .official-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(180deg, var(--color-bg-elevated) 0%, var(--color-bg-subtle) 100%);
+    border-bottom: 3px solid var(--color-accent);
+  }
+
+  /* Official Footer Bar */
+  .official-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: var(--color-bg-surface);
+    border-top: 1px solid var(--color-border-strong);
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+  }
+
+  /* Document Corner Decoration */
+  .document-corner {
+    position: relative;
+  }
+
+  .document-corner::before,
+  .document-corner::after {
+    content: '';
+    position: absolute;
+    background: var(--color-accent);
+  }
+
+  .document-corner::before {
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 2px;
+  }
+
+  .document-corner::after {
+    top: 0;
+    left: 0;
+    width: 2px;
+    height: 12px;
+  }
+
+  /* Tabular Numbers for Data */
+  .tabular-nums {
+    font-family: var(--font-tabular);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Small Caps for Official Labels */
+  .small-caps {
+    font-family: var(--font-ui);
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+  }
+
+  /* Navy Primary Button Override */
+  .btn-navy-primary {
+    background: var(--color-primary);
+    color: white;
+    border: 1px solid var(--color-primary);
+  }
+
+  .btn-navy-primary:hover {
+    background: var(--color-primary-dark);
+    border-color: var(--color-primary-dark);
+  }
+
+  /* Official Link Style */
+  .link-official {
+    color: var(--color-primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--transition-fast);
+  }
+
+  .link-official:hover {
+    border-bottom-color: var(--color-primary);
+  }
+
+  /* Stats Card — Government Style */
+  .stats-card-official {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid var(--color-primary);
+    padding: 1.25rem;
+    border-radius: 4px;
+  }
+
+  .stats-card-official .stats-value {
+    font-family: var(--font-tabular);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1;
+  }
+
+  .stats-card-official .stats-label {
+    font-family: var(--font-ui);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-top: 0.5rem;
+  }
+
+  /* Skip Link for Accessibility */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-primary);
+    color: white;
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 9999;
+    transition: top var(--transition-fast);
+  }
+
+  .skip-link:focus {
+    top: 1rem;
   }
 }
 

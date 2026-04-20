@@ -10,7 +10,8 @@ import {
   Bookmark,
   BookmarkCheck,
   Copy,
-  Eye
+  Eye,
+  FileText,
 } from 'lucide-react'
 import { Paparan } from '@/types/paparan'
 import { cn } from '@/utils/formatters'
@@ -24,6 +25,7 @@ interface BriefCardProps {
   onBookmarkToggle?: (briefId: string) => void
   onShare?: (briefId: string) => void
   showQuickActions?: boolean
+  classification?: 'unclassified' | 'official' | 'confidential'
 }
 
 export function BriefCard({
@@ -35,8 +37,8 @@ export function BriefCard({
   onBookmarkToggle,
   onShare,
   showQuickActions = true,
+  classification = 'unclassified',
 }: BriefCardProps) {
-  const [showActions, setShowActions] = useState(false)
   const [copied, setCopied] = useState(false)
   const highImpactCount = brief.developments.filter((d) => d.impact === 'HIGH').length
   const displayTags = brief.tags?.slice(0, 3) || []
@@ -55,6 +57,19 @@ export function BriefCard({
     onBookmarkToggle?.(brief.id)
   }
 
+  // Classification badge styles
+  const classificationStyles = {
+    unclassified: 'classification-badge-unclassified',
+    official: 'classification-badge-official',
+    confidential: 'classification-badge-confidential',
+  }
+
+  const classificationLabels = {
+    unclassified: 'UNCLASSIFIED',
+    official: 'OFFICIAL',
+    confidential: 'CONFIDENTIAL',
+  }
+
   if (loading) {
     return <BriefCardSkeleton variant={variant} />
   }
@@ -64,14 +79,19 @@ export function BriefCard({
       <NavLink
         to={`/briefs/${brief.id}`}
         className={cn(
-          'block bg-bg-elevated border border-border rounded-radius-lg p-4',
-          'hover:border-accent hover:shadow-md transition-all duration-200 group',
+          'block bg-bg-elevated border border-border rounded-lg p-4',
+          'hover:border-primary hover:shadow-sm transition-all duration-200 group',
           className
         )}
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <h3 className="font-display font-semibold text-text line-clamp-1 group-hover:text-accent transition-colors">
+            <div className="flex items-center gap-2 mb-2">
+              <span className={cn('classification-badge', classificationStyles[classification])}>
+                {classificationLabels[classification]}
+              </span>
+            </div>
+            <h3 className="font-display font-semibold text-text line-clamp-1 group-hover:text-primary transition-colors">
               {brief.title}
             </h3>
             <div className="flex items-center gap-3 mt-2 text-sm text-text-tertiary">
@@ -89,7 +109,7 @@ export function BriefCard({
             {onBookmarkToggle && (
               <button
                 onClick={handleBookmark}
-                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                className="p-1.5 rounded hover:bg-bg-surface transition-colors"
                 aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
               >
                 {bookmarked ? (
@@ -99,7 +119,7 @@ export function BriefCard({
                 )}
               </button>
             )}
-            <ArrowRight className="w-5 h-5 text-text-tertiary group-hover:text-accent transition-colors" />
+            <ArrowRight className="w-5 h-5 text-text-tertiary group-hover:text-primary transition-colors" />
           </div>
         </div>
       </NavLink>
@@ -109,27 +129,34 @@ export function BriefCard({
   return (
     <article
       className={cn(
-        'bg-bg-elevated border border-border rounded-radius-xl overflow-hidden',
-        'hover:border-accent hover:shadow-lg transition-all duration-200 group',
+        'bg-bg-elevated border border-border rounded-lg overflow-hidden',
+        'hover:border-primary transition-all duration-200 group',
         className
       )}
-      onMouseEnter={() => setShowActions(true)}
-      onMouseLeave={() => setShowActions(false)}
     >
-      {/* Card Header */}
+      {/* Card Header — Document Style */}
       <div className="p-6">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="px-2.5 py-1 bg-accent/10 text-accent text-xs font-semibold uppercase tracking-wide rounded-radius-md">
+        <div className="flex items-center gap-2 mb-4">
+          {/* Classification Badge */}
+          <span className={cn('classification-badge', classificationStyles[classification])}>
+            {classificationLabels[classification]}
+          </span>
+
+          {/* Region Badge */}
+          <span className="px-2.5 py-1 bg-accent-subtle text-accent text-xs font-semibold uppercase tracking-wider rounded-official border border-accent/20">
             {brief.region}
           </span>
+
+          {/* High Impact Indicator */}
           {highImpactCount > 0 && (
-            <span className="px-2.5 py-1 bg-red-light text-red text-xs font-semibold uppercase tracking-wide rounded-radius-md flex items-center gap-1">
+            <span className="px-2.5 py-1 bg-red-light text-red text-xs font-semibold uppercase tracking-wider rounded-official border border-red/30 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-red animate-pulse" />
               {highImpactCount} High Impact
             </span>
           )}
+
           {brief.lastUpdated && (
-            <span className="ml-auto text-xs text-text-tertiary">
+            <span className="ml-auto text-xs text-text-tertiary tabular-nums">
               Updated {brief.lastUpdated}
             </span>
           )}
@@ -139,7 +166,7 @@ export function BriefCard({
           to={`/briefs/${brief.id}`}
           className="block group/link"
         >
-          <h3 className="font-display font-bold text-lg text-text leading-snug group-hover/link:text-accent transition-colors line-clamp-2">
+          <h3 className="font-display font-bold text-lg text-text leading-snug group-hover/link:text-primary transition-colors line-clamp-2">
             {brief.title}
           </h3>
         </NavLink>
@@ -151,7 +178,7 @@ export function BriefCard({
           </time>
           <span className="w-px h-4 bg-border" />
           <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-blue" />
+            <FileText className="w-4 h-4" />
             {brief.developments.length} developments
           </span>
           <span className="w-px h-4 bg-border" />
@@ -162,7 +189,7 @@ export function BriefCard({
         </div>
 
         {/* Executive Summary Preview */}
-        <p className="mt-4 text-sm text-text-secondary line-clamp-3 leading-relaxed">
+        <p className="mt-4 text-sm text-text-secondary line-clamp-3 leading-relaxed border-l-2 border-accent/30 pl-3">
           {brief.executiveSummary[0]}
         </p>
 
@@ -172,7 +199,7 @@ export function BriefCard({
             {displayTags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-text-secondary text-xs rounded-radius-md hover:bg-accent/10 hover:text-accent transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1 px-2 py-1 bg-bg-surface text-text-secondary text-xs rounded border border-border hover:border-primary hover:text-primary transition-colors cursor-pointer"
               >
                 <Tag className="w-3 h-3" />
                 {tag}
@@ -187,32 +214,29 @@ export function BriefCard({
         )}
       </div>
 
-      {/* Card Footer */}
-      <div className="px-6 py-4 bg-gray-50/50 border-t border-border flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      {/* Card Footer — Official Style */}
+      <div className="px-6 py-4 bg-bg-surface border-t border-border flex items-center justify-between">
+        <div className="flex items-center gap-1">
           {/* Quick Actions */}
           {showQuickActions && (
-            <div className={cn(
-              'flex items-center gap-1 transition-opacity duration-200',
-              showActions ? 'opacity-100' : 'opacity-0'
-            )}>
+            <div className="flex items-center gap-1">
               <NavLink
                 to={`/briefs/${brief.id}`}
-                className="p-2 rounded-lg hover:bg-white hover:text-accent transition-colors"
+                className="p-2 rounded hover:bg-bg-elevated hover:text-primary transition-colors"
                 title="View brief"
               >
                 <Eye className="w-4 h-4 text-text-tertiary" />
               </NavLink>
               <NavLink
                 to={`/editor/${brief.id}`}
-                className="p-2 rounded-lg hover:bg-white hover:text-accent transition-colors"
+                className="p-2 rounded hover:bg-bg-elevated hover:text-primary transition-colors"
                 title="Edit brief"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Edit className="w-4 h-4 text-text-tertiary" />
               </NavLink>
               <button
-                className="p-2 rounded-lg hover:bg-white hover:text-accent transition-colors relative"
+                className="p-2 rounded hover:bg-bg-elevated hover:text-primary transition-colors relative"
                 title={copied ? 'Copied!' : 'Copy link'}
                 onClick={handleCopyLink}
               >
@@ -224,7 +248,7 @@ export function BriefCard({
               </button>
               {onBookmarkToggle && (
                 <button
-                  className="p-2 rounded-lg hover:bg-white transition-colors"
+                  className="p-2 rounded hover:bg-bg-elevated transition-colors"
                   title={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
                   onClick={handleBookmark}
                 >
@@ -241,7 +265,7 @@ export function BriefCard({
 
         <NavLink
           to={`/briefs/${brief.id}`}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-border rounded-radius-lg text-sm font-medium text-text hover:border-accent hover:text-accent transition-all group-hover:shadow-sm"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-bg-elevated border border-border rounded text-sm font-medium text-text hover:border-primary hover:text-primary transition-all group-hover:shadow-sm"
         >
           View Brief
           <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -259,46 +283,46 @@ interface BriefCardSkeletonProps {
 export function BriefCardSkeleton({ variant = 'default' }: BriefCardSkeletonProps) {
   if (variant === 'compact') {
     return (
-      <div className="bg-bg-elevated border border-border rounded-radius-lg p-4 animate-pulse">
+      <div className="bg-bg-elevated border border-border rounded-lg p-4 animate-pulse">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <div className="h-5 bg-gray-200 rounded w-3/4 mb-2" />
+            <div className="h-5 bg-bg-surface rounded w-3/4 mb-2" />
             <div className="flex items-center gap-3">
-              <div className="h-4 bg-gray-200 rounded w-20" />
-              <div className="h-4 bg-gray-200 rounded w-24" />
+              <div className="h-4 bg-bg-surface rounded w-20" />
+              <div className="h-4 bg-bg-surface rounded w-24" />
             </div>
           </div>
-          <div className="w-5 h-5 bg-gray-200 rounded" />
+          <div className="w-5 h-5 bg-bg-surface rounded" />
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-bg-elevated border border-border rounded-radius-xl overflow-hidden animate-pulse">
+    <div className="bg-bg-elevated border border-border rounded-lg overflow-hidden animate-pulse">
       <div className="p-6">
-        <div className="flex gap-2 mb-3">
-          <div className="h-6 w-20 bg-gray-200 rounded" />
-          <div className="h-6 w-24 bg-gray-200 rounded" />
+        <div className="flex gap-2 mb-4">
+          <div className="h-6 w-24 bg-bg-surface rounded" />
+          <div className="h-6 w-20 bg-bg-surface rounded" />
         </div>
-        <div className="h-6 bg-gray-200 rounded mb-2 w-3/4" />
-        <div className="h-6 bg-gray-200 rounded mb-4 w-1/2" />
-        <div className="h-4 bg-gray-200 rounded mb-2 w-full" />
-        <div className="h-4 bg-gray-200 rounded mb-2 w-2/3" />
-        <div className="h-4 bg-gray-200 rounded mb-4 w-4/5" />
+        <div className="h-6 bg-bg-surface rounded mb-2 w-3/4" />
+        <div className="h-6 bg-bg-surface rounded mb-4 w-1/2" />
+        <div className="h-4 bg-bg-surface rounded mb-2 w-full border-l-2 border-bg-subtle pl-3" />
+        <div className="h-4 bg-bg-surface rounded mb-2 w-2/3 border-l-2 border-bg-subtle pl-3" />
+        <div className="h-4 bg-bg-surface rounded mb-4 w-4/5 border-l-2 border-bg-subtle pl-3" />
         <div className="flex gap-2">
-          <div className="h-6 w-16 bg-gray-200 rounded" />
-          <div className="h-6 w-20 bg-gray-200 rounded" />
-          <div className="h-6 w-24 bg-gray-200 rounded" />
+          <div className="h-6 w-16 bg-bg-surface rounded" />
+          <div className="h-6 w-20 bg-bg-surface rounded" />
+          <div className="h-6 w-24 bg-bg-surface rounded" />
         </div>
       </div>
-      <div className="px-6 py-4 bg-gray-50/50 border-t border-border flex items-center justify-between">
+      <div className="px-6 py-4 bg-bg-surface border-t border-border flex items-center justify-between">
         <div className="flex gap-2">
-          <div className="h-8 w-8 bg-gray-200 rounded-lg" />
-          <div className="h-8 w-8 bg-gray-200 rounded-lg" />
-          <div className="h-8 w-8 bg-gray-200 rounded-lg" />
+          <div className="h-8 w-8 bg-bg-elevated rounded" />
+          <div className="h-8 w-8 bg-bg-elevated rounded" />
+          <div className="h-8 w-8 bg-bg-elevated rounded" />
         </div>
-        <div className="h-9 w-24 bg-gray-200 rounded-lg" />
+        <div className="h-9 w-24 bg-bg-elevated rounded" />
       </div>
     </div>
   )
@@ -316,26 +340,26 @@ export function BriefPreviewModal({ brief, isOpen, onClose }: BriefPreviewModalP
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
       onClick={onClose}
     >
       <div
-        className="bg-bg-elevated rounded-radius-xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-auto animate-scale-in"
+        className="bg-bg-elevated rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 border-b border-border flex items-center justify-between">
           <h2 className="font-display font-semibold text-lg">{brief.title}</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-bg-surface rounded transition-colors"
           >
             ×
           </button>
         </div>
         <div className="p-6">
           <div className="flex items-center gap-2 mb-4">
-            <span className="px-2.5 py-1 bg-accent/10 text-accent text-xs font-semibold uppercase tracking-wide rounded-radius-md">
-              {brief.region}
+            <span className="classification-badge classification-badge-unclassified">
+              UNCLASSIFIED
             </span>
             <span className="text-sm text-text-tertiary">{brief.date}</span>
           </div>
@@ -346,13 +370,13 @@ export function BriefPreviewModal({ brief, isOpen, onClose }: BriefPreviewModalP
             <NavLink
               to={`/briefs/${brief.id}`}
               onClick={onClose}
-              className="px-4 py-2 bg-accent text-white rounded-radius-lg font-medium hover:bg-accent-dark transition-colors"
+              className="px-4 py-2 bg-primary text-white rounded font-medium hover:bg-primary-dark transition-colors"
             >
               View Full Brief
             </NavLink>
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-border rounded-radius-lg font-medium hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 border border-border rounded font-medium hover:bg-bg-surface transition-colors"
             >
               Close
             </button>

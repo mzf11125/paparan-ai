@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { FileText, TrendingUp, AlertTriangle, Tag } from 'lucide-react'
-import { StatCard } from '@/components/dashboard/StatCard'
+import { FileText, TrendingUp, AlertTriangle, Tag, BarChart3, Activity } from 'lucide-react'
+import { StatsCard } from '@/components/ui/Card'
 import { RecentActivityFeed } from '@/components/dashboard/RecentActivityFeed'
 import { RegionOverview } from '@/components/dashboard/RegionOverview'
 import { briefService, initializeBriefStore } from '@/services/briefService'
@@ -25,20 +25,20 @@ export function AnalyticsDashboardPage() {
   )
   const totalTags = new Set(briefs.flatMap((b) => b.tags || [])).size
 
-  // Calculate region distribution
+  // Calculate region distribution with government-appropriate colors
   const regionDistribution = regions.map((region) => ({
     region,
     count: briefs.filter((b) => b.region === region).length,
     color:
       region === 'APAC'
-        ? '#3B82F6'
+        ? '#0369A1'  // Navy
         : region === 'EMEA'
-          ? '#10B981'
+          ? '#2D7A4D'  // Green
           : region === 'Americas'
-            ? '#F59E0B'
+            ? '#B8860B'  // Amber
             : region === 'ASEAN'
-              ? '#8B5CF6'
-              : '#6B7280'
+              ? '#2E5C8A'  // Blue
+              : '#6B7280'  // Gray
   }))
 
   // Generate mock recent activity
@@ -53,39 +53,56 @@ export function AnalyticsDashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-serif font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
-        <p className="text-gray-600">
-          Overview of policy intelligence briefs and developments
-        </p>
+      {/* Page Header — Official Style */}
+      <div className="flex items-start justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-lighter text-primary text-xs font-semibold uppercase tracking-wider rounded-official mb-3">
+            <BarChart3 className="w-3.5 h-3.5" />
+            Intelligence Overview
+          </div>
+          <h1 className="text-3xl font-display font-bold text-text mb-2">Analytics Dashboard</h1>
+          <p className="text-text-secondary">
+            Overview of policy intelligence briefs and developments
+          </p>
+        </div>
+        <div className="text-sm text-text-tertiary tabular-nums">
+          Last Updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+        </div>
       </div>
 
-      {/* Statistics Grid */}
+      {/* Statistics Grid — Government Style */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Briefs"
+        <StatsCard
           value={totalBriefs}
-          icon={FileText}
-          trend={{ value: 12, label: 'vs last month' }}
+          label="Total Briefs"
+          change={12}
+          changeLabel="vs last month"
+          icon={<FileText className="w-5 h-5" />}
+          color="primary"
         />
-        <StatCard
-          title="Regions Covered"
+        <StatsCard
           value={regions.length}
-          icon={TrendingUp}
-          trend={{ value: 0, label: 'stable' }}
+          label="Regions Covered"
+          change={0}
+          changeLabel="stable"
+          icon={<TrendingUp className="w-5 h-5" />}
+          color="accent"
         />
-        <StatCard
-          title="High Impact Items"
+        <StatsCard
           value={highImpactDevelopments}
-          icon={AlertTriangle}
-          trend={{ value: 8, label: 'vs last week' }}
+          label="High Impact Items"
+          change={8}
+          changeLabel="vs last week"
+          icon={<AlertTriangle className="w-5 h-5" />}
+          color="amber"
         />
-        <StatCard
-          title="Topics Tracked"
+        <StatsCard
           value={totalTags}
-          icon={Tag}
-          trend={{ value: 5, label: 'new this month' }}
+          label="Topics Tracked"
+          change={5}
+          changeLabel="new this month"
+          icon={<Tag className="w-5 h-5" />}
+          color="green"
         />
       </div>
 
@@ -102,10 +119,16 @@ export function AnalyticsDashboardPage() {
         </div>
       </div>
 
-      {/* Trending Topics Section */}
-      <div className="bg-white border border-[#E8E4DC] rounded-lg">
-        <div className="px-6 py-4 border-b border-[#E8E4DC]">
-          <h3 className="font-semibold text-gray-900">Trending Topics</h3>
+      {/* Trending Topics Section — Official Style */}
+      <div className="bg-bg-elevated border border-border rounded-lg shadow-sm">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Activity className="w-4 h-4 text-accent" />
+            <h3 className="font-display font-semibold text-text">Trending Topics</h3>
+          </div>
+          <span className="text-xs text-text-tertiary tabular-nums">
+            {Array.from(new Set(briefs.flatMap((b) => b.tags || []))).length} topics tracked
+          </span>
         </div>
         <div className="p-6">
           <div className="flex flex-wrap gap-3">
@@ -118,10 +141,10 @@ export function AnalyticsDashboardPage() {
                 return (
                   <button
                     key={tag}
-                    className="px-4 py-2 bg-gray-100 hover:bg-[#C8A96A]/10 hover:text-[#C8A96A] text-gray-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                    className="px-4 py-2 bg-bg-surface hover:bg-primary-lighter hover:text-primary text-text-secondary border border-border hover:border-primary rounded-lg text-sm font-medium transition-all flex items-center gap-2"
                   >
                     <span>{tag}</span>
-                    <span className="px-2 py-0.5 bg-white rounded-full text-xs text-gray-500">
+                    <span className="px-2 py-0.5 bg-bg-elevated rounded-full text-xs text-text-tertiary tabular-nums">
                       {count}
                     </span>
                   </button>
@@ -131,29 +154,52 @@ export function AnalyticsDashboardPage() {
         </div>
       </div>
 
-      {/* Recent Briefs Preview */}
-      <div className="bg-white border border-[#E8E4DC] rounded-lg">
-        <div className="px-6 py-4 border-b border-[#E8E4DC] flex items-center justify-between">
-          <h3 className="font-semibold text-gray-900">Recently Updated Briefs</h3>
+      {/* Recent Briefs Preview — Official Table Style */}
+      <div className="bg-bg-elevated border border-border rounded-lg shadow-sm">
+        <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <FileText className="w-4 h-4 text-accent" />
+            <h3 className="font-display font-semibold text-text">Recently Updated Briefs</h3>
+          </div>
+          <span className="text-xs text-text-tertiary">
+            Last 7 days
+          </span>
         </div>
-        <div className="divide-y divide-[#E8E4DC]">
+        <div className="divide-y divide-border">
           {briefs.slice(0, 5).map((brief) => (
             <div
               key={brief.id}
-              className="px-6 py-4 hover:bg-gray-50 transition-colors flex items-center justify-between"
+              className="px-6 py-4 hover:bg-bg-surface transition-colors flex items-center justify-between group"
             >
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 truncate">{brief.title}</p>
-                <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
+                <div className="flex items-center gap-3">
+                  <span className="classification-badge classification-badge-unclassified flex-shrink-0">
+                    UNCLASSIFIED
+                  </span>
+                  <p className="font-medium text-text truncate group-hover:text-primary transition-colors">
+                    {brief.title}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3 mt-1 text-sm text-text-secondary">
                   <span>{brief.region}</span>
                   <span>•</span>
-                  <span>{brief.date}</span>
+                  <span className="tabular-nums">{brief.date}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-500">
-                  {brief.developments.length} developments
-                </span>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <span className="text-sm text-text-secondary">
+                    {brief.developments.length} developments
+                  </span>
+                  <div className="flex items-center gap-1 mt-1">
+                    {brief.developments.filter((d) => d.impact === 'HIGH').length > 0 && (
+                      <span className="w-2 h-2 rounded-full bg-red" />
+                    )}
+                    {brief.developments.filter((d) => (d as any).delta === 'new').length > 0 && (
+                      <span className="w-2 h-2 rounded-full bg-green" />
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           ))}

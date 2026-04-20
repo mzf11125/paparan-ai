@@ -9,6 +9,7 @@ export const mockBriefs: Paparan[] = [
     title: 'Semiconductor Supply Chain — Taiwan Earthquake Impact Assessment',
     date: '15 April 2026',
     region: 'APAC',
+    classification: 'unclassified',
     lastUpdated: '15 April 2026 16:45 SGT',
     executiveSummary: [
       'Magnitude 6.2 earthquake struck Hsinchu County, Taiwan on 14 April 2026.',
@@ -132,6 +133,7 @@ export const mockBriefs: Paparan[] = [
     title: 'Climate Policy — Australia Carbon Border Adjustment Mechanism Announcement',
     date: '12 April 2026',
     region: 'APAC',
+    classification: 'official',
     lastUpdated: '12 April 2026 11:20 AEST',
     executiveSummary: [
       'Australia announced Carbon Border Adjustment Mechanism (CBAM) effective 1 January 2027.',
@@ -240,6 +242,7 @@ export const mockBriefs: Paparan[] = [
     title: 'Energy Security — EU Natural Gas Allocation Framework Update',
     date: '10 April 2026',
     region: 'EMEA',
+    classification: 'official',
     lastUpdated: '10 April 2026 14:00 CET',
     executiveSummary: [
       'EU Commission updated Natural Gas Allocation Framework following winter season review.',
@@ -342,6 +345,7 @@ export const mockBriefs: Paparan[] = [
     title: 'Trade Policy — US-Kenya Strategic Trade Agreement Negotiations Resume',
     date: '08 April 2026',
     region: 'Americas',
+    classification: 'unclassified',
     lastUpdated: '08 April 2026 15:30 EST',
     executiveSummary: [
       'US and Kenya resumed negotiations for Strategic Trade Agreement (STA) following 6-month pause.',
@@ -444,6 +448,7 @@ export const mockBriefs: Paparan[] = [
     title: 'Cybersecurity — Critical Infrastructure Attack Campaign Analysis',
     date: '05 April 2026',
     region: 'Global',
+    classification: 'confidential',
     lastUpdated: '05 April 2026 09:15 UTC',
     executiveSummary: [
       'Coordinated cyber campaign targeting energy and transportation sectors across 12 countries.',

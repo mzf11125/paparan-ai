@@ -3,7 +3,7 @@ import { Loader2, LucideIcon } from 'lucide-react'
 import { cn } from '@/utils/formatters'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'official'
   size?: 'sm' | 'md' | 'lg' | 'icon'
   isLoading?: boolean
   leftIcon?: LucideIcon
@@ -28,21 +28,28 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const baseStyles = 'inline-flex items-center justify-center gap-2 font-sans font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2'
+    const baseStyles = 'inline-flex items-center justify-center gap-2 font-sans font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2'
 
     const variantStyles = {
-      primary: 'bg-accent text-white hover:bg-accent-dark active:scale-[0.98] shadow-md hover:shadow-lg',
-      secondary: 'border-2 border-accent text-accent hover:bg-accent/10 active:scale-[0.98]',
-      outline: 'border border-border-strong text-text hover:bg-gray-50 active:scale-[0.98] hover:border-accent hover:text-accent',
-      ghost: 'text-text-secondary hover:bg-gray-100 hover:text-text active:scale-[0.98]',
-      danger: 'bg-red text-white hover:bg-red/90 active:scale-[0.98] shadow-md',
+      // Navy primary button — government style
+      primary: 'bg-primary text-white hover:bg-primary-dark shadow-sm border border-transparent',
+      // Gold secondary button — for emphasis
+      secondary: 'border-2 border-accent text-accent hover:bg-accent/10',
+      // Outline button — subtle
+      outline: 'border border-border-strong text-text hover:bg-bg-surface hover:border-primary hover:text-primary',
+      // Ghost button — minimal
+      ghost: 'text-text-secondary hover:bg-bg-surface hover:text-text',
+      // Danger button — for destructive actions
+      danger: 'bg-red text-white hover:bg-red/90 shadow-sm border border-transparent',
+      // Official button — document style with subtle border
+      official: 'bg-primary/95 text-white border border-primary/80 hover:bg-primary hover:border-primary shadow-sm rounded-official',
     }
 
     const sizeStyles = {
-      sm: 'px-4 py-2 text-sm rounded-radius-lg',
-      md: 'px-6 py-2.5 text-base rounded-radius-full',
-      lg: 'px-8 py-3 text-lg rounded-radius-full',
-      icon: 'p-2 rounded-radius-lg',
+      sm: 'px-4 py-2 text-sm rounded-lg',
+      md: 'px-6 py-2.5 text-base rounded-lg',
+      lg: 'px-8 py-3 text-lg rounded-lg',
+      icon: 'p-2 rounded-lg',
     }
 
     const iconSize = {

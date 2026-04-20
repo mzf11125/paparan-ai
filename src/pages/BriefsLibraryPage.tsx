@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Search, Grid3x3, List, SlidersHorizontal, X } from 'lucide-react'
+import { Search, Grid3x3, List, SlidersHorizontal, X, Filter, FileText } from 'lucide-react'
 import { BriefGrid, BriefGridSkeleton } from '@/components/brief/BriefGrid'
 import { briefService, initializeBriefStore } from '@/services/briefService'
 import { mockBriefs } from '@/data/mockBriefs'
@@ -83,33 +83,40 @@ export function BriefsLibraryPage() {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-serif font-bold text-gray-900 mb-2">Briefs Library</h1>
-        <p className="text-gray-600">
-          Browse {briefs.length} policy intelligence briefs across {regions.length - 1} regions
-        </p>
+      {/* Page Header — Official Style */}
+      <div className="flex items-start justify-between">
+        <div>
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary-lighter text-primary text-xs font-semibold uppercase tracking-wider rounded-official mb-3">
+            <FileText className="w-3.5 h-3.5" />
+            Intelligence Repository
+          </div>
+          <h1 className="text-3xl font-display font-bold text-text mb-2">Briefs Library</h1>
+          <p className="text-text-secondary">
+            Browse <span className="tabular-nums font-semibold text-text">{briefs.length}</span> policy intelligence briefs across <span className="tabular-nums font-semibold text-text">{regions.length - 1}</span> regions
+          </p>
+        </div>
       </div>
 
-      {/* Search and Filter Bar */}
-      <div className="bg-white border border-[#E8E4DC] rounded-lg p-4">
+      {/* Search and Filter Bar — Official Style */}
+      <div className="bg-bg-elevated border border-border rounded-lg p-4 shadow-sm">
         <div className="flex flex-col lg:flex-row gap-4">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-tertiary" />
             <input
               type="search"
               placeholder="Search briefs by title, region, or tags..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A96A] focus:border-transparent"
+              className="w-full pl-10 pr-10 py-2.5 bg-bg-surface border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-200 rounded"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-bg-elevated rounded transition-colors"
+                aria-label="Clear search"
               >
-                <X className="w-4 h-4 text-gray-400" />
+                <X className="w-4 h-4 text-text-tertiary" />
               </button>
             )}
           </div>
@@ -119,7 +126,7 @@ export function BriefsLibraryPage() {
             <select
               value={selectedRegion}
               onChange={(e) => setSelectedRegion(e.target.value)}
-              className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A96A]"
+              className="px-4 py-2.5 bg-bg-surface border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm"
             >
               {regions.map((region) => (
                 <option key={region} value={region}>
@@ -131,7 +138,7 @@ export function BriefsLibraryPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#C8A96A]"
+              className="px-4 py-2.5 bg-bg-surface border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all text-sm"
             >
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -140,14 +147,16 @@ export function BriefsLibraryPage() {
               ))}
             </select>
 
-            <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+            {/* View Mode Toggle */}
+            <div className="flex items-center border border-border rounded overflow-hidden">
               <button
                 onClick={() => setViewMode('grid')}
                 className={cn(
                   'p-2.5 transition-colors',
-                  viewMode === 'grid' ? 'bg-[#C8A96A] text-white' : 'bg-white hover:bg-gray-50'
+                  viewMode === 'grid' ? 'bg-primary text-white' : 'bg-bg-elevated hover:bg-bg-surface'
                 )}
                 title="Grid view"
+                aria-label="Grid view"
               >
                 <Grid3x3 className="w-4 h-4" />
               </button>
@@ -155,9 +164,10 @@ export function BriefsLibraryPage() {
                 onClick={() => setViewMode('list')}
                 className={cn(
                   'p-2.5 transition-colors',
-                  viewMode === 'list' ? 'bg-[#C8A96A] text-white' : 'bg-white hover:bg-gray-50'
+                  viewMode === 'list' ? 'bg-primary text-white' : 'bg-bg-elevated hover:bg-bg-surface'
                 )}
                 title="List view"
+                aria-label="List view"
               >
                 <List className="w-4 h-4" />
               </button>
@@ -166,9 +176,10 @@ export function BriefsLibraryPage() {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={cn(
-                'p-2.5 border border-gray-200 rounded-lg transition-colors flex items-center gap-2',
-                showFilters && 'bg-[#C8A96A] text-white border-[#C8A96A]'
+                'p-2.5 border border-border rounded transition-colors flex items-center gap-2 text-sm',
+                showFilters && 'bg-accent-subtle border-accent text-accent'
               )}
+              aria-label="Toggle filters"
             >
               <SlidersHorizontal className="w-4 h-4" />
               <span className="hidden sm:inline">Filters</span>
@@ -178,19 +189,20 @@ export function BriefsLibraryPage() {
 
         {/* Active Filters */}
         {activeFilters.length > 0 && (
-          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-200">
-            <span className="text-sm text-gray-500">Active filters:</span>
+          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border">
+            <Filter className="w-4 h-4 text-text-tertiary" />
+            <span className="text-sm text-text-secondary">Active filters:</span>
             {activeFilters.map((filter) => (
               <span
                 key={filter}
-                className="inline-flex items-center gap-1 px-2 py-1 bg-[#C8A96A]/10 text-[#C8A96A] text-sm rounded"
+                className="inline-flex items-center gap-1 px-2.5 py-1 bg-accent-subtle text-accent text-sm rounded border border-accent/20"
               >
                 {filter}
               </span>
             ))}
             <button
               onClick={clearAllFilters}
-              className="text-sm text-gray-500 hover:text-gray-700 underline"
+              className="text-sm text-primary hover:text-primary-dark underline"
             >
               Clear all
             </button>
@@ -203,9 +215,11 @@ export function BriefsLibraryPage() {
         <BriefGridSkeleton count={6} />
       ) : (
         <>
-          <p className="text-sm text-gray-500">
-            Showing {filteredBriefs.length} of {briefs.length} briefs
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-text-secondary">
+              Showing <span className="tabular-nums font-semibold text-text">{filteredBriefs.length}</span> of <span className="tabular-nums">{briefs.length}</span> briefs
+            </p>
+          </div>
           <BriefGrid briefs={filteredBriefs} viewMode={viewMode} />
         </>
       )}
