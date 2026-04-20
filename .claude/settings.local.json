@@ -9,7 +9,13 @@
       "WebSearch",
       "Bash(lsof:*)",
       "Bash(xargs:*)",
-      "Bash(npx skills add:*)"
+      "Bash(npx skills add:*)",
+      "Bash(git push:*)",
+      "Bash(git stash pop:*)",
+      "Bash(git stash drop:*)",
+      "Bash(echo:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
