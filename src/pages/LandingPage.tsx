@@ -143,7 +143,7 @@ export function LandingPage() {
             <span className="block text-text-secondary/80 font-medium text-lg lg:text-xl mb-4 tracking-wide">
               Policy Intelligence
             </span>
-            Intelligence Briefs for
+            Government-grade briefs for
             <span className="text-primary block mt-2">Strategic Decision-Making</span>
           </h1>
 
@@ -155,8 +155,7 @@ export function LandingPage() {
             }}
           >
             Transform complex policy developments into actionable intelligence.
-            Track developments, assess implications, and coordinate responses
-            <span className="text-text font-medium"> with government-grade briefs.</span>
+            <span className="text-text font-medium"> Government-grade briefs.</span>
           </p>
 
           {/* CTA buttons with elegant styling */}
