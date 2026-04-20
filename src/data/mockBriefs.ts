@@ -6,17 +6,17 @@ export const mockBriefs: Paparan[] = [
   // APAC Region Briefs
   {
     id: 'brief-2026-04-15-chip-tech',
-    title: 'Semiconductor Supply Chain — Taiwan Earthquake Impact Assessment',
+    title: 'Taiwan Earthquake: Chip Supply Impact',
     date: '15 April 2026',
     region: 'APAC',
     classification: 'unclassified',
     lastUpdated: '15 April 2026 16:45 SGT',
     executiveSummary: [
-      'Magnitude 6.2 earthquake struck Hsinchu County, Taiwan on 14 April 2026.',
-      'TSMC reported temporary suspension of operations at Fab 12 and Fab 14; partial operations resumed within 24 hours.',
-      'Global semiconductor spot prices increased 5-8% for advanced nodes (7nm and below).',
-      'Major tech companies activating contingency supply agreements; Samsung and Intel offering alternative capacity.',
-      'Supply chain analysts predict 3-5 day delivery delay for affected chip types through Q2 2026.'
+      'Taiwan quake disrupts TSMC ops, global chip prices rise 8%.',
+      'Tech firms activating backup supply agreements through Samsung and Intel.',
+      'Analysts predict 3-5 day delivery delays through Q2.',
+      'Major tech companies report minimal Q2 revenue impact expected.',
+      'Full production capacity expected to resume within 7-10 days.'
     ],
     currentSituation: 'The semiconductor industry is grappling with the impact of a 6.2 magnitude earthquake that struck Taiwan\'s Hsinchu County on April 14, 2026. The region hosts the Hsinchu Science Park, home to TSMC\'s most advanced fabrication facilities.\n\nTSMC, which produces over 90% of the world\'s most advanced semiconductors, temporarily suspended operations at Fab 12 and Fab 14 following the earthquake. Initial assessments indicate minimal structural damage, with the suspension primarily precautionary for equipment calibration.\n\nGlobal spot markets responded swiftly, with prices for advanced-node chips (7nm, 5nm, and 3nm processes) rising 5-8% within 24 hours. The impact is most acute in the smartphone and data center segments, where just-in-time manufacturing leaves minimal inventory buffers.\n\nIndustry analysts expect full production capacity to resume within 7-10 days, though delivery delays of 3-5 days are expected for affected chip types through the end of Q2 2026 as backlogs clear.',
     developments: [
@@ -130,17 +130,17 @@ export const mockBriefs: Paparan[] = [
   },
   {
     id: 'brief-2026-04-12-au-climate',
-    title: 'Climate Policy — Australia Carbon Border Adjustment Mechanism Announcement',
+    title: 'Australia Launches Carbon Border Tax',
     date: '12 April 2026',
     region: 'APAC',
     classification: 'official',
     lastUpdated: '12 April 2026 11:20 AEST',
     executiveSummary: [
-      'Australia announced Carbon Border Adjustment Mechanism (CBAM) effective 1 January 2027.',
-      'Initial scope covers steel, aluminum, cement, and fertilizers; energy-intensive goods phased in by 2030.',
-      'Importers required to purchase carbon certificates reflecting EU ETS prices.',
-      'ASEAN exporters face 8-12% cost increase on affected goods; compliance burden falls on exporters.',
-      'Indonesia and Vietnam formally request bilateral consultations; potential WTO challenge being assessed.'
+      'Australia CBAM starts January 2027, covering steel and cement.',
+      'ASEAN exporters face 8-12% cost increase on affected goods.',
+      'Indonesia and Vietnam request bilateral consultations on compliance.',
+      'Importers must purchase carbon certificates linked to EU prices.',
+      'Energy-intensive goods phased in by 2030.'
     ],
     currentSituation: 'Australia Treasurer announced the implementation of a Carbon Border Adjustment Mechanism (CBAM) during the budget speech on April 12, 2026. The mechanism will require importers to purchase carbon certificates corresponding to the carbon content of covered goods, with pricing linked to the European Union Emissions Trading System (EU ETS).\n\nThe initial implementation on January 1, 2027, will cover steel, aluminum, cement, and fertilizers—representing approximately 25% of Australia\'s imported emissions-intensive goods. A phased expansion will add energy-intensive goods by 2030, potentially covering over 60% of emissions-intensive imports.\n\nASEAN exporters face significant compliance challenges, with estimated cost increases of 8-12% on affected goods. The mechanism places the compliance burden on exporters, requiring them to verify and report embedded emissions through approved methodologies.\n\nIndonesia and Vietnam have formally requested bilateral consultations, citing concerns about compliance costs and potential violations of WTO most-favored-nation principles. Both countries are assessing potential WTO challenges, though success remains uncertain given EU precedent.\n\nIndustry associations are calling for transition assistance and recognition of carbon pricing schemes in exporting countries.',
     developments: [
@@ -239,17 +239,17 @@ export const mockBriefs: Paparan[] = [
   // EMEA Region Briefs
   {
     id: 'brief-2026-04-10-eu-energy',
-    title: 'Energy Security — EU Natural Gas Allocation Framework Update',
+    title: 'EU Gas Framework: CEE Priority',
     date: '10 April 2026',
     region: 'EMEA',
     classification: 'official',
     lastUpdated: '10 April 2026 14:00 CET',
     executiveSummary: [
-      'EU Commission updated Natural Gas Allocation Framework following winter season review.',
-      'Solidarity mechanism activated 3 times during 2025-26 winter; all requests resolved.',
-      'New provisions for LNG terminal access prioritization for CEE member states.',
-      'Gas storage levels at 58% for 2026-27 filling season, ahead of target timeline.',
-      'Commission proposes extending emergency framework through 2027; member state discussions ongoing.'
+      'EU updates gas allocation framework with CEE prioritization.',
+      'Gas storage at 58%, ahead of target for 2026-27 season.',
+      'Solidarity mechanism activated three times during winter.',
+      'Commission proposes extending emergency framework through 2027.',
+      'New LNG terminal access rules for Central European states.'
     ],
     currentSituation: 'The European Commission has adopted updates to the EU Natural Gas Allocation Framework following a comprehensive review of the 2025-26 winter season performance. The updated framework incorporates lessons learned from three solidarity mechanism activations and addresses ongoing supply diversification challenges.\n\nThe solidarity mechanism, which requires member states with surplus gas to assist those facing shortages, was activated three times during the past winter season—all involving Central and Eastern European (CEE) states facing supply interruptions from pipeline sources. All activations resulted in successful gas reallocation without supply curtailments to protected customers.\n\nNew provisions prioritize LNG terminal access for CEE member states without direct LNG infrastructure, addressing geographic imbalances in regasification capacity. The framework establishes secondary market mechanisms for LNG slot trading, though implementation details remain pending.\n\nGas storage levels stand at 58% for the upcoming 2026-27 filling season, approximately 8 percentage points above the five-year average and ahead of the November 1 target for 90% capacity. The accelerated filling reflects continued demand reduction and successful LNG integration.\n\nThe Commission has proposed extending the emergency framework through 2027, citing continued uncertainty regarding pipeline supplies and the need for structural reforms to gas market design. Member state discussions are ongoing, with several net-importing states supporting extension while some exporters express reservations.',
     developments: [
@@ -342,17 +342,17 @@ export const mockBriefs: Paparan[] = [
   // Americas Region Briefs
   {
     id: 'brief-2026-04-08-us-fta',
-    title: 'Trade Policy — US-Kenya Strategic Trade Agreement Negotiations Resume',
+    title: 'US-Kenya Trade Talks Resume',
     date: '08 April 2026',
     region: 'Americas',
     classification: 'unclassified',
     lastUpdated: '08 April 2026 15:30 EST',
     executiveSummary: [
-      'US and Kenya resumed negotiations for Strategic Trade Agreement (STA) following 6-month pause.',
-      'Fourth round of discussions held in Washington; focus on digital trade, agriculture, and labor standards.',
-      'Kenya seeks expanded market access for textile and apparel exports; US demands stronger IP protections.',
-      'Civil society groups raise concerns about investor-state dispute settlement provisions.',
-      'Target completion date set for Q4 2026; potential model for US-Africa trade policy.'
+      'US-Kenya trade negotiations resume after six-month pause.',
+      'Fourth round focuses on digital trade and labor standards.',
+      'Kenya seeks textile access; US wants stronger IP protections.',
+      'Civil society groups raise concerns about dispute settlement.',
+      'Target completion set for Q4 2026.'
     ],
     currentSituation: 'The United States and Kenya have resumed negotiations for a Strategic Trade Agreement (STA) following a six-month pause that coincided with Kenya\'s electoral transition and US legislative calendar considerations. The fourth round of negotiations was held in Washington, D.C., from April 5-8, 2026.\n\nThe STA would represent the first bilateral trade agreement between the United States and a sub-Saharan African nation, potentially serving as a model for future US-Africa trade relations. Unlike traditional free trade agreements, the STA is characterized as a "strategic" arrangement focusing on specific sectors rather than comprehensive liberalization.\n\nKey discussion areas include digital trade provisions, agricultural market access, and labor standards enforcement. Kenya has prioritized expanded market access for textile and apparel exports under AGOA renewal provisions, while the United States has emphasized stronger intellectual property protections and digital trade rules.\n\nCivil society groups in both countries have raised concerns about proposed investor-state dispute settlement (ISDS) provisions, arguing that they could undermine regulatory sovereignty. Environmental groups have also called for binding climate commitments.\n\nThe negotiations target completion by Q4 2026, though the timeline remains ambitious given remaining contentious issues. Both sides have expressed strategic interest in concluding the agreement before potential US administration changes.',
     developments: [
@@ -445,17 +445,17 @@ export const mockBriefs: Paparan[] = [
   // Security/Geopolitics Briefs
   {
     id: 'brief-2026-04-05-cyber',
-    title: 'Cybersecurity — Critical Infrastructure Attack Campaign Analysis',
+    title: 'Global Cyber Attack: Infrastructure Targeted',
     date: '05 April 2026',
     region: 'Global',
     classification: 'confidential',
     lastUpdated: '05 April 2026 09:15 UTC',
     executiveSummary: [
-      'Coordinated cyber campaign targeting energy and transportation sectors across 12 countries.',
-      'Attribution assessments point to state-sponsored actor; infrastructure suggests advanced persistent threat.',
-      'Ransomware variant with custom evasion capabilities detected in 23 confirmed incidents.',
-      'Critical infrastructure operators advised to implement emergency security protocols.',
-      'International coordination underway through CERT network; joint statement expected.'
+      'Coordinated cyber campaign hits energy and transport across 12 countries.',
+      'Custom ransomware detected in 23 confirmed incidents.',
+      'Attribution points to state-sponsored actor, assessment pending.',
+      'Critical infrastructure operators implementing emergency protocols.',
+      'International CERT coordination underway, joint statement expected.'
     ],
     currentSituation: 'A coordinated cyber campaign targeting critical infrastructure has been detected across 12 countries, affecting energy and transportation sectors. The campaign, which began on approximately March 28, 2026, involves a custom ransomware variant with advanced evasion capabilities.\n\nAttribution assessments from multiple national cybersecurity agencies suggest state-sponsored involvement, citing the sophistication of custom tools, infrastructure characteristics, and targeting patterns consistent with known advanced persistent threat groups. Specific attribution remains pending pending final technical analysis.\n\nTwenty-three confirmed incidents have been reported as of April 5, 2026, with additional potential incidents under investigation. The ransomware variant exhibits custom evasion capabilities including polymorphic code, anti-analysis techniques, and encrypted command-and-control communications.\n\nCritical infrastructure operators in affected sectors have been advised to implement emergency security protocols, including enhanced monitoring, isolation of industrial control systems, and accelerated patching of known vulnerabilities. Several operators have implemented temporary operational restrictions as precautionary measures.\n\nInternational coordination is underway through the global CERT network, with a joint statement from affected nations expected within 48 hours. The statement is expected to include attribution assessment, defensive guidance, and potential response measures.',
     developments: [

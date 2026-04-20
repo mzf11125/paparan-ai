@@ -2,17 +2,17 @@ import { Paparan } from "@/types/paparan";
 
 export const samplePaparan: Paparan = {
   id: "brief-2026-04-17-asean-trade",
-  title: "ASEAN Trade Relations — Vietnam-Indonesia Tariff Dispute",
+  title: "Vietnam-Indonesia Tariff Dispute",
   date: "17 April 2026",
   region: "ASEAN",
   classification: "official",
   lastUpdated: "17 April 2026 14:30 JKT",
   executiveSummary: [
-    "Vietnam imposed 15% tariff on processed food imports from Indonesia, effective 1 April 2026.",
-    "Bilateral trade volume declined 8% YoY in Q1 2026; processed food sector dropped 15% ($340M impact).",
-    "Indonesia formally requested consultations under ASEAN Trade in Goods Agreement (ATIGA) dispute mechanism.",
-    "Domestic industry lobbying intensifying in both countries; potential for retaliatory measures.",
-    "RCEP dispute settlement mechanism identified as viable resolution pathway, though never utilized since agreement inception."
+    "Vietnam imposed 15% tariff on processed food imports from Indonesia.",
+    "Bilateral trade volume declined 8% in Q1 2026.",
+    "Indonesia requested ASEAN consultations under dispute mechanism.",
+    "Domestic lobbying intensifies; potential for retaliatory measures.",
+    "RCEP dispute settlement identified as resolution pathway."
   ],
   currentSituation: "Indonesia and Vietnam trade relations have entered a period of friction following Vietnam's unexpected implementation of a 15% tariff on processed food imports from Indonesia, effective April 1, 2026. The tariff, announced via Circular No. 12/2026/TT-BCT, specifically targets products with Indonesian content exceeding 30%.\n\nInitial trade data for Q1 2026 shows an 8% decline in bilateral trade volume compared to the same period in 2025. The processed food sector, which represents approximately $2.3B in annual trade, has been most significantly affected with a 15% decline representing approximately $340M in lost value.\n\nIndonesian Ministry of Trade has formally requested consultations under ASEAN protocols, citing potential violations of the ASEAN Trade in Goods Agreement (ATIGA). Vietnamese officials have characterized the tariff as a \"temporary safeguard measure\" pending review of domestic industry concerns regarding pricing competitiveness.\n\nThe tariff has triggered increased lobbying activity from affected industry associations in both countries. The Indonesian Food and Beverage Association (GAPMMI) has called for retaliatory measures, while their Vietnamese counterpart (VAFood) has petitioned for tariff extension.",
   developments: [

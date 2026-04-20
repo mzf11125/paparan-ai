@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
-  Calendar,
   MapPin,
-  Tag,
+  Calendar,
   Edit,
   Share2,
   ArrowRight,
@@ -11,7 +10,6 @@ import {
   BookmarkCheck,
   Copy,
   Eye,
-  FileText,
 } from 'lucide-react'
 import { Paparan } from '@/types/paparan'
 import { cn } from '@/utils/formatters'
@@ -40,7 +38,6 @@ export function BriefCard({
   classification = 'unclassified',
 }: BriefCardProps) {
   const [copied, setCopied] = useState(false)
-  const highImpactCount = brief.developments.filter((d) => d.impact === 'HIGH').length
   const displayTags = brief.tags?.slice(0, 3) || []
 
   const handleCopyLink = async (e: React.MouseEvent) => {
@@ -134,82 +131,38 @@ export function BriefCard({
         className
       )}
     >
-      {/* Card Header — Document Style */}
+      {/* Card Header — Simplified */}
       <div className="p-6">
+        {/* Region Badge */}
         <div className="flex items-center gap-2 mb-4">
-          {/* Classification Badge */}
-          <span className={cn('classification-badge', classificationStyles[classification])}>
-            {classificationLabels[classification]}
-          </span>
-
-          {/* Region Badge */}
           <span className="px-2.5 py-1 bg-primary-lighter text-primary text-xs font-semibold uppercase tracking-wider rounded-official border border-primary/20">
             {brief.region}
           </span>
-
-          {/* High Impact Indicator */}
-          {highImpactCount > 0 && (
-            <span className="px-2.5 py-1 bg-red-light text-red text-xs font-semibold uppercase tracking-wider rounded-official border border-red/30 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-red animate-pulse" />
-              {highImpactCount} High Impact
-            </span>
-          )}
-
-          {brief.lastUpdated && (
-            <span className="ml-auto text-xs text-text-tertiary tabular-nums">
-              Updated {brief.lastUpdated}
-            </span>
-          )}
+          <time className="ml-auto text-xs text-text-tertiary tabular-nums">
+            {brief.date}
+          </time>
         </div>
 
         <NavLink
           to={`/briefs/${brief.id}`}
           className="block group/link"
         >
-          <h3 className="font-display font-bold text-lg text-text leading-snug group-hover/link:text-primary transition-colors line-clamp-2">
+          <h3 className="font-display font-bold text-lg text-text leading-snug group-hover/link:text-primary transition-colors">
             {brief.title}
           </h3>
         </NavLink>
 
-        <div className="flex items-center gap-3 mt-3 text-sm text-text-tertiary">
-          <time className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4" />
-            {brief.date}
-          </time>
-          <span className="w-px h-4 bg-border" />
-          <span className="flex items-center gap-1.5">
-            <FileText className="w-4 h-4" />
-            {brief.developments.length} developments
-          </span>
-          <span className="w-px h-4 bg-border" />
-          <span className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-green" />
-            {brief.sources.length} sources
-          </span>
-        </div>
-
         {/* Executive Summary Preview */}
-        <p className="mt-4 text-sm text-text-secondary line-clamp-3 leading-relaxed border-l-2 border-primary/30 pl-3">
+        <p className="mt-4 text-sm text-text-secondary leading-relaxed">
           {brief.executiveSummary[0]}
         </p>
 
         {/* Tags */}
         {displayTags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="flex flex-wrap gap-2 mt-4 text-xs text-text-tertiary">
             {displayTags.map((tag) => (
-              <span
-                key={tag}
-                className="inline-flex items-center gap-1 px-2 py-1 bg-bg-surface text-text-secondary text-xs rounded border border-border hover:border-primary hover:text-primary transition-colors cursor-pointer"
-              >
-                <Tag className="w-3 h-3" />
-                {tag}
-              </span>
+              <span key={tag}>{tag}</span>
             ))}
-            {(brief.tags?.length || 0) > 3 && (
-              <span className="text-xs text-text-tertiary">
-                +{(brief.tags?.length || 0) - 3} more
-              </span>
-            )}
           </div>
         )}
       </div>
