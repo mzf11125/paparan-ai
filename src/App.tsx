@@ -7,8 +7,10 @@ import { BriefDetailPage } from '@/pages/BriefDetailPage'
 import { AnalyticsDashboardPage } from '@/pages/AnalyticsDashboardPage'
 import { BriefEditorPage } from '@/pages/BriefEditorPage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { WatchlistPage } from '@/pages/WatchlistPage'
 import { useCommandPalette } from '@/components/ui/CommandPalette'
 import { CommandPalette } from '@/components/ui/CommandPalette'
+import { Toaster } from '@/components/ui/Toast'
 import { initializeBriefStore } from '@/services/briefService'
 import { mockBriefs } from '@/data/mockBriefs'
 
@@ -36,6 +38,7 @@ function AppRoutes() {
           <Route index element={<LandingPage />} />
           <Route path="briefs" element={<BriefsLibraryPage />} />
           <Route path="briefs/:id" element={<BriefDetailPage />} />
+          <Route path="watchlist" element={<WatchlistPage />} />
           <Route path="dashboard" element={<AnalyticsDashboardPage />} />
           <Route path="editor" element={<BriefEditorPage />} />
           <Route path="editor/:id" element={<BriefEditorPage />} />
@@ -52,6 +55,9 @@ function AppRoutes() {
         onClose={commandPalette.close}
         briefs={mockBriefs}
       />
+
+      {/* Global Toast Notifications */}
+      <Toaster />
     </>
   )
 }

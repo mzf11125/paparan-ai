@@ -7,17 +7,19 @@ import {
   Settings,
   Menu,
   X,
-  Search,
   Bell,
   ChevronDown,
   Home,
   Shield,
+  Bookmark,
 } from 'lucide-react'
 import { Logo } from '@/components/Brand/Logo'
+import { RegionQuickSwitcherCompact } from './RegionQuickSwitcher'
 import { cn } from '@/utils/formatters'
 
 const navItems = [
   { path: '/briefs', label: 'Briefs Library', icon: FileText },
+  { path: '/watchlist', label: 'My Watchlist', icon: Bookmark },
   { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
   { path: '/editor', label: 'Create Brief', icon: PlusCircle },
   { path: '/settings', label: 'Settings', icon: Settings },
@@ -81,6 +83,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
               <span className="text-text-tertiary">/</span>
               <span className="font-medium text-text">
                 {location.pathname === '/briefs' && 'Briefs Library'}
+                {location.pathname === '/watchlist' && 'My Watchlist'}
                 {location.pathname === '/dashboard' && 'Analytics Dashboard'}
                 {location.pathname === '/editor' && 'Brief Editor'}
                 {location.pathname === '/settings' && 'Settings'}
@@ -88,16 +91,9 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
             </nav>
           </div>
 
-          {/* Center: Search (desktop) */}
-          <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
-              <input
-                type="search"
-                placeholder="Search briefs... (Cmd+K)"
-                className="w-full pl-10 pr-4 py-2 bg-bg-surface border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
-              />
-            </div>
+          {/* Center: Region Quick Switcher (desktop) */}
+          <div className="hidden md:flex flex-1 max-w-xs mx-8 justify-center">
+            <RegionQuickSwitcherCompact />
           </div>
 
           {/* Right: Actions */}

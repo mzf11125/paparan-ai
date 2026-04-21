@@ -127,6 +127,7 @@ function Sparkline({ data, color = 'default', height = 48 }: SparklineProps) {
   }).join(' ')
 
   const fillPoints = `0,100 ${points} 100,100`
+  const uniqueId = Math.random().toString(36).substring(7)
 
   return (
     <svg
@@ -136,15 +137,18 @@ function Sparkline({ data, color = 'default', height = 48 }: SparklineProps) {
       style={{ height }}
     >
       <defs>
-        <linearGradient id={`gradient-${color}`} x1="0%" y1="0%" x2="0%" y2="100%">
+        <linearGradient id={`gradient-${color}-${uniqueId}`} x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor={sparkColors[color]} stopOpacity="0.2" />
           <stop offset="100%" stopColor={sparkColors[color]} stopOpacity="0" />
         </linearGradient>
       </defs>
+      {/* Gradient fill with fade-in animation */}
       <polygon
         points={fillPoints}
-        fill={`url(#gradient-${color})`}
+        fill={`url(#gradient-${color}-${uniqueId})`}
+        className="animate-fade-in"
       />
+      {/* Line with draw animation */}
       <polyline
         points={points}
         fill="none"
@@ -153,14 +157,21 @@ function Sparkline({ data, color = 'default', height = 48 }: SparklineProps) {
         strokeLinecap="round"
         strokeLinejoin="round"
         vectorEffect="non-scaling-stroke"
+        strokeDasharray="300"
+        strokeDashoffset="0"
+        style={{
+          animation: 'sparkline-draw 1s ease-out forwards',
+        }}
       />
-      {/* End dot */}
+      {/* End dot with fade-in */}
       <circle
         cx="100"
         cy={100 - ((data[data.length - 1] - min) / range) * 100}
         r="3"
         fill={sparkColors[color]}
         vectorEffect="non-scaling-stroke"
+        className="animate-fade-in"
+        style={{ animationDelay: '0.8s', opacity: 0 }}
       />
     </svg>
   )
@@ -174,16 +185,16 @@ interface StatCardSkeletonProps {
 
 export function StatCardSkeleton({ size = 'default', className = '' }: StatCardSkeletonProps) {
   return (
-    <div className={cn('bg-bg-elevated border border-border rounded-radius-xl p-6 animate-pulse', className)}>
+    <div className={cn('bg-bg-elevated border border-border rounded-radius-xl p-6', className)}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <div className="h-4 bg-gray-200 rounded w-24 mb-2" />
+          <div className="skeleton h-4 rounded w-24 mb-2" />
           <div className={cn(
-            'bg-gray-200 rounded',
+            'skeleton rounded',
             size === 'compact' ? 'h-8 w-20' : size === 'large' ? 'h-12 w-32' : 'h-10 w-28'
           )} />
         </div>
-        <div className="w-12 h-12 bg-gray-200 rounded-lg" />
+        <div className="skeleton w-12 h-12 rounded-lg" />
       </div>
     </div>
   )

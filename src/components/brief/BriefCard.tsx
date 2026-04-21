@@ -13,17 +13,19 @@ import {
 } from 'lucide-react'
 import { Paparan } from '@/types/paparan'
 import { cn } from '@/utils/formatters'
+import { toast } from '@/components/ui/Toast'
+import { useAppStore } from '@/contexts/AppContext'
 
 interface BriefCardProps {
   brief: Paparan
   variant?: 'default' | 'compact'
   className?: string
   loading?: boolean
-  bookmarked?: boolean
-  onBookmarkToggle?: (briefId: string) => void
   onShare?: (briefId: string) => void
   showQuickActions?: boolean
   classification?: 'unclassified' | 'official' | 'confidential'
+  // Optional override for bookmark state (for preview/readonly mode)
+  bookmarkedOverride?: boolean
 }
 
 export function BriefCard({
@@ -31,14 +33,17 @@ export function BriefCard({
   variant = 'default',
   className = '',
   loading = false,
-  bookmarked = false,
-  onBookmarkToggle,
   onShare,
   showQuickActions = true,
   classification = 'unclassified',
+  bookmarkedOverride,
 }: BriefCardProps) {
   const [copied, setCopied] = useState(false)
   const displayTags = brief.tags?.slice(0, 3) || []
+  const { isInWatchlist, toggleWatchlist } = useAppStore()
+
+  // Use override if provided, otherwise use store
+  const bookmarked = bookmarkedOverride ?? isInWatchlist(brief.id)
 
   const handleCopyLink = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -46,12 +51,28 @@ export function BriefCard({
     await navigator.clipboard.writeText(url)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+    toast.success('Link copied to clipboard', {
+      title: 'Brief Link',
+      duration: 3000,
+    })
     onShare?.(brief.id)
   }
 
   const handleBookmark = (e: React.MouseEvent) => {
     e.stopPropagation()
-    onBookmarkToggle?.(brief.id)
+    toggleWatchlist(brief.id)
+    // Show toast notification
+    if (!bookmarked) {
+      toast.success('Brief added to your watchlist', {
+        title: 'Watchlist',
+        duration: 3000,
+      })
+    } else {
+      toast.info('Brief removed from watchlist', {
+        title: 'Watchlist',
+        duration: 2500,
+      })
+    }
   }
 
   // Classification badge styles
@@ -103,19 +124,17 @@ export function BriefCard({
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            {onBookmarkToggle && (
-              <button
-                onClick={handleBookmark}
-                className="p-1.5 rounded hover:bg-bg-surface transition-colors"
-                aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
-              >
-                {bookmarked ? (
-                  <BookmarkCheck className="w-4 h-4 text-primary" />
-                ) : (
-                  <Bookmark className="w-4 h-4 text-text-tertiary" />
-                )}
-              </button>
-            )}
+            <button
+              onClick={handleBookmark}
+              className="p-1.5 rounded hover:bg-bg-surface transition-colors"
+              aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+            >
+              {bookmarked ? (
+                <BookmarkCheck className="w-4 h-4 text-primary" />
+              ) : (
+                <Bookmark className="w-4 h-4 text-text-tertiary" />
+              )}
+            </button>
             <ArrowRight className="w-5 h-5 text-text-tertiary group-hover:text-primary transition-colors" />
           </div>
         </div>
@@ -199,19 +218,17 @@ export function BriefCard({
                   <Share2 className="w-4 h-4 text-text-tertiary" />
                 )}
               </button>
-              {onBookmarkToggle && (
-                <button
-                  className="p-2 rounded hover:bg-bg-elevated transition-colors"
-                  title={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
-                  onClick={handleBookmark}
-                >
-                  {bookmarked ? (
-                    <BookmarkCheck className="w-4 h-4 text-primary" />
-                  ) : (
-                    <Bookmark className="w-4 h-4 text-text-tertiary" />
-                  )}
-                </button>
-              )}
+              <button
+                className="p-2 rounded hover:bg-bg-elevated transition-colors"
+                title={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+                onClick={handleBookmark}
+              >
+                {bookmarked ? (
+                  <BookmarkCheck className="w-4 h-4 text-primary" />
+                ) : (
+                  <Bookmark className="w-4 h-4 text-text-tertiary" />
+                )}
+              </button>
             </div>
           )}
         </div>
@@ -236,46 +253,46 @@ interface BriefCardSkeletonProps {
 export function BriefCardSkeleton({ variant = 'default' }: BriefCardSkeletonProps) {
   if (variant === 'compact') {
     return (
-      <div className="bg-bg-elevated border border-border rounded-lg p-4 animate-pulse">
+      <div className="bg-bg-elevated border border-border rounded-lg p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <div className="h-5 bg-bg-surface rounded w-3/4 mb-2" />
+            <div className="skeleton h-5 rounded w-3/4 mb-2" />
             <div className="flex items-center gap-3">
-              <div className="h-4 bg-bg-surface rounded w-20" />
-              <div className="h-4 bg-bg-surface rounded w-24" />
+              <div className="skeleton h-4 rounded w-20" />
+              <div className="skeleton h-4 rounded w-24" />
             </div>
           </div>
-          <div className="w-5 h-5 bg-bg-surface rounded" />
+          <div className="skeleton w-5 h-5 rounded" />
         </div>
       </div>
     )
   }
 
   return (
-    <div className="bg-bg-elevated border border-border rounded-lg overflow-hidden animate-pulse">
+    <div className="bg-bg-elevated border border-border rounded-lg overflow-hidden">
       <div className="p-6">
         <div className="flex gap-2 mb-4">
-          <div className="h-6 w-24 bg-bg-surface rounded" />
-          <div className="h-6 w-20 bg-bg-surface rounded" />
+          <div className="skeleton h-6 w-24 rounded" />
+          <div className="skeleton h-6 w-20 rounded" />
         </div>
-        <div className="h-6 bg-bg-surface rounded mb-2 w-3/4" />
-        <div className="h-6 bg-bg-surface rounded mb-4 w-1/2" />
-        <div className="h-4 bg-bg-surface rounded mb-2 w-full border-l-2 border-bg-subtle pl-3" />
-        <div className="h-4 bg-bg-surface rounded mb-2 w-2/3 border-l-2 border-bg-subtle pl-3" />
-        <div className="h-4 bg-bg-surface rounded mb-4 w-4/5 border-l-2 border-bg-subtle pl-3" />
+        <div className="skeleton h-6 rounded mb-2 w-3/4" />
+        <div className="skeleton h-6 rounded mb-4 w-1/2" />
+        <div className="skeleton h-4 rounded mb-2 w-full" />
+        <div className="skeleton h-4 rounded mb-2 w-2/3" />
+        <div className="skeleton h-4 rounded mb-4 w-4/5" />
         <div className="flex gap-2">
-          <div className="h-6 w-16 bg-bg-surface rounded" />
-          <div className="h-6 w-20 bg-bg-surface rounded" />
-          <div className="h-6 w-24 bg-bg-surface rounded" />
+          <div className="skeleton h-6 w-16 rounded" />
+          <div className="skeleton h-6 w-20 rounded" />
+          <div className="skeleton h-6 w-24 rounded" />
         </div>
       </div>
       <div className="px-6 py-4 bg-bg-surface border-t border-border flex items-center justify-between">
         <div className="flex gap-2">
-          <div className="h-8 w-8 bg-bg-elevated rounded" />
-          <div className="h-8 w-8 bg-bg-elevated rounded" />
-          <div className="h-8 w-8 bg-bg-elevated rounded" />
+          <div className="skeleton h-8 w-8 rounded" />
+          <div className="skeleton h-8 w-8 rounded" />
+          <div className="skeleton h-8 w-8 rounded" />
         </div>
-        <div className="h-9 w-24 bg-bg-elevated rounded" />
+        <div className="skeleton h-9 w-24 rounded" />
       </div>
     </div>
   )

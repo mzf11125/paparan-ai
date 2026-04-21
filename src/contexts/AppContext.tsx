@@ -10,7 +10,15 @@ export interface BriefFilters {
     end: Date
   }
   impactLevel?: ('HIGH' | 'MEDIUM' | 'LOW')[]
+  classification?: ('unclassified' | 'official' | 'confidential' | 'secret')[]
   searchQuery?: string
+}
+
+export interface SavedSearch {
+  id: string
+  name: string
+  filters: BriefFilters
+  createdAt: Date
 }
 
 export interface AppStore {
@@ -20,6 +28,19 @@ export interface AppStore {
   addBrief: (brief: Paparan) => void
   updateBrief: (id: string, updates: Partial<Paparan>) => void
   deleteBrief: (id: string) => void
+
+  // Watchlist/Bookmarks
+  watchlist: string[]
+  addToWatchlist: (id: string) => void
+  removeFromWatchlist: (id: string) => void
+  toggleWatchlist: (id: string) => void
+  isInWatchlist: (id: string) => boolean
+
+  // Saved searches
+  savedSearches: SavedSearch[]
+  addSavedSearch: (name: string, filters: BriefFilters) => void
+  deleteSavedSearch: (id: string) => void
+  applySavedSearch: (id: string) => void
 
   // Filter state
   filters: BriefFilters
@@ -43,7 +64,7 @@ const defaultFilters: BriefFilters = {}
 
 export const useAppStore = create<AppStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       // Briefs data
       briefs: [],
       setBriefs: (briefs) => set({ briefs }),
@@ -54,6 +75,44 @@ export const useAppStore = create<AppStore>()(
         })),
       deleteBrief: (id) =>
         set((state) => ({ briefs: state.briefs.filter((b) => b.id !== id) })),
+
+      // Watchlist/Bookmarks
+      watchlist: [],
+      addToWatchlist: (id) => set((state) => ({
+        watchlist: [...new Set([...state.watchlist, id])]
+      })),
+      removeFromWatchlist: (id) => set((state) => ({
+        watchlist: state.watchlist.filter((item) => item !== id)
+      })),
+      toggleWatchlist: (id) => set((state) => ({
+        watchlist: state.watchlist.includes(id)
+          ? state.watchlist.filter((item) => item !== id)
+          : [...new Set([...state.watchlist, id])]
+      })),
+      isInWatchlist: (id) => get().watchlist.includes(id),
+
+      // Saved searches
+      savedSearches: [],
+      addSavedSearch: (name, filters) => set((state) => ({
+        savedSearches: [
+          ...state.savedSearches,
+          {
+            id: `search-${Date.now()}`,
+            name,
+            filters,
+            createdAt: new Date()
+          }
+        ]
+      })),
+      deleteSavedSearch: (id) => set((state) => ({
+        savedSearches: state.savedSearches.filter((s) => s.id !== id)
+      })),
+      applySavedSearch: (id) => {
+        const search = get().savedSearches.find((s) => s.id === id)
+        if (search) {
+          set({ filters: search.filters })
+        }
+      },
 
       // Filter state
       filters: defaultFilters,
@@ -80,7 +139,9 @@ export const useAppStore = create<AppStore>()(
       partialize: (state) => ({
         sidebarCollapsed: state.sidebarCollapsed,
         theme: state.theme,
-        viewMode: state.viewMode
+        viewMode: state.viewMode,
+        watchlist: state.watchlist,
+        savedSearches: state.savedSearches
       })
     }
   )
@@ -114,8 +175,32 @@ export const useFilteredBriefs = () => {
       }
     }
 
+    // Impact level filter
+    if (filters.impactLevel && filters.impactLevel.length > 0) {
+      const hasMatchingImpact = brief.developments.some((d) =>
+        filters.impactLevel?.includes(d.impact)
+      )
+      if (!hasMatchingImpact) return false
+    }
+
+    // Date range filter
+    if (filters.dateRange) {
+      const briefDate = new Date(brief.date)
+      if (briefDate < filters.dateRange.start || briefDate > filters.dateRange.end) {
+        return false
+      }
+    }
+
     return true
   })
+}
+
+// Selector for watchlist briefs
+export const useWatchlistBriefs = () => {
+  const briefs = useAppStore((state) => state.briefs)
+  const watchlist = useAppStore((state) => state.watchlist)
+
+  return briefs.filter((brief) => watchlist.includes(brief.id))
 }
 
 // Selector for brief statistics
