@@ -24,10 +24,20 @@ const config: Config = {
         'text-secondary': 'var(--color-text-secondary)',
         'text-tertiary': 'var(--color-text-tertiary)',
         'text-inverse': 'var(--color-text-inverse)',
-        accent: 'var(--color-accent)',
-        'accent-light': 'var(--color-accent-light)',
-        'accent-lighter': 'var(--color-accent-lighter)',
-        'accent-dark': 'var(--color-accent-dark)',
+
+        // Primary Action Color — Navy Blue
+        primary: 'var(--color-primary)',
+        'primary-dark': 'var(--color-primary-dark)',
+        'primary-light': 'var(--color-primary-light)',
+        'primary-lighter': 'var(--color-primary-lighter)',
+
+        // Navy Accent Color
+        navy: 'var(--color-navy)',
+        'navy-light': 'var(--color-navy-light)',
+        'navy-lighter': 'var(--color-navy-lighter)',
+        'navy-dark': 'var(--color-navy-dark)',
+        'navy-subtle': 'var(--color-navy-subtle)',
+
         border: 'var(--color-border)',
         'border-strong': 'var(--color-border-strong)',
 
@@ -102,6 +112,9 @@ const config: Config = {
         'radius-xl': 'var(--radius-xl)',
         'radius-2xl': 'var(--radius-2xl)',
         'radius-full': 'var(--radius-full)',
+
+        // Official government-style border radius
+        official: '4px',
 
         // Legacy border radius values (mapped)
         card: 'var(--radius-xl)',

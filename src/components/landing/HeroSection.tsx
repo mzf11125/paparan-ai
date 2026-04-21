@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Shield } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 const ROTATING_WORDS = ['Monitor.', 'Analyze.', 'Brief.', 'Decide.']
