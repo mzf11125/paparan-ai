@@ -55,7 +55,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
       </a>
 
       {/* Top Navigation Bar — Official Style */}
-      <header className="sticky top-0 z-50 bg-bg-elevated/95 backdrop-blur-sm border-b border-border shadow-sm">
+      <header className="sticky top-0 z-[60] bg-bg-elevated/95 backdrop-blur-md border-b border-border shadow-sm transition-shadow duration-200">
         {/* Classification Banner */}
         <div className="classification-banner classification-banner-unclassified py-1">
           <Shield className="w-3 h-3" />
