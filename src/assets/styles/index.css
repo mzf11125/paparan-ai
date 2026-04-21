@@ -28,31 +28,31 @@
   --font-tabular: 'DM Mono', 'SF Mono', monospace;
 
   /* ============================================
-     COLOR SYSTEM — INSTITUTIONAL DUAL-TONE
+     COLOR SYSTEM — DARK NAVY THEME (Landing Page Match)
      ============================================ */
 
-  /* Primary Colors — Paper-like Foundation */
-  --color-bg: #FAFAF8;              /* Warm paper-like background */
-  --color-bg-elevated: #FFFFFF;     /* Pure white for cards */
-  --color-bg-surface: #F5F3F0;      /* Slightly darker paper */
-  --color-bg-subtle: #F0EEE9;       /* Subtle contrast area */
-  --color-text: #2D2D2D;            /* Dark warm gray for primary text */
-  --color-text-secondary: #5A5A5A;  /* Medium gray for secondary text */
-  --color-text-tertiary: #8A8A8A;   /* Light gray for tertiary text */
-  --color-text-inverse: #FFFFFF;    /* White on dark backgrounds */
+  /* Primary Colors — Dark Navy Foundation */
+  --color-bg: #060d1a;              /* Deep navy background (hero) */
+  --color-bg-elevated: #0A1628;     /* Navy for cards/sections */
+  --color-bg-surface: #0F2744;      /* Lighter navy for surfaces */
+  --color-bg-subtle: #1a3a6b;       /* Subtle contrast area */
+  --color-text: #FFFFFF;            /* White for primary text */
+  --color-text-secondary: rgba(255, 255, 255, 0.65);  /* White/65 for secondary */
+  --color-text-tertiary: rgba(255, 255, 255, 0.45);   /* White/45 for tertiary */
+  --color-text-inverse: #060d1a;    /* Dark on white backgrounds */
 
-  /* Primary Action Color — Navy Blue (for buttons, links, actions) */
-  --color-primary: #0369A1;         /* Government navy blue */
-  --color-primary-dark: #025380;    /* Darker navy for hover */
-  --color-primary-light: #E0F2FE;   /* Light blue background */
-  --color-primary-lighter: #F0F9FF; /* Very light blue */
+  /* Primary Action Color — Bright Blue for CTAs */
+  --color-primary: #60a5fa;         /* Bright blue for primary actions */
+  --color-primary-dark: #3b82f6;    /* Darker blue for hover */
+  --color-primary-light: rgba(96, 165, 250, 0.15);   /* Blue background tint */
+  --color-primary-lighter: rgba(96, 165, 250, 0.08); /* Very light blue tint */
 
-  /* Navy Accent — Single action/accent color for institutional look */
-  --color-navy: #0369A1;            /* Navy blue accent — matches primary */
-  --color-navy-light: #0284C7;      /* Lighter navy for hover states */
-  --color-navy-lighter: #E0F2FE;    /* Very light navy background */
-  --color-navy-dark: #025380;       /* Darker navy for active states */
-  --color-navy-subtle: rgba(3, 105, 161, 0.1); /* Subtle navy tint */
+  /* Navy Accent — Matching the landing page */
+  --color-navy: #0A1628;            /* Navy blue accent */
+  --color-navy-light: #0F2744;      /* Lighter navy for hover */
+  --color-navy-lighter: #1a3a6b;    /* Very light navy */
+  --color-navy-dark: #060d1a;       /* Darker navy */
+  --color-navy-subtle: rgba(10, 22, 40, 0.5); /* Subtle navy tint */
 
   /* Classification Colors — Security Level Indicators */
   --color-classified-unclassified: #2D7A4D;  /* Green for UNCLASSIFIED */
@@ -79,11 +79,11 @@
   --color-paparan-sage: #2D5A4F;
   --color-paparan-slate: #6B7280;
 
-  /* Border & Divider Colors */
-  --color-border: #E8E4DC;          /* Subtle warm border */
-  --color-border-strong: #D4D0C8;   /* Stronger border for emphasis */
-  --color-border-subtle: #F2EFE8;   /* Very subtle border */
-  --color-border-accent: #0369A1;   /* Navy accent border */
+  /* Border & Divider Colors — Dark Theme */
+  --color-border: rgba(255, 255, 255, 0.1);          /* Subtle white border */
+  --color-border-strong: rgba(255, 255, 255, 0.15);   /* Stronger border for emphasis */
+  --color-border-subtle: rgba(255, 255, 255, 0.05);  /* Very subtle border */
+  --color-border-accent: #60a5fa;                   /* Bright blue accent border */
 
   /* Document Frame Colors */
   --color-document-frame: #1A1A1A;  /* Dark frame for official documents */
