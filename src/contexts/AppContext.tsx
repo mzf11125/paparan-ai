@@ -2,6 +2,23 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Paparan } from '@/types/paparan'
 
+// Auth types
+export interface User {
+  email: string
+  name: string
+  avatar?: string
+}
+
+export interface AuthState {
+  user: User | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  login: (email: string) => Promise<boolean>
+  logout: () => void
+}
+
+const ALLOWED_EMAIL = 'mzidanfatonie@gmail.com'
+
 export interface BriefFilters {
   region?: string
   tags?: string[]
@@ -22,6 +39,13 @@ export interface SavedSearch {
 }
 
 export interface AppStore {
+  // Auth
+  user: User | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  login: (email: string) => Promise<boolean>
+  logout: () => void
+
   // Briefs data
   briefs: Paparan[]
   setBriefs: (briefs: Paparan[]) => void
@@ -65,6 +89,32 @@ const defaultFilters: BriefFilters = {}
 export const useAppStore = create<AppStore>()(
   persist(
     (set, get) => ({
+      // Auth
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      login: async (email: string) => {
+        set({ isLoading: true })
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 800))
+
+        if (email.toLowerCase() === ALLOWED_EMAIL.toLowerCase()) {
+          const user: User = {
+            email: ALLOWED_EMAIL,
+            name: 'Zidan Fatonie',
+            avatar: 'https://ui-avatars.com/api/?name=ZF&background=1d4ed8&color=fff'
+          }
+          set({ user, isAuthenticated: true, isLoading: false })
+          return true
+        }
+
+        set({ isLoading: false })
+        return false
+      },
+      logout: () => {
+        set({ user: null, isAuthenticated: false })
+      },
+
       // Briefs data
       briefs: [],
       setBriefs: (briefs) => set({ briefs }),
@@ -137,6 +187,8 @@ export const useAppStore = create<AppStore>()(
     {
       name: 'paparan-app-store',
       partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
         sidebarCollapsed: state.sidebarCollapsed,
         theme: state.theme,
         viewMode: state.viewMode,

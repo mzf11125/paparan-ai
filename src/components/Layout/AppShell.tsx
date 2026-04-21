@@ -2,7 +2,7 @@ import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import {
   FileText, BarChart3, PlusCircle, Settings, Menu, X,
-  Bell, ChevronDown, Home, Shield, Bookmark, Newspaper, Sun, Moon,
+  Bell, ChevronDown, Home, Shield, Bookmark, Newspaper, Sun, Moon, LogOut,
 } from 'lucide-react'
 import { Logo } from '@/components/Brand/Logo'
 import { RegionQuickSwitcherCompact } from './RegionQuickSwitcher'
@@ -26,7 +26,8 @@ interface AppShellProps {
 export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const { theme, setTheme } = useAppStore()
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const { theme, setTheme, user, logout } = useAppStore()
   const location = useLocation()
 
   // Close mobile sidebar on route change
@@ -121,12 +122,52 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
               New Brief
             </NavLink>
 
-            <button className="flex items-center gap-2 p-2 rounded-lg hover:bg-bg-surface transition-colors">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm font-medium">
-                U
-              </div>
-              <ChevronDown className="w-4 h-4 text-text-tertiary" />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-bg-surface transition-colors"
+              >
+                {user?.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt={user.name}
+                    className="w-8 h-8 rounded-full"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm font-medium">
+                    {user?.name?.charAt(0) || 'U'}
+                  </div>
+                )}
+                <span className="hidden md:block text-sm font-medium text-text">{user?.name || 'User'}</span>
+                <ChevronDown className="w-4 h-4 text-text-tertiary" />
+              </button>
+
+              {/* User Dropdown Menu */}
+              {userMenuOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setUserMenuOpen(false)}
+                  />
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-bg-elevated border border-border rounded-lg shadow-lg py-1 z-20">
+                    <div className="px-4 py-2 border-b border-border">
+                      <p className="text-xs font-medium text-text-tertiary">Signed in as</p>
+                      <p className="text-sm font-medium text-text truncate">{user?.email}</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        logout()
+                        setUserMenuOpen(false)
+                      }}
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-text-secondary hover:text-text hover:bg-bg-surface transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      Sign out
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </header>

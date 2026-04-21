@@ -57,7 +57,7 @@ export function LandingPage() {
       <TrustedBySection />
       <ModulesSection />
       <PersonasSection />
-      <TestimonialsSection />
+      {/* <TestimonialsSection /> */}
 
       {/* ── Featured Briefs ── */}
       <section className="py-24 bg-bg-elevated">
