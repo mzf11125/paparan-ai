@@ -11,6 +11,9 @@ coverage
 out/
 build
 
+# Build output (Vite)
+dist/
+
 # Production
 *.log
 
