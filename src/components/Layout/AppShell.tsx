@@ -10,6 +10,7 @@ import { cn } from '@/utils/formatters'
 import { useAppStore } from '@/contexts/AppContext'
 
 const navItems = [
+  { path: '/home', label: 'News Feed', icon: Newspaper },
   { path: '/briefs', label: 'Briefs Library', icon: FileText },
   { path: '/watchlist', label: 'My Watchlist', icon: Bookmark },
   { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
@@ -76,6 +77,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
               <span className="text-text-tertiary">Paparan</span>
               <span className="text-text-tertiary">/</span>
               <span className="font-medium text-text">
+                {location.pathname === '/home' && 'News Feed'}
                 {location.pathname === '/briefs' && 'Briefs Library'}
                 {location.pathname === '/watchlist' && 'My Watchlist'}
                 {location.pathname === '/dashboard' && 'Dashboard'}
@@ -192,21 +194,6 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
               )}
             >
               <nav className="p-4 space-y-1" aria-label="Main navigation">
-                <NavLink
-                  to="/"
-                  className={({ isActive }) =>
-                    cn(
-                      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                      isActive
-                        ? 'bg-primary-light text-primary'
-                        : 'text-text-secondary hover:bg-bg-surface hover:text-text'
-                    )
-                  }
-                >
-                  <Home className="w-5 h-5 flex-shrink-0" />
-                  {!sidebarCollapsed && <span>Home</span>}
-                </NavLink>
-
                 {navItems.map((item) => (
                   <NavLink
                     key={item.path}
