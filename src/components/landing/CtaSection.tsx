@@ -18,10 +18,10 @@ export function CtaSection() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full opacity-20 blur-3xl pointer-events-none" style={{ background: 'radial-gradient(ellipse, #3b82f6, transparent)' }} aria-hidden="true" />
 
       <div className="relative z-10 max-w-3xl mx-auto px-4 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 border border-white/20 text-white/70 text-xs font-semibold uppercase tracking-[0.2em] rounded-full mb-8">
+        {/* <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 border border-white/20 text-white/70 text-xs font-semibold uppercase tracking-[0.2em] rounded-full mb-8">
           <Shield className="w-3.5 h-3.5" aria-hidden="true" />
           Get Started
-        </div>
+        </div> */}
         <h2 className="text-3xl lg:text-5xl font-display font-bold text-white mb-5 text-balance" style={{ lineHeight: '1.15' }}>
           Ready to Transform Your Policy Intelligence?
         </h2>

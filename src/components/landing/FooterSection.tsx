@@ -7,7 +7,7 @@ export function FooterSection() {
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-1">
-            <Logo variant="wordmark" size="md" />
+            <Logo variant="wordmark" size="md" color="inverted" />
             <p className="mt-4 text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.35)' }}>
               AI-powered policy intelligence for government affairs, regulatory, and public sector teams across ASEAN.
             </p>
@@ -16,15 +16,29 @@ export function FooterSection() {
           {[
             {
               heading: 'Platform',
-              links: ['Monitor', 'Research', 'Brief', 'Workspace'],
+              links: [
+                { label: 'Monitor', to: '/briefs' },
+                { label: 'Research', to: '/briefs' },
+                { label: 'Brief', to: '/editor' },
+                { label: 'Workspace', to: '/dashboard' },
+              ],
             },
             {
               heading: 'Solutions',
-              links: ['Government Relations', 'Regulatory Affairs', 'Public Affairs'],
+              links: [
+                { label: 'Government Relations', to: '/briefs' },
+                { label: 'Regulatory Affairs', to: '/briefs' },
+                { label: 'Public Affairs', to: '/briefs' },
+              ],
             },
             {
               heading: 'Company',
-              links: ['About', 'Security', 'Resources', 'Contact'],
+              links: [
+                { label: 'About', to: '/settings' },
+                { label: 'Security', to: '/settings' },
+                { label: 'Resources', to: '/briefs' },
+                { label: 'Contact', to: '/settings' },
+              ],
             },
           ].map(({ heading, links }) => (
             <div key={heading}>
@@ -32,16 +46,16 @@ export function FooterSection() {
                 {heading}
               </div>
               <ul className="space-y-2.5">
-                {links.map((link) => (
-                  <li key={link}>
+                {links.map(({ label, to }) => (
+                  <li key={label}>
                     <Link
-                      to="#"
+                      to={to}
                       className="text-sm transition-colors duration-200"
                       style={{ color: 'rgba(255,255,255,0.45)' }}
                       onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.8)')}
                       onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255,255,255,0.45)')}
                     >
-                      {link}
+                      {label}
                     </Link>
                   </li>
                 ))}

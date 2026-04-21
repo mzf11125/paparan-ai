@@ -51,11 +51,10 @@ export function PersonasSection() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {PERSONAS.map(({ title, image, imageAlt, points }, i) => (
+          {PERSONAS.map(({ title, image, imageAlt, points }) => (
             <div
               key={title}
-              className="reveal-on-scroll group rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-              style={{ transitionDelay: `${i * 100}ms` }}
+              className="group rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
               <div className="relative h-48 overflow-hidden">
                 <img

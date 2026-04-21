@@ -15,21 +15,26 @@ export function LandingPage() {
   const featuredBriefs = mockBriefs.slice(0, 3)
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-white">
       <a href="#main-content" className="skip-link">Skip to main content</a>
 
       {/* ── Navigation ── */}
       <nav className="border-b border-white/10 sticky top-0 z-50 backdrop-blur-md" style={{ background: 'rgba(10,22,40,0.95)' }}>
         <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" aria-label="Paparan Brief home">
-            <Logo variant="wordmark" size="md" />
+            <Logo variant="wordmark" size="md" color="inverted" />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
-            {['Monitor', 'Research', 'Brief', 'Workspace'].map((item) => (
-              <span key={item} className="text-white/65 hover:text-white transition-colors duration-200 text-sm font-medium cursor-pointer">
-                {item}
-              </span>
+            {[
+              { label: 'Monitor', to: '/briefs' },
+              { label: 'Research', to: '/briefs' },
+              { label: 'Brief', to: '/editor' },
+              { label: 'Dashboard', to: '/dashboard' },
+            ].map(({ label, to }) => (
+              <Link key={label} to={to} className="text-white/65 hover:text-white transition-colors duration-200 text-sm font-medium">
+                {label}
+              </Link>
             ))}
           </div>
 
