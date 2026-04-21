@@ -37,7 +37,7 @@ const variantClasses = {
   warning: 'bg-amber-light text-amber border border-amber/30',
   danger: 'bg-red-light text-red border border-red/30',
   info: 'bg-blue-light text-blue border border-blue/30',
-  subtle: 'bg-gray-100 text-text-secondary border border-gray-200',
+  subtle: 'bg-bg-surface text-text-secondary border border-border',
   outline: 'bg-transparent border border-border-strong text-text',
   accent: 'bg-accent text-white border border-accent',
 } as const
@@ -150,7 +150,7 @@ const dotColors = {
   amber: 'bg-amber',
   red: 'bg-red',
   blue: 'bg-blue',
-  gray: 'bg-gray-400',
+  gray: 'bg-text-tertiary',
 }
 
 export function DotBadge({ color = 'gray', pulse = false, className = '' }: DotBadgeProps) {

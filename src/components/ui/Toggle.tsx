@@ -17,7 +17,7 @@ export const Toggle: React.FC<ToggleProps> = ({ checked, onChange, label, ariaLa
     >
       <div
         className={`relative w-11 h-6 rounded-full transition-colors duration-200 ${
-          checked ? "bg-accent" : "bg-gray-300"
+          checked ? "bg-accent" : "bg-border-strong"
         }`}
       >
         <span

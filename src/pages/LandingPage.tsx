@@ -15,7 +15,7 @@ export function LandingPage() {
   const featuredBriefs = mockBriefs.slice(0, 3)
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <a href="#main-content" className="skip-link">Skip to main content</a>
 
       {/* ── Navigation ── */}
@@ -44,7 +44,7 @@ export function LandingPage() {
             </Link>
             <Link
               to="/briefs"
-              className="inline-flex items-center gap-2 px-5 py-2 bg-white rounded-lg font-semibold text-sm transition-all duration-200 hover:bg-blue-50 hover:-translate-y-0.5 shadow-sm cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2 bg-bg-elevated text-text rounded-lg font-semibold text-sm transition-all duration-200 hover:bg-bg-surface hover:-translate-y-0.5 shadow-sm cursor-pointer border border-border"
               style={{ color: '#0F2744' }}
             >
               Request a Demo
@@ -60,17 +60,17 @@ export function LandingPage() {
       <TestimonialsSection />
 
       {/* ── Featured Briefs ── */}
-      <section className="py-24 bg-white">
+      <section className="py-24 bg-bg-elevated">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="flex items-center justify-between mb-12">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-3" style={{ background: '#EFF6FF', color: '#0369A1' }}>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-3 bg-primary-light text-primary">
                 Latest Intelligence
               </div>
-              <h2 className="text-3xl font-display font-bold text-gray-900 mb-1">Featured Policy Briefs</h2>
-              <p className="text-gray-500">Latest developments from across the region</p>
+              <h2 className="text-3xl font-display font-bold text-text mb-1">Featured Policy Briefs</h2>
+              <p className="text-text-secondary">Latest developments from across the region</p>
             </div>
-            <Link to="/briefs" className="hidden sm:inline-flex items-center gap-2 font-medium text-sm transition-colors duration-200 cursor-pointer" style={{ color: '#0369A1' }}>
+            <Link to="/briefs" className="hidden sm:inline-flex items-center gap-2 font-medium text-sm transition-colors duration-200 cursor-pointer text-primary hover:text-primary-dark">
               View all briefs <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
           </div>
@@ -83,7 +83,7 @@ export function LandingPage() {
       </section>
 
       {/* ── Stats ── */}
-      <section className="py-16 border-t border-gray-100" style={{ background: '#F8FAFC' }}>
+      <section className="py-16 border-t border-border bg-bg-surface">
         <div className="max-w-7xl mx-auto px-4 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {[

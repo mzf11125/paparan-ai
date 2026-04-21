@@ -219,7 +219,7 @@ export function BarChart({
               <span className="text-sm text-text-secondary w-20 text-right flex-shrink-0">
                 {item.label}
               </span>
-              <div className="flex-1 h-6 bg-gray-100 rounded-lg overflow-hidden">
+              <div className="flex-1 h-6 bg-bg-surface rounded-lg overflow-hidden">
                 <div
                   className="h-full rounded-lg transition-all duration-500 ease-out"
                   style={{ width: `${percentage}%`, backgroundColor: color }}
@@ -248,7 +248,7 @@ export function BarChart({
             {showValues && (
               <span className="text-xs font-medium text-text">{item.value}</span>
             )}
-            <div className="w-full bg-gray-100 rounded-t-lg overflow-hidden" style={{ height: `${percentage}%` }}>
+            <div className="w-full bg-bg-surface rounded-t-lg overflow-hidden" style={{ height: `${percentage}%` }}>
               <div
                 className="w-full h-full rounded-t-lg transition-all duration-500 ease-out"
                 style={{ backgroundColor: color }}

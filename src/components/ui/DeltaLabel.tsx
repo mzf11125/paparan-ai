@@ -42,7 +42,7 @@ const deltaConfig = {
 const impactConfig = {
   HIGH: { label: 'HIGH', color: 'text-red-700' },
   MEDIUM: { label: 'MED', color: 'text-amber-700' },
-  LOW: { label: 'LOW', color: 'text-gray-600' },
+  LOW: { label: 'LOW', color: 'text-text-tertiary' },
 } as const
 
 export const DeltaLabel: React.FC<DeltaLabelProps> = ({

@@ -20,7 +20,7 @@ export const DevelopmentsList: React.FC<DevelopmentsListProps> = ({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-5 pb-4 border-b border-gray-200 lg:hidden">
+      <div className="flex items-center justify-between mb-5 pb-4 border-b border-border lg:hidden">
         <span className="text-sm text-text font-semibold uppercase tracking-wider font-ui">Filter</span>
         <FilterButtons currentFilter={filter} onFilterChange={onFilterChange} counts={{ all: developments.length, high: highCount }} />
       </div>
@@ -33,7 +33,7 @@ export const DevelopmentsList: React.FC<DevelopmentsListProps> = ({
             className={`development-item p-5 rounded-xl border transition-all duration-200 ${
               dev.impact === "HIGH"
                 ? "border-delta-escalated/30 bg-delta-escalated-light/50"
-                : "border-gray-200 bg-gray-50/50"
+                : "border-border bg-bg-surface"
             }`}
           >
             <div className="flex items-start justify-between gap-4 mb-3">
@@ -46,7 +46,7 @@ export const DevelopmentsList: React.FC<DevelopmentsListProps> = ({
             {dev.entities && dev.entities.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {dev.entities.map((entity, i) => (
-                  <span key={i} className="inline-flex px-2.5 py-1 text-xs font-medium font-ui bg-white border border-gray-200 text-text-secondary rounded-md">
+                  <span key={i} className="inline-flex px-2.5 py-1 text-xs font-medium font-ui bg-bg-elevated border border-border text-text-secondary rounded-md">
                     {entity}
                   </span>
                 ))}

@@ -41,10 +41,10 @@ function ModuleCard({ icon: Icon, name, tagline, description, image, imageAlt, i
   return (
     <div
       ref={ref}
-      className="reveal-on-scroll group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+      className="reveal-on-scroll group bg-bg-elevated border border-border rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
       style={{ transitionDelay: `${index * 80}ms` }}
     >
-      <div className="relative h-44 overflow-hidden bg-gray-50">
+      <div className="relative h-44 overflow-hidden bg-bg-surface">
         <img
           src={image}
           alt={imageAlt}
@@ -53,15 +53,15 @@ function ModuleCard({ icon: Icon, name, tagline, description, image, imageAlt, i
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.9) 100%)' }} aria-hidden="true" />
-        <div className="absolute top-4 left-4 w-10 h-10 rounded-lg flex items-center justify-center shadow-md" style={{ background: '#0F2744' }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent 50%, rgba(15,39,68,0.9) 100%)' }} aria-hidden="true" />
+        <div className="absolute top-4 left-4 w-10 h-10 rounded-lg flex items-center justify-center shadow-md bg-navy">
           <Icon className="w-5 h-5 text-white" aria-hidden="true" />
         </div>
       </div>
       <div className="p-6">
-        <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: '#0369A1' }}>{name}</div>
-        <h3 className="text-base font-semibold text-gray-900 mb-2 leading-snug font-display">{tagline}</h3>
-        <p className="text-gray-500 text-sm leading-relaxed">{description}</p>
+        <div className="text-xs font-bold uppercase tracking-widest mb-1 text-primary">{name}</div>
+        <h3 className="text-base font-semibold text-text mb-2 leading-snug font-display">{tagline}</h3>
+        <p className="text-text-secondary text-sm leading-relaxed">{description}</p>
       </div>
     </div>
   )
@@ -69,16 +69,16 @@ function ModuleCard({ icon: Icon, name, tagline, description, image, imageAlt, i
 
 export function ModulesSection() {
   return (
-    <section className="py-24 bg-gray-50">
+    <section className="py-24 bg-bg-surface">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-4" style={{ background: '#EFF6FF', color: '#0369A1' }}>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-4 bg-primary-light text-primary">
             The Platform
           </div>
-          <h2 className="text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-4 text-balance">
+          <h2 className="text-3xl lg:text-4xl font-display font-bold text-text mb-4 text-balance">
             Four Modules. One Workflow.
           </h2>
-          <p className="text-lg text-gray-500 max-w-xl mx-auto">
+          <p className="text-lg text-text-secondary max-w-xl mx-auto">
             From raw policy signal to decision-ready work product — without the manual effort.
           </p>
         </div>

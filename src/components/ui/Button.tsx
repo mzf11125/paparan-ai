@@ -114,7 +114,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       return (
         <div className="group relative inline-block">
           {button}
-          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-900 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-navy-dark rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
             {tooltip}
           </span>
         </div>

@@ -96,7 +96,7 @@ export const Tabs = ({
           'relative',
           variant === 'underline' && 'border-b border-border',
           variant === 'pill' && 'gap-2',
-          variant === 'segmented' && 'bg-gray-100 p-1 rounded-radius-lg gap-1',
+          variant === 'segmented' && 'bg-bg-surface p-1 rounded-radius-lg gap-1',
           containerStyles[orientation]
         )}
         role="tablist"
@@ -235,7 +235,7 @@ export const VerticalTabs = ({
                 'whitespace-nowrap',
                 isActive
                   ? 'bg-accent/10 text-accent'
-                  : 'text-text-tertiary hover:text-text hover:bg-gray-100',
+                  : 'text-text-tertiary hover:text-text hover:bg-bg-elevated',
                 tab.disabled && 'opacity-50 cursor-not-allowed'
               )}
               role="tab"

@@ -217,7 +217,7 @@ function EmptyState({ onRefresh, isRefreshing }: EmptyStateProps) {
   return (
     <div className="flex items-center justify-center py-20">
       <div className="text-center max-w-md">
-        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-20 h-20 bg-bg-surface rounded-full flex items-center justify-center mx-auto mb-6">
           <FileX className="w-10 h-10 text-text-tertiary" />
         </div>
         <h3 className="text-xl font-display font-semibold text-text mb-2">No Briefs Found</h3>
@@ -257,7 +257,7 @@ export function ViewModeToggle({ viewMode, onChange, className = '' }: ViewModeT
         onClick={() => onChange('grid')}
         className={cn(
           'p-2.5 transition-colors',
-          viewMode === 'grid' ? 'bg-accent text-white' : 'bg-white hover:bg-gray-50 text-text-tertiary'
+          viewMode === 'grid' ? 'bg-primary text-white' : 'bg-bg-elevated hover:bg-bg-surface text-text-tertiary'
         )}
         title="Grid view"
       >
@@ -267,7 +267,7 @@ export function ViewModeToggle({ viewMode, onChange, className = '' }: ViewModeT
         onClick={() => onChange('list')}
         className={cn(
           'p-2.5 transition-colors',
-          viewMode === 'list' ? 'bg-accent text-white' : 'bg-white hover:bg-gray-50 text-text-tertiary'
+          viewMode === 'list' ? 'bg-primary text-white' : 'bg-bg-elevated hover:bg-bg-surface text-text-tertiary'
         )}
         title="List view"
       >

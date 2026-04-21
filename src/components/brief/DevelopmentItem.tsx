@@ -21,7 +21,7 @@ export const DevelopmentItem: React.FC<DevelopmentItemProps> = ({
       className={`development-item p-5 rounded-xl border transition-all duration-200 ${
         isHighImpact
           ? 'border-delta-escalated/30 bg-delta-escalated-light/50 shadow-subtle'
-          : 'border-gray-200 bg-gray-50/50'
+          : 'border-border bg-bg-surface'
       } ${
         highlightMode && !isHighImpact
           ? 'opacity-40 scale-[0.98]'
@@ -61,7 +61,7 @@ export const DevelopmentItem: React.FC<DevelopmentItemProps> = ({
           {development.entities.map((entity, j) => (
             <span
               key={j}
-              className="inline-flex px-2.5 py-1 text-xs font-medium font-ui bg-white border border-gray-200 text-text-secondary rounded-md"
+              className="inline-flex px-2.5 py-1 text-xs font-medium font-ui bg-bg-elevated border border-border text-text-secondary rounded-md"
             >
               {entity}
             </span>

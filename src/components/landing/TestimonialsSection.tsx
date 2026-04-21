@@ -27,13 +27,13 @@ const TESTIMONIALS = [
 
 export function TestimonialsSection() {
   return (
-    <section className="py-24" style={{ background: '#F8FAFC' }}>
+    <section className="py-24 bg-bg-surface">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-4" style={{ background: '#EFF6FF', color: '#0369A1' }}>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-4 bg-primary-light text-primary">
             Customer Stories
           </div>
-          <h2 className="text-3xl lg:text-4xl font-display font-bold text-gray-900 text-balance">
+          <h2 className="text-3xl lg:text-4xl font-display font-bold text-text text-balance">
             Trusted by Policy Professionals
           </h2>
         </div>
@@ -43,12 +43,12 @@ export function TestimonialsSection() {
             <div
               key={name}
               ref={useScrollReveal()}
-              className="reveal-on-scroll bg-white rounded-2xl p-7 border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col"
-              style={{ borderTop: '3px solid #0369A1', transitionDelay: `${i * 100}ms` }}
+              className="reveal-on-scroll bg-bg-elevated rounded-2xl p-7 border border-border shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col"
+              style={{ borderTop: '3px solid #60a5fa', transitionDelay: `${i * 100}ms` }}
             >
-              <Quote className="w-7 h-7 mb-4 shrink-0" style={{ color: '#BFDBFE' }} aria-hidden="true" />
-              <p className="text-gray-600 text-sm leading-relaxed font-serif italic flex-1">"{quote}"</p>
-              <div className="mt-6 pt-5 border-t border-gray-100 flex items-center gap-3">
+              <Quote className="w-7 h-7 mb-4 shrink-0 text-primary-light" aria-hidden="true" />
+              <p className="text-text-secondary text-sm leading-relaxed font-serif italic flex-1">"{quote}"</p>
+              <div className="mt-6 pt-5 border-t border-border flex items-center gap-3">
                 <img
                   src={avatar}
                   alt={`Portrait of ${name}`}
@@ -58,8 +58,8 @@ export function TestimonialsSection() {
                   className="w-10 h-10 rounded-full object-cover shrink-0"
                 />
                 <div>
-                  <div className="font-semibold text-gray-900 text-sm">{name}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{title} · {org}</div>
+                  <div className="font-semibold text-text text-sm">{name}</div>
+                  <div className="text-xs text-text-tertiary mt-0.5">{title} · {org}</div>
                 </div>
               </div>
             </div>

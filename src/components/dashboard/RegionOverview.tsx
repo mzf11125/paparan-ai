@@ -136,7 +136,7 @@ export function RegionOverview({
                       )}
                     </div>
                   </div>
-                  <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden group">
+                  <div className="relative h-2 bg-bg-surface rounded-full overflow-hidden group">
                     <div
                       className="h-full rounded-full transition-all duration-500 ease-out relative"
                       style={{
@@ -152,7 +152,7 @@ export function RegionOverview({
                     </div>
                     {/* Tooltip */}
                     {isHovered && (
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap animate-fade-in">
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-navy-dark text-white text-xs rounded whitespace-nowrap animate-fade-in">
                         {Math.round(percentage)}% of total
                       </div>
                     )}
@@ -173,7 +173,7 @@ export function RegionOverview({
                 <Link
                   key={region.region}
                   to={`/briefs?region=${encodeURIComponent(region.region)}`}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors group"
+                  className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-bg-surface transition-colors group"
                 >
                   <div className="flex items-center gap-3">
                     <span
@@ -232,7 +232,7 @@ export function RegionOverview({
 
       {/* Legend */}
       {viewMode === 'progress' && (
-        <div className="px-6 py-3 border-t border-border bg-gray-50/50">
+        <div className="px-6 py-3 border-t border-border bg-bg-surface/50">
           <div className="flex flex-wrap items-center gap-4 text-xs text-text-tertiary">
             <span className="font-medium">Categories:</span>
             {Object.entries(defaultRegionColors).map(([name, color]) => (

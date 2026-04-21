@@ -27,7 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside className="w-60 shrink-0 hidden lg:block no-print">
       <div className="sticky top-20 space-y-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="bg-bg-elevated border border-border rounded-lg p-4">
           <div className="flex items-center gap-2 text-text font-semibold mb-4">
             <Filter className="w-4 h-4 text-accent" />
             <span className="text-sm uppercase tracking-wider font-ui">Filter</span>
@@ -37,7 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <label className="text-xs text-text-secondary uppercase tracking-wide mb-2 block font-ui">Developments</label>
               <FilterButtons currentFilter={filter} onFilterChange={onFilterChange} counts={counts} />
             </div>
-            <div className="pt-4 border-t border-gray-200">
+            <div className="pt-4 border-t border-border">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-text-secondary uppercase tracking-wide font-ui">Highlight Mode</span>
                 <Toggle checked={highlightMode} onChange={onToggleHighlight} ariaLabel="Toggle highlight mode for high impact items" />
@@ -49,7 +49,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        <nav className="bg-white border border-gray-200 rounded-lg p-4" aria-label="Document sections">
+        <nav className="bg-bg-elevated border border-border rounded-lg p-4" aria-label="Document sections">
           <div className="flex items-center gap-2 text-text font-semibold mb-4">
             <span className="text-sm uppercase tracking-wider font-ui">Sections</span>
           </div>
@@ -58,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <li key={section.id}>
                 <button
                   onClick={() => scrollToSection(section.id)}
-                  className="w-full text-left px-3 py-2 text-sm text-text-secondary hover:text-text hover:bg-gray-50 rounded-lg transition-colors flex items-center gap-2 font-ui"
+                  className="w-full text-left px-3 py-2 text-sm text-text-secondary hover:text-text hover:bg-bg-surface rounded-lg transition-colors flex items-center gap-2 font-ui"
                 >
                   <span className="w-1 h-1 rounded-full bg-accent/50" />
                   <span className="truncate">{section.title}</span>
@@ -68,7 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </ul>
         </nav>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <div className="bg-bg-elevated border border-border rounded-lg p-4">
           <div className="flex items-center gap-2 text-text font-semibold mb-3">
             <span className="text-sm uppercase tracking-wider font-ui">Archive</span>
           </div>

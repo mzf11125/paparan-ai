@@ -1,26 +1,19 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import {
-  FileText,
-  BarChart3,
-  PlusCircle,
-  Settings,
-  Menu,
-  X,
-  Bell,
-  ChevronDown,
-  Home,
-  Shield,
-  Bookmark,
+  FileText, BarChart3, PlusCircle, Settings, Menu, X,
+  Bell, ChevronDown, Home, Shield, Bookmark, Newspaper, Sun, Moon,
 } from 'lucide-react'
 import { Logo } from '@/components/Brand/Logo'
 import { RegionQuickSwitcherCompact } from './RegionQuickSwitcher'
 import { cn } from '@/utils/formatters'
+import { useAppStore } from '@/contexts/AppContext'
 
 const navItems = [
+  { path: '/home', label: 'News Feed', icon: Newspaper },
   { path: '/briefs', label: 'Briefs Library', icon: FileText },
   { path: '/watchlist', label: 'My Watchlist', icon: Bookmark },
-  { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+  { path: '/dashboard', label: 'Analytics', icon: BarChart3 },
   { path: '/editor', label: 'Create Brief', icon: PlusCircle },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
@@ -33,6 +26,7 @@ interface AppShellProps {
 export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const { theme, setTheme } = useAppStore()
   const location = useLocation()
 
   // Close mobile sidebar on route change
@@ -57,10 +51,10 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
       {/* Top Navigation Bar — Official Style */}
       <header className="sticky top-0 z-[60] bg-bg-elevated/95 backdrop-blur-md border-b border-border shadow-sm transition-shadow duration-200">
         {/* Classification Banner */}
-        <div className="classification-banner classification-banner-unclassified py-1">
+        {/* <div className="classification-banner classification-banner-unclassified py-1">
           <Shield className="w-3 h-3" />
           <span>Unclassified — For Public Release</span>
-        </div>
+        </div> */}
 
         <div className="flex items-center justify-between px-4 lg:px-6 h-14">
           {/* Left: Logo and Mobile Menu */}
@@ -82,9 +76,10 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
               <span className="text-text-tertiary">Paparan</span>
               <span className="text-text-tertiary">/</span>
               <span className="font-medium text-text">
+                {location.pathname === '/home' && 'News Feed'}
                 {location.pathname === '/briefs' && 'Briefs Library'}
                 {location.pathname === '/watchlist' && 'My Watchlist'}
-                {location.pathname === '/dashboard' && 'Analytics Dashboard'}
+                {location.pathname === '/dashboard' && 'Analytics'}
                 {location.pathname === '/editor' && 'Brief Editor'}
                 {location.pathname === '/settings' && 'Settings'}
               </span>
@@ -98,6 +93,18 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
 
           {/* Right: Actions */}
           <div className="flex items-center gap-2">
+            {/* Theme toggle */}
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="p-2 rounded-lg hover:bg-bg-surface transition-colors"
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark'
+                ? <Sun className="w-5 h-5 text-text-secondary" />
+                : <Moon className="w-5 h-5 text-text-secondary" />
+              }
+            </button>
+
             <button
               className="p-2 rounded-lg hover:bg-bg-surface transition-colors relative"
               aria-label="Notifications"
@@ -215,7 +222,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
         <footer className="border-t border-border-strong bg-bg-elevated py-6 mt-auto">
           {/* Official Footer Bar */}
           <div className="max-w-6xl mx-auto px-4 lg:px-8">
-            <div className="official-footer !py-0">
+            {/* <div className="official-footer !py-0">
               <div className="flex items-center gap-3">
                 <Logo variant="icon" size="sm" color="monochrome" />
                 <span className="text-text-tertiary">
@@ -225,7 +232,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
               <div className="text-text-tertiary">
                 Last Updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </div>
-            </div>
+            </div> */}
 
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 mt-4 border-t border-border">
               <div className="flex items-center gap-6 text-sm text-text-secondary">

@@ -15,15 +15,15 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ paparan }) => {
     switch (impact) {
       case "HIGH": return "bg-delta-escalated";
       case "MEDIUM": return "bg-amber-500";
-      default: return "bg-gray-400";
+      default: return "bg-text-tertiary";
     }
   };
 
   return (
     <aside className="w-72 shrink-0 hidden xl:block no-print">
       <div className="sticky top-20 space-y-6">
-        <div className="bg-white border border-gray-200 rounded-lg p-5">
-          <h3 className="font-display text-lg text-text font-semibold mb-4 pb-3 border-b border-gray-200 flex items-center gap-2">
+        <div className="bg-bg-elevated border border-border rounded-lg p-5">
+          <h3 className="font-display text-lg text-text font-semibold mb-4 pb-3 border-b border-border flex items-center gap-2">
             <FileText className="w-4 h-4 text-accent" />
             Quick Stats
           </h3>
@@ -50,14 +50,14 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ paparan }) => {
               </span>
               <span className="font-semibold text-delta-deescalated">{opportunityCount}</span>
             </div>
-            <div className="flex justify-between items-center pt-3 border-t border-gray-200">
+            <div className="flex justify-between items-center pt-3 border-t border-border">
               <span className="text-sm text-text-secondary font-ui">Priority Actions</span>
               <span className="font-semibold text-accent">{actionCount}</span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-5">
+        <div className="bg-bg-elevated border border-border rounded-lg p-5">
           <h3 className="font-display text-sm text-text font-semibold mb-4 uppercase tracking-wider">Document Details</h3>
           <div className="space-y-4">
             <div>
@@ -77,7 +77,7 @@ export const ContextPanel: React.FC<ContextPanelProps> = ({ paparan }) => {
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-5">
+        <div className="bg-bg-elevated border border-border rounded-lg p-5">
           <h3 className="font-display text-sm text-text font-semibold mb-4 uppercase tracking-wider">Recent Timeline</h3>
           <div className="space-y-4">
             {paparan.developments.slice(0, 4).map((dev, i) => (

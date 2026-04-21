@@ -77,10 +77,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             type={inputType}
             className={cn(
-              'w-full border rounded-radius-lg transition-all duration-200',
+              'w-full border rounded-radius-lg transition-all duration-200 bg-background text-text',
               'focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent',
               'placeholder:text-text-tertiary',
-              'disabled:bg-gray-50 disabled:cursor-not-allowed',
+              'disabled:bg-bg-surface disabled:cursor-not-allowed',
               sizeStyles[size],
               LeftIcon && 'pl-10',
               (RightIcon || type === 'password' || hasError || hasSuccess) && 'pr-10',
@@ -171,10 +171,10 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           className={cn(
-            'w-full border rounded-radius-lg transition-all duration-200',
+            'w-full border rounded-radius-lg transition-all duration-200 bg-background text-text',
             'focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent',
             'placeholder:text-text-tertiary',
-            'disabled:bg-gray-50 disabled:cursor-not-allowed',
+            'disabled:bg-bg-surface disabled:cursor-not-allowed',
             sizeStyles[size],
             hasError
               ? 'border-red focus:ring-red/50'

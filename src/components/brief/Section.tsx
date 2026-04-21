@@ -12,7 +12,7 @@ export const Section: React.FC<SectionProps> = ({ id, title, children, defaultEx
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 
   return (
-    <section id={id} className="py-8 border-b border-gray-200 last:border-b-0">
+    <section id={id} className="py-8 border-b border-border last:border-b-0">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded-lg"

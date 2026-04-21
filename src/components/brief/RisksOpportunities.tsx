@@ -14,7 +14,7 @@ export const RisksOpportunities: React.FC<RisksOpportunitiesProps> = ({ risks, o
           <h3 className="font-display text-lg">Risks</h3>
         </div>
         {risks.map((risk, i) => (
-          <article key={i} className="p-4 bg-white border border-delta-escalated/20 rounded-lg border-l-4 border-l-delta-escalated">
+          <article key={i} className="p-4 bg-bg-elevated border border-delta-escalated/20 rounded-lg border-l-4 border-l-delta-escalated">
             <p className="text-document-sm text-text font-body">{risk}</p>
           </article>
         ))}
@@ -26,7 +26,7 @@ export const RisksOpportunities: React.FC<RisksOpportunitiesProps> = ({ risks, o
           <h3 className="font-display text-lg">Opportunities</h3>
         </div>
         {opportunities.map((opportunity, i) => (
-          <article key={i} className="p-4 bg-white border border-delta-deescalated/20 rounded-lg border-l-4 border-l-delta-deescalated">
+          <article key={i} className="p-4 bg-bg-elevated border border-delta-deescalated/20 rounded-lg border-l-4 border-l-delta-deescalated">
             <p className="text-document-sm text-text font-body">{opportunity}</p>
           </article>
         ))}

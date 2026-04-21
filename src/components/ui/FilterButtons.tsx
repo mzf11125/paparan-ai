@@ -14,7 +14,7 @@ export const FilterButtons: React.FC<FilterButtonsProps> = ({ currentFilter, onF
         className={`px-3 py-1.5 text-sm font-ui font-medium rounded-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
           currentFilter === "all"
             ? "bg-accent text-white"
-            : "bg-white border border-gray-200 text-text-secondary hover:bg-gray-50"
+            : "bg-bg-elevated border border-border text-text-secondary hover:bg-bg-surface"
         }`}
         aria-pressed={currentFilter === "all"}
       >
@@ -25,7 +25,7 @@ export const FilterButtons: React.FC<FilterButtonsProps> = ({ currentFilter, onF
         className={`px-3 py-1.5 text-sm font-ui font-medium rounded-lg transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${
           currentFilter === "high"
             ? "bg-accent text-white"
-            : "bg-white border border-gray-200 text-text-secondary hover:bg-gray-50"
+            : "bg-bg-elevated border border-border text-text-secondary hover:bg-bg-surface"
         }`}
         aria-pressed={currentFilter === "high"}
       >

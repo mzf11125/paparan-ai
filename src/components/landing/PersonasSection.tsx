@@ -36,16 +36,16 @@ const PERSONAS = [
 
 export function PersonasSection() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-bg-elevated">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-4" style={{ background: '#EFF6FF', color: '#0369A1' }}>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-4 bg-primary-light text-primary">
             Solutions
           </div>
-          <h2 className="text-3xl lg:text-4xl font-display font-bold text-gray-900 mb-4 text-balance">
+          <h2 className="text-3xl lg:text-4xl font-display font-bold text-text mb-4 text-balance">
             Built for Your Team
           </h2>
-          <p className="text-lg text-gray-500 max-w-xl mx-auto">
+          <p className="text-lg text-text-secondary max-w-xl mx-auto">
             Whether you're managing client relationships, navigating regulation, or shaping public narratives — Paparan fits your workflow.
           </p>
         </div>
@@ -54,7 +54,7 @@ export function PersonasSection() {
           {PERSONAS.map(({ title, image, imageAlt, points }) => (
             <div
               key={title}
-              className="group rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              className="group rounded-2xl overflow-hidden border border-border hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
               <div className="relative h-48 overflow-hidden">
                 <img
@@ -68,19 +68,18 @@ export function PersonasSection() {
                 <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(15,39,68,0.3) 0%, rgba(15,39,68,0.7) 100%)' }} aria-hidden="true" />
                 <h3 className="absolute bottom-4 left-5 text-lg font-bold text-white font-display">{title}</h3>
               </div>
-              <div className="p-6 bg-white">
+              <div className="p-6 bg-bg-surface">
                 <ul className="space-y-3 mb-6">
                   {points.map((point) => (
-                    <li key={point} className="flex items-start gap-2.5 text-sm text-gray-600">
-                      <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#0369A1' }} aria-hidden="true" />
+                    <li key={point} className="flex items-start gap-2.5 text-sm text-text-secondary">
+                      <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0 text-primary" aria-hidden="true" />
                       {point}
                     </li>
                   ))}
                 </ul>
                 <Link
                   to="/briefs"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200 cursor-pointer"
-                  style={{ color: '#0369A1' }}
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200 cursor-pointer text-primary hover:text-primary-dark"
                 >
                   Learn more <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </Link>

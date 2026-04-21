@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import { AppShell } from '@/components/Layout/AppShell'
 import { LandingPage } from '@/pages/LandingPage'
 import { BriefsLibraryPage } from '@/pages/BriefsLibraryPage'
@@ -8,11 +9,13 @@ import { AnalyticsDashboardPage } from '@/pages/AnalyticsDashboardPage'
 import { BriefEditorPage } from '@/pages/BriefEditorPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { WatchlistPage } from '@/pages/WatchlistPage'
+import { NewsFeedPage } from '@/pages/NewsFeedPage'
 import { useCommandPalette } from '@/components/ui/CommandPalette'
 import { CommandPalette } from '@/components/ui/CommandPalette'
 import { Toaster } from '@/components/ui/Toast'
 import { initializeBriefStore } from '@/services/briefService'
 import { mockBriefs } from '@/data/mockBriefs'
+import { useAppStore } from '@/contexts/AppContext'
 
 // Initialize store with mock data
 initializeBriefStore(mockBriefs)
@@ -29,6 +32,11 @@ const queryClient = new QueryClient({
 
 function AppRoutes() {
   const commandPalette = useCommandPalette()
+  const theme = useAppStore(s => s.theme)
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+  }, [theme])
 
   return (
     <>
@@ -39,6 +47,7 @@ function AppRoutes() {
           <Route path="briefs" element={<BriefsLibraryPage />} />
           <Route path="briefs/:id" element={<BriefDetailPage />} />
           <Route path="watchlist" element={<WatchlistPage />} />
+          <Route path="home" element={<NewsFeedPage />} />
           <Route path="dashboard" element={<AnalyticsDashboardPage />} />
           <Route path="editor" element={<BriefEditorPage />} />
           <Route path="editor/:id" element={<BriefEditorPage />} />

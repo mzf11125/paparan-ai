@@ -8,7 +8,7 @@ export const ActionsList: React.FC<ActionsListProps> = ({ actions }) => {
   const priorityConfig = {
     HIGH: { variant: "bg-delta-escalated/20 text-delta-escalated border-delta-escalated/30", label: "HIGH" },
     MEDIUM: { variant: "bg-amber-100 text-amber-700 border-amber-200", label: "MED" },
-    LOW: { variant: "bg-gray-100 text-gray-700 border-gray-200", label: "LOW" },
+    LOW: { variant: "bg-bg-surface text-text-tertiary border-border", label: "LOW" },
   } as const;
 
   return (

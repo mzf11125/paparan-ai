@@ -117,7 +117,7 @@ export function RecentActivityFeed({
 
       {/* Filters */}
       {showFilters && (
-        <div className="px-6 py-3 border-b border-border bg-gray-50/50">
+        <div className="px-6 py-3 border-b border-border bg-bg-surface/50">
           <div className="flex items-center gap-2 overflow-x-auto">
             <Filter className="w-4 h-4 text-text-tertiary flex-shrink-0" />
             <div className="flex gap-1">
@@ -145,7 +145,7 @@ export function RecentActivityFeed({
       <div className="divide-y divide-border">
         {Object.keys(groupedActivities).length === 0 ? (
           <div className="px-6 py-12 text-center">
-            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 bg-bg-surface rounded-full flex items-center justify-center mx-auto mb-3">
               <Clock className="w-6 h-6 text-text-tertiary" />
             </div>
             <p className="text-text-tertiary">No recent activity</p>
@@ -156,7 +156,7 @@ export function RecentActivityFeed({
             .map((group) => (
               <div key={group}>
                 {/* Group Header */}
-                <div className="px-6 py-2 bg-gray-50/80 border-b border-border">
+                <div className="px-6 py-2 bg-bg-surface/80 border-b border-border">
                   <span className="text-xs font-semibold text-text-tertiary uppercase tracking-wide">
                     {group}
                   </span>
@@ -194,8 +194,8 @@ function FilterButton({ active, onClick, children }: FilterButtonProps) {
       className={cn(
         'px-3 py-1.5 text-sm font-medium rounded-radius-lg transition-colors whitespace-nowrap',
         active
-          ? 'bg-accent text-white'
-          : 'text-text-tertiary hover:text-text hover:bg-gray-200'
+          ? 'bg-primary text-white'
+          : 'text-text-tertiary hover:text-text hover:bg-bg-surface'
       )}
     >
       {children}
@@ -218,8 +218,8 @@ function ActivityItem({ activity, onClick, getActivityIcon, getActivityLabel }: 
     <div
       className={cn(
         'px-6 py-4 transition-all duration-200 cursor-pointer group relative',
-        'hover:bg-gray-50',
-        !activity.read && 'bg-blue-light/30 hover:bg-blue-light/50'
+        'hover:bg-bg-surface',
+        !activity.read && 'bg-primary-light/20 hover:bg-primary-light/30'
       )}
       onClick={onClick}
       onMouseEnter={() => setShowActions(true)}
@@ -233,7 +233,7 @@ function ActivityItem({ activity, onClick, getActivityIcon, getActivityLabel }: 
       <div className="flex items-start gap-3 pl-2">
         <div className={cn(
           'p-2 rounded-lg flex-shrink-0 transition-colors',
-          !activity.read ? 'bg-white shadow-sm' : 'bg-gray-100'
+          !activity.read ? 'bg-bg-elevated shadow-sm' : 'bg-bg-surface'
         )}>
           {getActivityIcon(activity.type)}
         </div>
@@ -275,7 +275,7 @@ function ActivityItem({ activity, onClick, getActivityIcon, getActivityLabel }: 
           showActions ? 'opacity-100' : 'opacity-0'
         )}>
           <button
-            className="p-1.5 hover:bg-gray-200 rounded transition-colors"
+            className="p-1.5 hover:bg-bg-surface rounded transition-colors"
             title="More options"
           >
             <MoreHorizontal className="w-4 h-4 text-text-tertiary" />

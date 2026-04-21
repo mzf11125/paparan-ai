@@ -146,19 +146,19 @@ export function CommandPalette({ isOpen, onClose, briefs = [] }: CommandPaletteP
       />
 
       {/* Command Palette */}
-      <div className="relative w-full max-w-xl bg-white rounded-xl shadow-2xl overflow-hidden">
+      <div className="relative w-full max-w-xl bg-bg-elevated rounded-xl shadow-2xl overflow-hidden border border-border">
         {/* Search Input */}
-        <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-200">
-          <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
+        <div className="flex items-center gap-3 px-4 py-4 border-b border-border">
+          <Search className="w-5 h-5 text-text-tertiary flex-shrink-0" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a command or search..."
-            className="flex-1 bg-transparent border-0 outline-none text-gray-900 placeholder:text-gray-400"
+            className="flex-1 bg-transparent border-0 outline-none text-text placeholder:text-text-tertiary"
           />
-          <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-gray-400 bg-gray-100 rounded">
+          <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-text-tertiary bg-bg-surface rounded">
             ESC
           </kbd>
         </div>
@@ -169,13 +169,13 @@ export function CommandPalette({ isOpen, onClose, briefs = [] }: CommandPaletteP
           className="max-h-80 overflow-y-auto py-2"
         >
           {filteredCommands.length === 0 ? (
-            <div className="px-4 py-8 text-center text-gray-500">
+            <div className="px-4 py-8 text-center text-text-secondary">
               No results found
             </div>
           ) : (
             <>
               {query && briefCommands.filter((c) => filteredCommands.includes(c)).length > 0 && (
-                <div className="px-4 py-2 text-xs text-gray-500 uppercase tracking-wider">
+                <div className="px-4 py-2 text-xs text-text-tertiary uppercase tracking-wider">
                   Briefs
                 </div>
               )}
@@ -190,13 +190,13 @@ export function CommandPalette({ isOpen, onClose, briefs = [] }: CommandPaletteP
                     onClick={command.action}
                     className={cn(
                       'w-full flex items-center gap-3 px-4 py-3 text-left transition-colors',
-                      isSelected ? 'bg-[#C8A96A]/10' : 'hover:bg-gray-50'
+                      isSelected ? 'bg-primary-light text-primary' : 'hover:bg-bg-surface'
                     )}
                   >
-                    {Icon && <Icon className="w-5 h-5 text-gray-400 flex-shrink-0" />}
-                    <span className="flex-1 text-gray-900">{command.label}</span>
+                    {Icon && <Icon className="w-5 h-5 text-text-tertiary flex-shrink-0" />}
+                    <span className="flex-1 text-text">{command.label}</span>
                     {isBrief && (
-                      <span className="text-xs text-gray-400">Brief</span>
+                      <span className="text-xs text-text-tertiary">Brief</span>
                     )}
                   </button>
                 )
@@ -206,20 +206,20 @@ export function CommandPalette({ isOpen, onClose, briefs = [] }: CommandPaletteP
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between text-xs text-gray-500">
+        <div className="px-4 py-3 border-t border-border flex items-center justify-between text-xs text-text-tertiary">
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 bg-gray-100 rounded">↑↓</kbd>
+              <kbd className="px-1.5 py-0.5 bg-bg-surface rounded">↑↓</kbd>
               Navigate
             </span>
             <span className="flex items-center gap-1">
-              <kbd className="px-1.5 py-0.5 bg-gray-100 rounded">↵</kbd>
+              <kbd className="px-1.5 py-0.5 bg-bg-surface rounded">↵</kbd>
               Select
             </span>
           </div>
           <button
             onClick={onClose}
-            className="flex items-center gap-1 hover:text-gray-700"
+            className="flex items-center gap-1 hover:text-text"
           >
             <X className="w-4 h-4" />
             Close

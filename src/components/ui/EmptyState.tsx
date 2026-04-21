@@ -22,16 +22,16 @@ export function EmptyState({
   return (
     <div className={cn('flex flex-col items-center justify-center py-16 px-4', className)}>
       {Icon && (
-        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-          <Icon className="w-8 h-8 text-gray-400" />
+        <div className="w-16 h-16 bg-bg-surface rounded-full flex items-center justify-center mb-4">
+          <Icon className="w-8 h-8 text-text-tertiary" />
         </div>
       )}
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
-      {description && <p className="text-gray-600 text-center max-w-md mb-6">{description}</p>}
+      <h3 className="text-lg font-semibold text-text mb-2">{title}</h3>
+      {description && <p className="text-text-secondary text-center max-w-md mb-6">{description}</p>}
       {action && (
         <button
           onClick={action.onClick}
-          className="px-6 py-2 bg-[#C8A96A] hover:bg-[#A88B4A] text-white rounded-lg font-medium transition-colors"
+          className="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-medium transition-colors"
         >
           {action.label}
         </button>
@@ -45,7 +45,7 @@ export function EmptyBriefs({ onCreate }: { onCreate?: () => void }) {
   return (
     <EmptyState
       icon={() => (
-        <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-8 h-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -65,7 +65,7 @@ export function EmptySearch({ onClear }: { onClear: () => void }) {
   return (
     <EmptyState
       icon={() => (
-        <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-8 h-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -85,7 +85,7 @@ export function EmptyFilters({ onReset }: { onReset: () => void }) {
   return (
     <EmptyState
       icon={() => (
-        <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-8 h-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
