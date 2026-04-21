@@ -10,10 +10,9 @@ import { cn } from '@/utils/formatters'
 import { useAppStore } from '@/contexts/AppContext'
 
 const navItems = [
-  { path: '/home', label: 'News Feed', icon: Newspaper },
   { path: '/briefs', label: 'Briefs Library', icon: FileText },
   { path: '/watchlist', label: 'My Watchlist', icon: Bookmark },
-  { path: '/dashboard', label: 'Analytics', icon: BarChart3 },
+  { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
   { path: '/editor', label: 'Create Brief', icon: PlusCircle },
   { path: '/settings', label: 'Settings', icon: Settings },
 ]
@@ -77,10 +76,9 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
               <span className="text-text-tertiary">Paparan</span>
               <span className="text-text-tertiary">/</span>
               <span className="font-medium text-text">
-                {location.pathname === '/home' && 'News Feed'}
                 {location.pathname === '/briefs' && 'Briefs Library'}
                 {location.pathname === '/watchlist' && 'My Watchlist'}
-                {location.pathname === '/dashboard' && 'Analytics'}
+                {location.pathname === '/dashboard' && 'Dashboard'}
                 {location.pathname === '/editor' && 'Brief Editor'}
                 {location.pathname === '/settings' && 'Settings'}
               </span>

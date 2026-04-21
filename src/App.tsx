@@ -9,7 +9,6 @@ import { AnalyticsDashboardPage } from '@/pages/AnalyticsDashboardPage'
 import { BriefEditorPage } from '@/pages/BriefEditorPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { WatchlistPage } from '@/pages/WatchlistPage'
-import { NewsFeedPage } from '@/pages/NewsFeedPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { useCommandPalette } from '@/components/ui/CommandPalette'
 import { CommandPalette } from '@/components/ui/CommandPalette'
@@ -87,14 +86,6 @@ function AppRoutes() {
             element={
               <ProtectedRoute>
                 <WatchlistPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="home"
-            element={
-              <ProtectedRoute>
-                <NewsFeedPage />
               </ProtectedRoute>
             }
           />
