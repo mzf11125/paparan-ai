@@ -7,7 +7,6 @@ import { HeroSection } from '@/components/landing/HeroSection'
 import { TrustedBySection } from '@/components/landing/TrustedBySection'
 import { ModulesSection } from '@/components/landing/ModulesSection'
 import { PersonasSection } from '@/components/landing/PersonasSection'
-import { TestimonialsSection } from '@/components/landing/TestimonialsSection'
 import { CtaSection } from '@/components/landing/CtaSection'
 import { FooterSection } from '@/components/landing/FooterSection'
 

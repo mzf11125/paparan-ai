@@ -17,7 +17,7 @@ export interface AuthState {
   logout: () => void
 }
 
-const ALLOWED_EMAIL = 'mzidanfatonie@gmail.com'
+const ALLOWED_EMAIL = import.meta.env.VITE_ALLOWED_EMAIL || 'mzidanfatonie@gmail.com'
 
 export interface BriefFilters {
   region?: string

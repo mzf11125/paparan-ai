@@ -2,7 +2,7 @@ import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import {
   FileText, BarChart3, PlusCircle, Settings, Menu, X,
-  Bell, ChevronDown, Home, Shield, Bookmark, Newspaper, Sun, Moon, LogOut,
+  Bell, ChevronDown, Bookmark, Newspaper, Sun, Moon, LogOut,
 } from 'lucide-react'
 import { Logo } from '@/components/Brand/Logo'
 import { RegionQuickSwitcherCompact } from './RegionQuickSwitcher'

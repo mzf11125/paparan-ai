@@ -31,9 +31,6 @@ const queryClient = new QueryClient({
   }
 })
 
-// Routes that don't require authentication
-const publicRoutes = ['/', '/login']
-
 // Protected route wrapper component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAppStore()
