@@ -11,6 +11,7 @@ import { SettingsPage } from '@/pages/SettingsPage'
 import { WatchlistPage } from '@/pages/WatchlistPage'
 import { NewsFeedPage } from '@/pages/NewsFeedPage'
 import { LoginPage } from '@/pages/LoginPage'
+import { ChatPage } from '@/pages/ChatPage'
 import { useCommandPalette } from '@/components/ui/CommandPalette'
 import { CommandPalette } from '@/components/ui/CommandPalette'
 import { Toaster } from '@/components/ui/Toast'
@@ -124,6 +125,14 @@ function AppRoutes() {
             element={
               <ProtectedRoute>
                 <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="chat"
+            element={
+              <ProtectedRoute>
+                <ChatPage />
               </ProtectedRoute>
             }
           />

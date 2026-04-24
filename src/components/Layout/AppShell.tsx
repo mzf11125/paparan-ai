@@ -2,7 +2,7 @@ import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import {
   FileText, BarChart3, PlusCircle, Settings, Menu, X,
-  Bell, ChevronDown, Bookmark, Newspaper, Sun, Moon, LogOut,
+  Bell, ChevronDown, Bookmark, Newspaper, Sun, Moon, LogOut, MessageSquare,
 } from 'lucide-react'
 import { Logo } from '@/components/Brand/Logo'
 import { RegionQuickSwitcherCompact } from './RegionQuickSwitcher'
@@ -12,6 +12,7 @@ import { useAppStore } from '@/contexts/AppContext'
 const navItems = [
   { path: '/home', label: 'News Feed', icon: Newspaper },
   { path: '/briefs', label: 'Briefs Library', icon: FileText },
+  { path: '/chat', label: 'Chat', icon: MessageSquare },
   { path: '/watchlist', label: 'My Watchlist', icon: Bookmark },
   { path: '/dashboard', label: 'Dashboard', icon: BarChart3 },
   { path: '/editor', label: 'Create Brief', icon: PlusCircle },
