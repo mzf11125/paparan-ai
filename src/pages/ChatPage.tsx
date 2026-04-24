@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
 import { Send, Bot, User, Loader2 } from 'lucide-react'
-import { SourceTooltip } from '@/components/ui/SourceTooltip'
 
 interface Message {
   role: 'user' | 'assistant'
