@@ -130,6 +130,26 @@ Each source must include `url`, `title`, `snippet` for citation display (uses ex
 
 ---
 
+## Phase 2b — Conversational Tab (P0)
+
+**Goal:** Allow users to ask questions about news sources, briefs, and policy details in a chat interface — powered by the Python RAG backend.
+
+- **New page:** `src/pages/ChatPage.tsx`
+  - Chat message list with streaming token display (SSE)
+  - Input box with send button
+  - Source citations rendered inline using existing `SourceTooltip` component
+  - Conversation history persisted per user via LangMem thread
+- **Route:** `/chat` added to `src/routes/index.tsx`
+- **Sidebar:** "Chat" nav item added to `src/components/Layout/Sidebar.tsx`
+- **API:** Calls `POST /api/chat` on the Python backend (streaming SSE)
+- **Use cases:**
+  - "What did OJK announce about crypto regulation this week?"
+  - "Summarise the latest ASEAN trade developments"
+  - "What are the sources behind this brief?"
+  - Questions about uploaded documents
+
+---
+
 ## Phase 3 — Real-Time Intelligence Feed (P1)
 
 **Goal:** Replace mock news feed with live ASEAN policy intelligence.
