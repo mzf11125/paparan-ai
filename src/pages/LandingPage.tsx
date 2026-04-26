@@ -10,6 +10,51 @@ import { PersonasSection } from '@/components/landing/PersonasSection'
 import { CtaSection } from '@/components/landing/CtaSection'
 import { FooterSection } from '@/components/landing/FooterSection'
 
+const NEWS_SOURCES = [
+  // Gov / Multilateral
+  'parliament.gov.my', 'parliament.gov.sg', 'dpr.go.id', 'bi.go.id',
+  'asean.org', 'worldbank.org', 'imf.org', 'congress.gov.ph', 'quochoi.vn',
+  // Tier 1 news
+  'reuters.com', 'apnews.com', 'bloomberg.com', 'ft.com',
+  // Indonesia
+  'antaranews.com', 'kontan.co.id', 'bisnis.com', 'ojk.go.id',
+  // Islamic / Web3
+  'salaamgateway.com', 'coindesk.com', 'theblock.co',
+]
+
+function NewsSourcesCarousel() {
+  const doubled = [...NEWS_SOURCES, ...NEWS_SOURCES]
+  return (
+    <div
+      className="relative"
+      style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)' }}
+    >
+      <div
+        className="flex gap-8 items-center marquee-sources motion-safe:[animation-play-state:running]"
+        style={{ animation: 'marquee-sources 35s linear infinite', width: 'max-content' }}
+      >
+        {doubled.map((source, i) => (
+          <span
+            key={i}
+            className="text-sm font-medium text-text-secondary hover:text-text transition-colors whitespace-nowrap cursor-default px-3 py-1.5 rounded-md border border-border bg-bg-elevated"
+          >
+            {source}
+          </span>
+        ))}
+      </div>
+      <style>{`
+        @keyframes marquee-sources {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .marquee-sources { animation: none; }
+        }
+      `}</style>
+    </div>
+  )
+}
+
 export function LandingPage() {
   const featuredBriefs = mockBriefs.slice(0, 3)
 
@@ -82,22 +127,14 @@ export function LandingPage() {
       </section>
 
       {/* ── Stats ── */}
-      <section className="py-16 border-t border-border bg-bg-surface">
-        <div className="max-w-7xl mx-auto px-4 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { value: '500+', label: 'Indexed Sources' },
-              { value: '140+', label: 'Markets Covered' },
-              { value: '10M+', label: 'Documents Indexed' },
-              { value: '24/7', label: 'Live Monitoring' },
-            ].map(({ value, label }) => (
-              <div key={label} className="stats-card-official">
-                <div className="stats-value">{value}</div>
-                <div className="stats-label">{label}</div>
-              </div>
-            ))}
-          </div>
+      {/* ── News Sources Carousel ── */}
+      <section className="py-10 border-t border-border bg-bg-surface overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 mb-6">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.25em] text-text-tertiary">
+            Intelligence sourced from
+          </p>
         </div>
+        <NewsSourcesCarousel />
       </section>
 
       <CtaSection />
