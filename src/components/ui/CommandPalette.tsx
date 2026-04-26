@@ -155,8 +155,9 @@ export function CommandPalette({ isOpen, onClose, briefs = [] }: CommandPaletteP
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Type a command or search..."
-            className="flex-1 bg-transparent border-0 outline-none text-text placeholder:text-text-tertiary"
+            placeholder="Type a command or search…"
+            className="flex-1 bg-transparent border-0 outline-none focus-visible:outline-none text-text placeholder:text-text-tertiary"
+            spellCheck={false}
           />
           <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-text-tertiary bg-bg-surface rounded">
             ESC

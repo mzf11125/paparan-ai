@@ -29,7 +29,7 @@ export function TrustedBySection() {
         }}
       >
         <div
-          className="flex gap-12 items-center"
+          className="marquee-inner flex gap-12 items-center"
           style={{
             animation: 'marquee 30s linear infinite',
             width: 'max-content',
@@ -52,7 +52,7 @@ export function TrustedBySection() {
           to { transform: translateX(-50%); }
         }
         @media (prefers-reduced-motion: reduce) {
-          .marquee-track { animation: none; }
+          .marquee-inner { animation: none; }
         }
       `}</style>
     </section>

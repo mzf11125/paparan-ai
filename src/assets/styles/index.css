@@ -193,6 +193,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    color-scheme: light dark;
   }
 
   body {
@@ -326,7 +327,7 @@
 
   /* Smooth Transitions */
   .transition-smooth {
-    transition: all var(--transition-base) ease-out;
+    transition: color var(--transition-base) ease-out, background-color var(--transition-base) ease-out, border-color var(--transition-base) ease-out, box-shadow var(--transition-base) ease-out, opacity var(--transition-base) ease-out, transform var(--transition-base) ease-out;
   }
 
   /* ============================================
@@ -453,7 +454,7 @@
 .delta-badge {
   @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wide;
   font-family: var(--font-ui);
-  transition: all var(--transition-fast);
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .delta-badge-new {
@@ -485,7 +486,7 @@
    ============================================ */
 
 .highlight-mode .development-item {
-  transition: all var(--transition-base);
+  transition: opacity var(--transition-base), filter var(--transition-base), box-shadow var(--transition-base);
 
   &[data-impact="LOW"],
   &[data-impact="MEDIUM"] {
@@ -761,7 +762,7 @@
 
   .card-interactive {
     cursor: pointer;
-    transition: all var(--transition-base) var(--spring-default);
+    transition: box-shadow var(--transition-base) var(--spring-default), transform var(--transition-base) var(--spring-default);
   }
 
   .card-interactive:hover {
@@ -1260,6 +1261,15 @@
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  .stagger-list > * {
+    opacity: 1;
+    animation: none;
+  }
+  .animate-fade-in,
+  .animate-slide-in,
+  .animate-fade-out {
+    animation: none;
   }
 }
 

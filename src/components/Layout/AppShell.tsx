@@ -132,6 +132,8 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
                   <img
                     src={user.avatar}
                     alt={user.name}
+                    width={32}
+                    height={32}
                     className="w-8 h-8 rounded-full"
                   />
                 ) : (
@@ -189,7 +191,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
             {/* Sidebar */}
             <aside
               className={cn(
-                'fixed lg:sticky top-0 left-0 z-40 h-[calc(100vh-4rem)] bg-bg-elevated border-r border-border transition-transform duration-200 ease-in-out',
+                'fixed lg:sticky top-14 left-0 z-40 h-[calc(100vh-3.5rem)] bg-bg-elevated border-r border-border transition-transform duration-200 ease-in-out',
                 sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
                 sidebarCollapsed ? 'w-16' : 'w-64'
               )}
