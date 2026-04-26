@@ -12,14 +12,28 @@ import { FooterSection } from '@/components/landing/FooterSection'
 
 const NEWS_SOURCES = [
   // Gov / Multilateral
-  'parliament.gov.my', 'parliament.gov.sg', 'dpr.go.id', 'bi.go.id',
-  'asean.org', 'worldbank.org', 'imf.org', 'congress.gov.ph', 'quochoi.vn',
+  { name: 'Parliament Malaysia', domain: 'parliament.gov.my' },
+  { name: 'Parliament Singapore', domain: 'parliament.gov.sg' },
+  { name: 'DPR Indonesia', domain: 'dpr.go.id' },
+  { name: 'Bank Indonesia', domain: 'bi.go.id' },
+  { name: 'ASEAN', domain: 'asean.org' },
+  { name: 'World Bank', domain: 'worldbank.org' },
+  { name: 'IMF', domain: 'imf.org' },
+  { name: 'Congress Philippines', domain: 'congress.gov.ph' },
   // Tier 1 news
-  'reuters.com', 'apnews.com', 'bloomberg.com', 'ft.com',
+  { name: 'Reuters', domain: 'reuters.com' },
+  { name: 'AP News', domain: 'apnews.com' },
+  { name: 'Bloomberg', domain: 'bloomberg.com' },
+  { name: 'Financial Times', domain: 'ft.com' },
   // Indonesia
-  'antaranews.com', 'kontan.co.id', 'bisnis.com', 'ojk.go.id',
+  { name: 'Antara News', domain: 'antaranews.com' },
+  { name: 'Kontan', domain: 'kontan.co.id' },
+  { name: 'Bisnis', domain: 'bisnis.com' },
+  { name: 'OJK', domain: 'ojk.go.id' },
   // Islamic / Web3
-  'salaamgateway.com', 'coindesk.com', 'theblock.co',
+  { name: 'Salaam Gateway', domain: 'salaamgateway.com' },
+  { name: 'CoinDesk', domain: 'coindesk.com' },
+  { name: 'The Block', domain: 'theblock.co' },
 ]
 
 function NewsSourcesCarousel() {
@@ -30,16 +44,26 @@ function NewsSourcesCarousel() {
       style={{ maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)' }}
     >
       <div
-        className="flex gap-8 items-center marquee-sources motion-safe:[animation-play-state:running]"
-        style={{ animation: 'marquee-sources 35s linear infinite', width: 'max-content' }}
+        className="marquee-sources flex gap-6 items-center"
+        style={{ animation: 'marquee-sources 40s linear infinite', width: 'max-content' }}
       >
-        {doubled.map((source, i) => (
-          <span
+        {doubled.map(({ name, domain }, i) => (
+          <div
             key={i}
-            className="text-sm font-medium text-text-secondary hover:text-text transition-colors whitespace-nowrap cursor-default px-3 py-1.5 rounded-md border border-border bg-bg-elevated"
+            className="flex items-center gap-2.5 px-4 py-2 rounded-lg border border-border bg-bg-elevated whitespace-nowrap cursor-default hover:border-primary/40 transition-colors duration-200"
+            title={domain}
           >
-            {source}
-          </span>
+            <img
+              src={`https://logo.clearbit.com/${domain}`}
+              alt={name}
+              width={20}
+              height={20}
+              loading="lazy"
+              className="w-5 h-5 rounded-sm object-contain"
+              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+            />
+            <span className="text-sm font-medium text-text-secondary">{name}</span>
+          </div>
         ))}
       </div>
       <style>{`
