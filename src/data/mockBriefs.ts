@@ -1,8 +1,6 @@
 import { Paparan } from '@/types/paparan'
-import { samplePaparan } from './sampleBrief'
 
 export const mockBriefs: Paparan[] = [
-  samplePaparan,
   // APAC Region Briefs
   {
     id: 'brief-2026-04-15-chip-tech',

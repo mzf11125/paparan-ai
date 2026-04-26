@@ -25,13 +25,13 @@ export function HeroSection() {
       className="relative min-h-[92vh] flex flex-col items-center justify-center overflow-hidden"
       style={{ background: '#060d1a' }}
     >
-      {/* GIF background — dark futuristic data landscape */}
+      {/* Background — ASEAN parliament / government building aerial */}
       <img
-        src="https://media.giphy.com/media/sPD0WMaCidlM9E2Nl8/giphy.gif"
+        src="https://images.unsplash.com/photo-1555848962-6e79363ec58f?w=1920&q=80"
         alt=""
         aria-hidden="true"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-        style={{ opacity: 0.35, filter: 'saturate(0.6) hue-rotate(200deg) brightness(0.7)' }}
+        style={{ opacity: 0.35, filter: 'saturate(0.5) brightness(0.6)' }}
       />
 
       {/* Layered dark overlay — stronger at edges, lighter at center */}

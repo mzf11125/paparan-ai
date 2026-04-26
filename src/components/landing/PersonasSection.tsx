@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom'
 const PERSONAS = [
   {
     title: 'Government Relations',
+    // ASEAN parliament session / legislative chamber
     image: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&q=75',
-    imageAlt: 'Government building representing government relations work',
+    imageAlt: 'Legislative chamber representing government relations work',
     points: [
       'Prep clients fast with bill analysis and redlines',
       'Generate meeting briefs and hearing summaries',
@@ -14,8 +15,9 @@ const PERSONAS = [
   },
   {
     title: 'Regulatory Affairs',
+    // Regulatory compliance / law books
     image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&q=75',
-    imageAlt: 'Legal documents representing regulatory affairs',
+    imageAlt: 'Policy documents and regulatory paperwork',
     points: [
       'Automated 360° horizon scanning across jurisdictions',
       'Side-by-side regulatory comparisons and impact analysis',
@@ -24,8 +26,9 @@ const PERSONAS = [
   },
   {
     title: 'Public Affairs & Comms',
+    // Press conference / public statement
     image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&q=75',
-    imageAlt: 'Communications team in a meeting',
+    imageAlt: 'Public affairs team in a policy briefing',
     points: [
       'Turn policy signals into client-ready messaging briefs',
       'Build stakeholder maps and weekly issue updates',

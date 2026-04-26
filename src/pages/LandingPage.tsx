@@ -14,7 +14,7 @@ export function LandingPage() {
   const featuredBriefs = mockBriefs.slice(0, 3)
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <a href="#main-content" className="skip-link">Skip to main content</a>
 
       {/* ── Navigation ── */}

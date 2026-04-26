@@ -7,21 +7,21 @@ const TESTIMONIALS = [
     name: 'Ahmad Razif',
     title: 'Managing Director',
     org: 'Regional Policy Advisors',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&q=75',
+    initials: 'AR',
   },
   {
     quote: 'The research and monitoring tools have helped us stay up to speed on policy issues relevant to our mission — identifying key insights faster so we can focus on engaging partners.',
     name: 'Dr. Siti Norzahira',
     title: 'Head of Research',
     org: 'Institute for Strategic Studies',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=80&h=80&fit=crop&q=75',
+    initials: 'SN',
   },
   {
     quote: 'Paparan has reshaped how we track the evolving policy landscape. Our team can quickly understand what matters most and act with greater speed and confidence.',
     name: 'James Lim',
     title: 'Head of Global Public Policy',
     org: 'ASEAN Affairs Council',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&q=75',
+    initials: 'JL',
   },
 ]
 
@@ -39,7 +39,7 @@ export function TestimonialsSection() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map(({ quote, name, title, org, avatar }, i) => (
+          {TESTIMONIALS.map(({ quote, name, title, org, initials }, i) => (
             <div
               key={name}
               ref={useScrollReveal()}
@@ -49,14 +49,9 @@ export function TestimonialsSection() {
               <Quote className="w-7 h-7 mb-4 shrink-0 text-primary-light" aria-hidden="true" />
               <p className="text-text-secondary text-sm leading-relaxed font-serif italic flex-1">"{quote}"</p>
               <div className="mt-6 pt-5 border-t border-border flex items-center gap-3">
-                <img
-                  src={avatar}
-                  alt={`Portrait of ${name}`}
-                  width={40}
-                  height={40}
-                  loading="lazy"
-                  className="w-10 h-10 rounded-full object-cover shrink-0"
-                />
+                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
+                  <span className="text-xs font-bold text-white">{initials}</span>
+                </div>
                 <div>
                   <div className="font-semibold text-text text-sm">{name}</div>
                   <div className="text-xs text-text-tertiary mt-0.5">{title} · {org}</div>

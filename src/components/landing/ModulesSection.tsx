@@ -7,7 +7,8 @@ const MODULES = [
     name: 'Monitor',
     tagline: 'Catch policy signals before they become crises.',
     description: 'Real-time alerts on legislative and regulatory developments across ASEAN and 140+ global markets — with draft-ready insights attached.',
-    image: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&q=75',
+    // Data dashboard / analytics screen
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=75',
     imageAlt: 'Policy monitoring dashboard with real-time alerts',
   },
   {
@@ -15,7 +16,8 @@ const MODULES = [
     name: 'Research',
     tagline: 'Turn hours of research into minutes.',
     description: 'Search bills, hearings, rulemakings, and agency filings alongside expert analysis from think tanks and advocacy organisations.',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=75',
+    // Library / document archive
+    image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&q=75',
     imageAlt: 'Research interface showing document search results',
   },
   {
@@ -23,6 +25,7 @@ const MODULES = [
     name: 'Brief',
     tagline: 'Generate fully cited briefs in seconds.',
     description: 'Ask targeted questions or upload documents. Paparan produces executive-ready memos, issue analysis, and talking points — fully sourced.',
+    // Clean document / writing desk
     image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=600&q=75',
     imageAlt: 'AI-generated policy brief document',
   },
@@ -31,6 +34,7 @@ const MODULES = [
     name: 'Workspace',
     tagline: 'Deliver work product your team can use immediately.',
     description: 'Hearing summaries, side-by-side comparisons, stakeholder maps, and meeting prep — structured to match how your team actually works.',
+    // Organised workspace / productivity setup
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&q=75',
     imageAlt: 'Workspace dashboard with policy work products',
   },
