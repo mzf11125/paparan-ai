@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Paparan } from '@/types/paparan'
+import { supabase } from '@/lib/supabase'
 
 // Auth types
 export interface User {
@@ -13,11 +14,11 @@ export interface AuthState {
   user: User | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (email: string) => Promise<boolean>
-  logout: () => void
+  login: (email: string) => Promise<{ error?: string; magicLinkSent?: boolean }>
+  logout: () => Promise<void>
+  setUser: (user: User | null) => void
 }
 
-const ALLOWED_EMAIL = import.meta.env.VITE_ALLOWED_EMAIL
 
 export interface BriefFilters {
   region?: string
@@ -43,8 +44,9 @@ export interface AppStore {
   user: User | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (email: string) => Promise<boolean>
-  logout: () => void
+  login: (email: string) => Promise<{ error?: string; magicLinkSent?: boolean }>
+  logout: () => Promise<void>
+  setUser: (user: User | null) => void
 
   // Briefs data
   briefs: Paparan[]
@@ -93,25 +95,19 @@ export const useAppStore = create<AppStore>()(
       user: null,
       isAuthenticated: false,
       isLoading: false,
+      setUser: (user) => set({ user, isAuthenticated: !!user }),
       login: async (email: string) => {
         set({ isLoading: true })
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 800))
-
-        if (email.toLowerCase() === ALLOWED_EMAIL.toLowerCase()) {
-          const user: User = {
-            email: ALLOWED_EMAIL,
-            name: 'Zidan Fatonie',
-            avatar: 'https://ui-avatars.com/api/?name=ZF&background=1d4ed8&color=fff'
-          }
-          set({ user, isAuthenticated: true, isLoading: false })
-          return true
-        }
-
+        const { error } = await supabase.auth.signInWithOtp({
+          email,
+          options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        })
         set({ isLoading: false })
-        return false
+        if (error) return { error: error.message }
+        return { magicLinkSent: true }
       },
-      logout: () => {
+      logout: async () => {
+        await supabase.auth.signOut()
         set({ user: null, isAuthenticated: false })
       },
 

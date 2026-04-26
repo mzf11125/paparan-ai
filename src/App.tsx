@@ -11,6 +11,7 @@ import { SettingsPage } from '@/pages/SettingsPage'
 import { WatchlistPage } from '@/pages/WatchlistPage'
 import { NewsFeedPage } from '@/pages/NewsFeedPage'
 import { LoginPage } from '@/pages/LoginPage'
+import { AuthCallbackPage } from '@/pages/AuthCallbackPage'
 import { ChatPage } from '@/pages/ChatPage'
 import { useCommandPalette } from '@/components/ui/CommandPalette'
 import { CommandPalette } from '@/components/ui/CommandPalette'
@@ -57,6 +58,7 @@ function AppRoutes() {
       <Routes>
         {/* Public Login Route */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
         {/* Routes with AppShell */}
         <Route path="/" element={<AppShell />}>
