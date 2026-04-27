@@ -1,9 +1,7 @@
-from langchain.chat_models import init_chat_model
-from langchain.agents import create_agent
+from deepagents import create_deep_agent
 from langchain.tools import tool
 from app.db.vector_store import feed_retriever, document_retriever
-
-_model = init_chat_model("claude-sonnet-4-5", model_provider="anthropic")
+from app.llm import get_agent_model, get_agent_kwargs
 
 _SYSTEM = """You are Paparan, an ASEAN policy intelligence assistant.
 Answer questions about policy developments, news sources, regulatory changes, and uploaded documents.
@@ -34,8 +32,9 @@ def retrieve_document_context(query: str):
     return serialized, docs
 
 
-conv_agent = create_agent(
-    _model,
-    [retrieve_policy_context, retrieve_document_context],
+conv_agent = create_deep_agent(
+    model=get_agent_model(),
+    tools=[retrieve_policy_context, retrieve_document_context],
     system_prompt=_SYSTEM,
+    **get_agent_kwargs(),
 )

@@ -1,13 +1,13 @@
 import json
-from langchain.chat_models import init_chat_model
 from langchain.tools import tool
 from langchain_core.documents import Document
 from app.tools.tavily_tools import tavily_search
 from app.tools.supabase_tools import semantic_search
 from app.db.vector_store import feed_retriever
 from app.db.schema import PolicyBrief, Development, Source, Action
+from app.llm import get_chat_model
 
-_model = init_chat_model("claude-sonnet-4-5", model_provider="anthropic")
+_model = get_chat_model()
 
 BRIEF_SCHEMA = """Return ONLY valid JSON matching this schema:
 {

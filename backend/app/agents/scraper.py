@@ -58,6 +58,12 @@ def scrape_node(state: ScraperState) -> ScraperState:
                     "title": title, "summary": summary, "url": url,
                     "source": "tavily", "region": region, "topic_tags": query.split()[:3],
                 })
+                # Auto-archive to Wayback Machine (fire-and-forget)
+                try:
+                    from app.tools.bellingcat.archive_tools import archive_source
+                    archive_source.invoke({"url": url})
+                except Exception:
+                    pass
                 saved += 1
         except Exception:
             continue

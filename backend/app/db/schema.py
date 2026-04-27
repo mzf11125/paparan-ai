@@ -49,6 +49,17 @@ class PolicyBrief(BaseModel):
     sources: list[Source]
     tags: list[str] = []
     previous_report_id: str | None = None
+    # Intelligence enhancements
+    rpjmn_alignment: dict | None = None
+    urgency_score: float | None = None
+    source_count: int = 0
+    confidence_score: str = "MEDIUM"
+    diplomat_meta: dict | None = None
+    # Bellingcat / OSINT enrichment
+    spatial_context: dict | None = None
+    archived_sources: list | None = None
+    environmental_indicators: dict | None = None
+    conflict_context: dict | None = None
 
 
 class FeedItem(BaseModel):

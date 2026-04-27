@@ -13,6 +13,7 @@ import { NewsFeedPage } from '@/pages/NewsFeedPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { AuthCallbackPage } from '@/pages/AuthCallbackPage'
 import { ChatPage } from '@/pages/ChatPage'
+import { AseanDashboardPage } from '@/pages/AseanDashboardPage'
 import { useCommandPalette } from '@/components/ui/CommandPalette'
 import { CommandPalette } from '@/components/ui/CommandPalette'
 import { Toaster } from '@/components/ui/Toast'
@@ -20,28 +21,18 @@ import { initializeBriefStore } from '@/services/briefService'
 import { mockBriefs } from '@/data/mockBriefs'
 import { useAppStore } from '@/contexts/AppContext'
 
-// Initialize store with mock data
 initializeBriefStore(mockBriefs)
 
-// Create React Query client
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: 1
-    }
-  }
+  defaultOptions: { queries: { staleTime: 5 * 60 * 1000, retry: 1 } },
 })
 
-// Protected route wrapper component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAppStore()
   const location = useLocation()
-
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />
   }
-
   return <>{children}</>
 }
 
@@ -56,102 +47,32 @@ function AppRoutes() {
   return (
     <>
       <Routes>
-        {/* Public Login Route */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
-        {/* Routes with AppShell */}
         <Route path="/" element={<AppShell />}>
-          {/* Public routes */}
           <Route index element={<LandingPage />} />
 
-          {/* Protected routes */}
-          <Route
-            path="briefs"
-            element={
-              <ProtectedRoute>
-                <BriefsLibraryPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="briefs/:id"
-            element={
-              <ProtectedRoute>
-                <BriefDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="watchlist"
-            element={
-              <ProtectedRoute>
-                <WatchlistPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="home"
-            element={
-              <ProtectedRoute>
-                <NewsFeedPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="dashboard"
-            element={
-              <ProtectedRoute>
-                <AnalyticsDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="editor"
-            element={
-              <ProtectedRoute>
-                <BriefEditorPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="editor/:id"
-            element={
-              <ProtectedRoute>
-                <BriefEditorPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="settings"
-            element={
-              <ProtectedRoute>
-                <SettingsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="chat"
-            element={
-              <ProtectedRoute>
-                <ChatPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="briefs" element={<ProtectedRoute><BriefsLibraryPage /></ProtectedRoute>} />
+          <Route path="briefs/:id" element={<ProtectedRoute><BriefDetailPage /></ProtectedRoute>} />
+          <Route path="watchlist" element={<ProtectedRoute><WatchlistPage /></ProtectedRoute>} />
+          <Route path="home" element={<ProtectedRoute><NewsFeedPage /></ProtectedRoute>} />
+          <Route path="dashboard" element={<ProtectedRoute><AnalyticsDashboardPage /></ProtectedRoute>} />
+          <Route path="editor" element={<ProtectedRoute><BriefEditorPage /></ProtectedRoute>} />
+          <Route path="editor/:id" element={<ProtectedRoute><BriefEditorPage /></ProtectedRoute>} />
+          <Route path="settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+          <Route path="chat" element={<ProtectedRoute><ChatPage /></ProtectedRoute>} />
+          <Route path="asean" element={<ProtectedRoute><AseanDashboardPage /></ProtectedRoute>} />
         </Route>
 
-        {/* 404 redirect */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
-      {/* Global Command Palette */}
       <CommandPalette
         isOpen={commandPalette.isOpen}
         onClose={commandPalette.close}
         briefs={mockBriefs}
       />
-
-      {/* Global Toast Notifications */}
       <Toaster />
     </>
   )

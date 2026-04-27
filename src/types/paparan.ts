@@ -45,6 +45,13 @@ export interface Paparan {
   actions: Action[];
   sources: Source[];
   tags?: string[];
+  // Intelligence enhancements
+  rpjmn_alignment?: Record<string, Record<string, number>> | null;
+  urgency_score?: number | null;
+  source_count?: number;
+  confidence_score?: string;
+  diplomat_meta?: Record<string, unknown> | null;
+  previous_report_id?: string | null;
 }
 
 export type FilterType = "all" | "high";

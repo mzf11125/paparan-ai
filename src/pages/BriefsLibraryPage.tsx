@@ -1,12 +1,13 @@
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Grid3x3, List, Filter, FileText } from 'lucide-react'
+import { Grid3x3, List, Filter, FileText, Layers, X, Loader2 } from 'lucide-react'
 import { BriefGrid, BriefGridSkeleton } from '@/components/brief/BriefGrid'
 import { AdvancedSearch, SavedSearchesList } from '@/components/ui/AdvancedSearch'
 import { RegionQuickSwitcher } from '@/components/Layout/RegionQuickSwitcher'
 import { briefService, initializeBriefStore } from '@/services/briefService'
 import { mockBriefs } from '@/data/mockBriefs'
 import { useAppStore, useFilteredBriefs } from '@/contexts/AppContext'
+import { exportService } from '@/services/exportService'
 import { cn } from '@/utils/formatters'
 
 // Initialize store with mock data
@@ -25,6 +26,9 @@ export function BriefsLibraryPage() {
   const filteredBriefs = useFilteredBriefs()
   const [sortBy, setSortBy] = useState('date-desc')
   const [showSavedSearches, setShowSavedSearches] = useState(false)
+  const [selectedIds] = useState<Set<string>>(new Set())
+  const [synthesisResult, setSynthesisResult] = useState<Record<string, unknown> | null>(null)
+  const [synthesizing, setSynthesizing] = useState(false)
 
   const { data: allBriefs = [], isLoading } = useQuery({
     queryKey: ['briefs', 'all'],
@@ -55,6 +59,17 @@ export function BriefsLibraryPage() {
 
   const handleClearFilters = () => {
     clearFilters()
+  }
+
+  const handleSynthesize = async () => {
+    if (selectedIds.size < 2) return
+    setSynthesizing(true)
+    try {
+      const result = await exportService.synthesize(Array.from(selectedIds))
+      setSynthesisResult(result)
+    } finally {
+      setSynthesizing(false)
+    }
   }
 
   return (
@@ -157,7 +172,56 @@ export function BriefsLibraryPage() {
             <p className="text-sm text-text-secondary">
               Showing <span className="tabular-nums font-semibold text-text">{sortedBriefs.length}</span> of <span className="tabular-nums">{allBriefs.length}</span> briefs
             </p>
+            {selectedIds.size >= 2 && (
+              <button
+                onClick={handleSynthesize}
+                disabled={synthesizing}
+                className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg text-sm font-medium hover:bg-accent-dark transition-colors disabled:opacity-50"
+              >
+                {synthesizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Layers className="w-4 h-4" />}
+                Synthesize {selectedIds.size} Briefs
+              </button>
+            )}
           </div>
+
+          {/* Synthesis result modal */}
+          {synthesisResult && (
+            <div className="bg-bg-elevated border border-accent/30 rounded-lg p-5 relative">
+              <button onClick={() => setSynthesisResult(null)}
+                className="absolute top-3 right-3 p-1 hover:bg-bg-surface rounded">
+                <X className="w-4 h-4 text-text-tertiary" />
+              </button>
+              <h3 className="font-semibold text-text mb-3 flex items-center gap-2">
+                <Layers className="w-4 h-4 text-accent" /> Cross-Brief Synthesis
+              </h3>
+              <div className="grid md:grid-cols-2 gap-4 text-sm">
+                {[
+                  { key: 'common_themes', label: 'Common Themes', color: 'text-primary' },
+                  { key: 'diverging_signals', label: 'Diverging Signals', color: 'text-amber' },
+                  { key: 'recommended_focus', label: 'Recommended Focus', color: 'text-green' },
+                ].map(({ key, label, color }) => {
+                  const items = (synthesisResult[key] as string[]) || []
+                  return items.length > 0 ? (
+                    <div key={key}>
+                      <p className={cn('text-xs font-bold uppercase tracking-wider mb-1.5', color)}>{label}</p>
+                      <ul className="space-y-1">
+                        {items.map((item, i) => <li key={i} className="text-text-secondary">• {item}</li>)}
+                      </ul>
+                    </div>
+                  ) : null
+                })}
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider mb-1.5 text-red">Aggregate Risk</p>
+                  <span className={cn('px-2 py-0.5 text-xs font-bold rounded uppercase',
+                    synthesisResult.aggregate_risk === 'HIGH' ? 'bg-red/20 text-red' :
+                    synthesisResult.aggregate_risk === 'MEDIUM' ? 'bg-amber/20 text-amber' : 'bg-green/20 text-green')}>
+                    {synthesisResult.aggregate_risk as string}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <BriefGrid briefs={sortedBriefs} viewMode={viewMode} />
         </>
       )}

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Send, Bot, User, Loader2 } from 'lucide-react'
+import { apiClient } from '@/services/api'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -29,9 +30,13 @@ export function ChatPage() {
     setMessages(prev => [...prev, { role: 'assistant', content: '' }])
 
     try {
+      const token = await apiClient.getToken()
       const res = await fetch(`${API_URL}/api/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ message: text }),
       })
 

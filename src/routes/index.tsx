@@ -7,6 +7,7 @@ const BriefDetailPage = lazy(() => import('@/pages/BriefDetailPage').then(m => (
 const AnalyticsDashboardPage = lazy(() => import('@/pages/AnalyticsDashboardPage').then(m => ({ default: m.AnalyticsDashboardPage })))
 const BriefEditorPage = lazy(() => import('@/pages/BriefEditorPage').then(m => ({ default: m.BriefEditorPage })))
 const SettingsPage = lazy(() => import('@/pages/SettingsPage').then(m => ({ default: m.SettingsPage })))
+const AseanDashboardPage = lazy(() => import('@/pages/AseanDashboardPage').then(m => ({ default: m.AseanDashboardPage })))
 
 export interface RouteConfig {
   path: string
@@ -86,6 +87,16 @@ export const routes: RouteConfig[] = [
       description: 'Manage your preferences',
       showInNav: true,
       icon: 'Settings'
+    }
+  },
+  {
+    path: '/asean',
+    element: <AseanDashboardPage />,
+    meta: {
+      title: 'ASEAN Intelligence',
+      description: 'RDTII tracking, policy simulation, and knowledge graph',
+      showInNav: true,
+      icon: 'Globe'
     }
   }
 ]

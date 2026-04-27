@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Save, Eye, ArrowLeft, Plus, Trash2, Check, FileEdit } from 'lucide-react'
+import { Save, Eye, ArrowLeft, Plus, Trash2, Check, FileEdit, Sparkles, Loader2 } from 'lucide-react'
 import { briefService, initializeBriefStore } from '@/services/briefService'
 import { mockBriefs } from '@/data/mockBriefs'
 import { Paparan, Development } from '@/types/paparan'
 import { ClassificationBadge } from '@/components/ui/ClassificationBadge'
 import { cn } from '@/utils/formatters'
 
-// Initialize store with mock data
 initializeBriefStore(mockBriefs)
+
+const REGIONS = ['ASEAN', 'Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Philippines', 'Vietnam', 'Myanmar', 'Global']
 
 export function BriefEditorPage() {
   const { id } = useParams<{ id: string }>()
@@ -19,6 +20,9 @@ export function BriefEditorPage() {
 
   const [previewMode, setPreviewMode] = useState(false)
   const [autoSaveStatus, setAutoSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved')
+  const [aiTopic, setAiTopic] = useState('')
+  const [aiGenerating, setAiGenerating] = useState(false)
+  const [aiError, setAiError] = useState('')
 
   // Form state
   const [formData, setFormData] = useState<Partial<Paparan>>({
@@ -80,6 +84,26 @@ export function BriefEditorPage() {
   const handleSave = () => {
     setAutoSaveStatus('saving')
     saveMutation.mutate(formData)
+  }
+
+  const handleGenerateWithAI = async () => {
+    const topic = aiTopic.trim() || formData.title || ''
+    if (!topic) { setAiError('Enter a topic to generate a brief.'); return }
+    setAiGenerating(true)
+    setAiError('')
+    try {
+      const generated = await briefService.generateBrief(
+        topic,
+        formData.region || 'ASEAN',
+        formData.classification || 'unclassified'
+      )
+      setFormData(generated)
+      setAutoSaveStatus('unsaved')
+    } catch (e: any) {
+      setAiError(e.message?.includes('fetch') ? 'Backend unavailable. Start the API server.' : (e.message || 'Generation failed'))
+    } finally {
+      setAiGenerating(false)
+    }
   }
 
   const updateField = (field: keyof Paparan, value: any) => {
@@ -250,6 +274,53 @@ export function BriefEditorPage() {
       {/* Form */}
       <div className="bg-bg-elevated border border-border rounded-lg">
         <div className="p-6 space-y-8">
+
+          {/* AI Generation Panel */}
+          {!isEditing && (
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <h2 className="text-sm font-semibold text-primary uppercase tracking-wider font-ui">Generate with AI</h2>
+              </div>
+              <p className="text-xs text-text-secondary mb-3">
+                Enter a policy topic and let the AI agents research and generate a full brief automatically.
+              </p>
+              <div className="flex gap-2">
+                <input
+                  value={aiTopic}
+                  onChange={e => setAiTopic(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleGenerateWithAI()}
+                  placeholder={`e.g., "ASEAN digital trade agreement 2026" or "OJK crypto regulation Indonesia"`}
+                  className="flex-1 px-3 py-2 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary text-text"
+                  disabled={aiGenerating}
+                />
+                <select
+                  value={formData.region || 'ASEAN'}
+                  onChange={e => updateField('region', e.target.value)}
+                  className="px-3 py-2 text-sm border border-border rounded-lg bg-background focus:outline-none focus:border-primary text-text"
+                  disabled={aiGenerating}
+                >
+                  {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+                <button
+                  onClick={handleGenerateWithAI}
+                  disabled={aiGenerating}
+                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 font-medium whitespace-nowrap"
+                >
+                  {aiGenerating
+                    ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating…</>
+                    : <><Sparkles className="w-4 h-4" /> Generate</>}
+                </button>
+              </div>
+              {aiError && <p className="mt-2 text-xs text-red">{aiError}</p>}
+              {aiGenerating && (
+                <p className="mt-2 text-xs text-text-tertiary animate-pulse">
+                  Running agents: scraping sources → researching → scoring RPJMN alignment → enriching spatial context…
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Basic Info */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -292,11 +363,7 @@ export function BriefEditorPage() {
                   className="w-full px-4 py-2.5 bg-background border border-border rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 font-ui text-text transition-colors"
                 >
                   <option value="">Select region</option>
-                  <option value="APAC">APAC</option>
-                  <option value="EMEA">EMEA</option>
-                  <option value="Americas">Americas</option>
-                  <option value="ASEAN">ASEAN</option>
-                  <option value="Global">Global</option>
+                  {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </div>
 
