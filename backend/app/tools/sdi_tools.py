@@ -1,43 +1,11 @@
 """SDI (Satu Data Indonesia) reference lookup tools."""
 import httpx
-import re
 from typing import Optional
 from langchain.tools import tool
 from langchain_core.documents import Document
 from app.db.client import get_client
-from app.db.vector_store import get_sdi_indicator_store, get_sdi_retriever
+from app.db.vector_store import sdi_indicator_store, sdi_retriever
 from app.config import settings
-
-
-# Input validation patterns to prevent injection
-VALID_KL_CODE_PATTERN = re.compile(r'^\d{3}$')
-VALID_SECTOR_CODE_PATTERN = re.compile(r'^\d{2}$')
-VALID_INDICATOR_ID_PATTERN = re.compile(r'^[A-Za-z0-9\.\-]+$')
-SAFE_TEXT_PATTERN = re.compile(r'^[\w\s\.\-,\(\)\']+$')
-
-
-def validate_kl_code(kl_code: str) -> bool:
-    """Validate KL code format (3 digits)."""
-    return bool(VALID_KL_CODE_PATTERN.match(kl_code))
-
-
-def validate_sector_code(sector_code: str) -> bool:
-    """Validate sector code format (2 digits)."""
-    return bool(VALID_SECTOR_CODE_PATTERN.match(sector_code))
-
-
-def validate_indicator_id(indicator_id: str) -> bool:
-    """Validate indicator ID format."""
-    return bool(VALID_INDICATOR_ID_PATTERN.match(indicator_id))
-
-
-def sanitize_text_input(text: str, max_length: int = 500) -> str:
-    """Sanitize text input to prevent injection."""
-    if not text:
-        return ""
-    # Remove potentially dangerous characters and limit length
-    sanitized = re.sub(r'[;<>"\']', '', text)
-    return sanitized[:max_length].strip()
 
 
 @tool
@@ -51,11 +19,6 @@ def get_sdi_reference_indicator(indicator_id: str) -> str:
     Returns:
         JSON string with indicator reference data
     """
-    # Input validation
-    indicator_id = sanitize_text_input(indicator_id, 100)
-    if not indicator_id:
-        return "Invalid indicator ID: cannot be empty"
-
     client = get_client()
 
     # First, check database
@@ -92,20 +55,11 @@ def search_sdi_indicators(query: str, kl_code: str = "", sector: str = "", limit
     Returns:
         JSON string with matching indicators
     """
-    # Input validation
-    query = sanitize_text_input(query, 500)
-    if kl_code and not validate_kl_code(kl_code):
-        return f"Invalid KL code format: {kl_code}. Expected 3-digit code (e.g., '007')"
-    if sector and not validate_sector_code(sector):
-        return f"Invalid sector code format: {sector}. Expected 2-digit code (e.g., '01')"
-    if limit and (not isinstance(limit, int) or limit < 1 or limit > 100):
-        return "Invalid limit: must be between 1 and 100"
-
     client = get_client()
 
     # Try semantic search first
     try:
-        results = get_sdi_retriever().invoke(query)
+        results = sdi_retriever.invoke(query)
         formatted_results = []
 
         for doc in results[:limit]:
@@ -136,44 +90,30 @@ def search_sdi_indicators(query: str, kl_code: str = "", sector: str = "", limit
         # Fall back to text search if vector search fails
         pass
 
-    # Fallback to text search using Supabase RPC function
-    # Using the secure search_indicators_by_text function created in migration 003
+    # Fallback to text search
     try:
-        # Call the secure SQL function that uses parameterized queries
-        result = client.rpc("search_indicators_by_text", {
-            "search_query": query
-        }).execute()
+        query_text = f"""
+            SELECT id, indicator_id, indicator_name, producing_institution, kl_code, definition
+            FROM sdi_indicators
+            WHERE search_vector @@ plainto_tsquery('indonesian', $1)
+        """
 
+        if kl_code:
+            query_text += " AND kl_code = $2"
+
+        query_text += " LIMIT $3"
+
+        params = [query]
+        if kl_code:
+            params.append(kl_code)
+        params.append(limit)
+
+        result = client.rpc("exec_sql", {"query_text": query_text, "params": params}).execute()
         if result.data:
-            # Apply additional filters in Python (safe from SQL injection)
-            filtered_results = result.data
-            if kl_code:
-                filtered_results = [r for r in filtered_results if r.get("kl_code") == kl_code]
-            if sector:
-                filtered_results = [r for r in filtered_results if r.get("sector") == sector]
-
-            # Apply limit
-            filtered_results = filtered_results[:limit]
-
-            if filtered_results:
-                from json import dumps
-                # Format results to match expected output
-                formatted_results = []
-                for r in filtered_results:
-                    formatted_results.append({
-                        "id": r.get("id", ""),
-                        "indicator_id": r.get("indicator_id", ""),
-                        "indicator_name": r.get("indicator_name", ""),
-                        "producing_institution": r.get("producing_institution", ""),
-                        "kl_code": r.get("kl_code", ""),
-                        "definition": r.get("definition", "")[:200] + "..." if len(r.get("definition", "")) > 200 else r.get("definition", ""),
-                    })
-                return dumps(formatted_results, ensure_ascii=False)
+            from json import dumps
+            return dumps(result.data, ensure_ascii=False)
 
     except Exception as e:
-        # Log error for monitoring
-        import logging
-        logging.warning(f"Text search failed: {str(e)}")
         pass
 
     return "No indicators found matching the query."
@@ -190,11 +130,6 @@ def get_kl_reference(kl_code: str) -> str:
     Returns:
         K/L name and category
     """
-    # Input validation
-    kl_code = sanitize_text_input(kl_code, 10)
-    if not validate_kl_code(kl_code):
-        return f"Invalid KL code format: {kl_code}. Expected 3-digit code (e.g., '007')"
-
     client = get_client()
     result = client.table("kl_code_reference").select("*").eq("code", kl_code).execute()
 
@@ -216,11 +151,6 @@ def get_sector_reference(sector_code: str) -> str:
     Returns:
         Sector name
     """
-    # Input validation
-    sector_code = sanitize_text_input(sector_code, 10)
-    if not validate_sector_code(sector_code):
-        return f"Invalid sector code format: {sector_code}. Expected 2-digit code (e.g., '01')"
-
     client = get_client()
     result = client.table("sector_reference").select("*").eq("code", sector_code).execute()
 
@@ -241,11 +171,6 @@ def get_sdi_goal_reference(goal_code: str) -> str:
     Returns:
         SDI goal description
     """
-    # Input validation
-    goal_code = sanitize_text_input(goal_code, 20)
-    if not goal_code:
-        return "Invalid goal code: cannot be empty"
-
     client = get_client()
     result = client.table("sdi_goal_reference").select("*").eq("code", goal_code).execute()
 
@@ -332,16 +257,6 @@ def index_sdi_indicator(
     Returns:
         Success message
     """
-    # Input validation
-    if not validate_indicator_id(indicator_id):
-        return f"Invalid indicator_id format: {indicator_id}"
-    indicator_name = sanitize_text_input(indicator_name, 500)
-    definition = sanitize_text_input(definition, 5000)
-    producing_institution = sanitize_text_input(producing_institution, 200)
-    if not validate_kl_code(kl_code):
-        return f"Invalid KL code format: {kl_code}"
-    user_id = sanitize_text_input(str(user_id), 50)
-
     try:
         # Create combined text for embedding
         combined_text = f"{indicator_name}\n\n{definition}\n\n{producing_institution}"
@@ -359,7 +274,7 @@ def index_sdi_indicator(
             },
         )
 
-        get_sdi_indicator_store().add_documents([doc])
+        sdi_indicator_store.add_documents([doc])
         return f"Indexed indicator: {indicator_id}"
 
     except Exception as e:
@@ -387,21 +302,12 @@ def find_similar_indicators(
     Returns:
         List of similar indicators with similarity scores
     """
-    # Input validation
-    indicator_name = sanitize_text_input(indicator_name, 500)
-    definition = sanitize_text_input(definition, 5000)
-    user_id = sanitize_text_input(str(user_id), 50)
-    if not isinstance(threshold, (int, float)) or threshold < 0 or threshold > 1:
-        return "Invalid threshold: must be between 0 and 1"
-    if not isinstance(limit, int) or limit < 1 or limit > 50:
-        return "Invalid limit: must be between 1 and 50"
-
     try:
         # Combine for embedding search
         combined_text = f"{indicator_name}\n\n{definition}"
 
         # Search vector store
-        results = get_sdi_indicator_store().similarity_search_with_score(
+        results = sdi_indicator_store.similarity_search_with_score(
             query=combined_text,
             k=limit,
         )
@@ -513,18 +419,10 @@ def suggest_indicator_id(prefix: str, count: int = 1) -> str:
     Returns:
         List of suggested indicator IDs
     """
-    # Input validation
-    prefix = sanitize_text_input(prefix, 10)
-    if not validate_kl_code(prefix):
-        return f"Invalid KL code format: {prefix}. Expected 3-digit code (e.g., '007')"
-    if not isinstance(count, int) or count < 1 or count > 100:
-        return "Invalid count: must be between 1 and 100"
-
     client = get_client()
 
-    # Get max existing indicator ID for this prefix using a safe filter
-    # Using ilike with pattern matching through Supabase's filter method
-    result = client.table("sdi_indicators").select("indicator_id").filter("indicator_id", "like", f"{prefix}.%").execute()
+    # Get max existing indicator ID for this prefix
+    result = client.table("sdi_indicators").select("indicator_id").like("indicator_id", f"{prefix}.%").execute()
 
     max_suffix = 0
     for row in result.data:

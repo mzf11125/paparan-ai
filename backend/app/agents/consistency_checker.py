@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Literal, TypedDict
 
-from langchain_openai import OpenAIEmbeddings
+from langchain_anthropic import AnthropicEmbeddings
 from langchain_postgres import PGVector
 from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END
@@ -19,12 +19,7 @@ from app.db.sdi_schema import (
 )
 
 # Initialize embeddings for semantic comparison
-import os
-openai_key = os.getenv("OPENAI_API_KEY", "")
-if openai_key and not openai_key.startswith("sk-dummy"):
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-else:
-    embeddings = None
+embeddings = AnthropicEmbeddings(model="voyage-3")
 
 # Direct PGVector connection for raw SQL queries
 from psycopg2 import sql

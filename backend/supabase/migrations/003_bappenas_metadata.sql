@@ -2,12 +2,13 @@
 -- This migration adds tables for SDI-compliant metadata extraction
 -- from RPJMN/Renstra documents with cross-K/L consistency checking
 
--- Note: Supabase uses gen_random_uuid() (PostgreSQL 13+ native) instead of uuid-ossp
+-- Enable UUID extension if not already enabled
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. Bappenas Documents Table
 -- Stores uploaded documents for metadata extraction
 CREATE TABLE IF NOT EXISTS bappenas_documents (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     filename TEXT NOT NULL,
     file_hash TEXT UNIQUE NOT NULL, -- SHA-256 for deduplication
@@ -55,7 +56,7 @@ CREATE POLICY "Users can delete own documents"
 -- 2. SDI Indicators Table
 -- Stores extracted SDI-compliant indicators
 CREATE TABLE IF NOT EXISTS sdi_indicators (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     document_id UUID REFERENCES bappenas_documents(id) ON DELETE CASCADE,
 
@@ -160,7 +161,7 @@ CREATE POLICY "Users can delete own indicators"
 -- 3. Extraction Jobs Table
 -- Tracks async metadata extraction jobs
 CREATE TABLE IF NOT EXISTS extraction_jobs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     document_id UUID REFERENCES bappenas_documents(id) ON DELETE CASCADE,
 
@@ -200,7 +201,7 @@ CREATE POLICY "Users can insert own jobs"
 -- 4. Consistency Flags Table
 -- Stores cross-K/L consistency issues
 CREATE TABLE IF NOT EXISTS consistency_flags (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
 
     indicator_a_id UUID REFERENCES sdi_indicators(id) ON DELETE CASCADE,
@@ -328,20 +329,20 @@ INSERT INTO kl_code_reference (code, name, category) VALUES
     ('132', 'Komisi Nasional Disabilitas', 'Lembaga'),
     ('133', 'Komisi Nasional Anti Kekerasan terhadap Perempuan', 'Lembaga'),
     ('134', 'Komisi Nasional Kekekerasan Anak', 'Lembaga'),
-    ('135', 'Komisi Pengawas Persaingan Usaha 2', 'Lembaga'),
+    ('135', 'Komisi Pengawas Persaingan Usaha', 'Lembaga'),
     ('136', 'Arsip Nasional Republik Indonesia', 'Lembaga'),
     ('137', 'Perpustakaan Nasional', 'Lembaga'),
     ('138', 'Badan Meteorologi, Klimatologi, dan Geofisika', 'Lembaga'),
     ('139', 'Badan Standardisasi Nasional', 'Lembaga'),
     ('140', 'Badan Ketahanan Pangan', 'Lembaga'),
-    ('141', 'Badan Narkotika Nasional 2', 'Lembaga'),
+    ('141', 'Badan Narkotika Nasional', 'Lembaga'),
     ('142', 'Badan Nasional Pengelola Perbatasan', 'Lembaga'),
-    ('143', 'Komisi Nasional Anti Kekerasan terhadap Perempuan 2', 'Lembaga'),
-    ('144', 'Komisi Pengawas Persaingan Usaha Daerah 2', 'Lembaga'),
+    ('143', 'Komisi Nasional Anti Kekerasan terhadap Perempuan', 'Lembaga'),
+    ('144', 'Komisi Pengawas Persaingan Usaha Daerah', 'Lembaga'),
     ('145', 'Badan Pembinaan Ideologi Pancasila', 'Lembaga'),
     ('146', 'Badan Intelijen Negara', 'Lembaga'),
     ('147', 'Badan Siber dan Sandi Negara', 'Lembaga'),
-    ('148', 'Kementrian Investasi/BKPM 2', 'Lembaga')
+    ('148', 'Kementrian Investasi/BKPM', 'Lembaga')
 ON CONFLICT (code) DO NOTHING;
 
 
