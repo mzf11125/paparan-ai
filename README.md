@@ -32,10 +32,11 @@ Government policymakers face an overwhelming volume of fragmented data—from ne
 Designed specifically for the ASEAN geopolitical landscape, Paparan.ai ensures that intelligence is preserved, policy proposals align with national development goals (like Indonesia's RPJMN), and diplomats receive exactly what they need to act.
 
 ## ✨ Key Features
-- **Multi-Agent Orchestration**: A sophisticated LangGraph pipeline featuring specialized agents (Scraper, Gov Intel, Analyst, Researcher, Simulator) working in concert.
+- **Multi-Agent Orchestration**: A sophisticated LangGraph pipeline featuring specialized agents (Scraper, Gov Intel, Analyst, Researcher, Simulator, Consistency Checker, Metadata Extractor) working in concert.
 - **Deep OSINT Integration**: Built-in integrations with Bellingcat-approved tools (Sentinel Hub, VesselFinder, OpenCorporates, NASA FIRMS, ACLED).
 - **Auto-Archiving**: Every scraped intelligence source is automatically archived to the Wayback Machine to prevent link rot and preserve historical records.
 - **Automatic Policy Alignment**: Policy briefs are instantly scored against Indonesia's RPJMN Asta Cita and ASEAN RDTII pillars.
+- **SDI-Compliant Intelligence**: Automatic extraction of SDI indicators from RPJMN/Renstra documents with cross-K/L consistency checking against Satu Data Indonesia standards (Perpres 195/2024).
 - **Diplomat & Executive Exports**: One-click generation of PDF memos, PowerPoint slide decks, and Diplomat Briefings complete with talking points and distribution lists.
 - **Cache-First RAG**: High-performance Retrieval-Augmented Generation using Supabase pgvector to reduce LLM latency and API costs.
 - **LLM Agnostic**: Seamlessly switch between Anthropic (Claude) and z.ai (OpenAI-compatible) models without changing agent code.
@@ -57,6 +58,11 @@ Designed specifically for the ASEAN geopolitical landscape, Paparan.ai ensures t
 | Spatial / geo tools | ✅ Real Nominatim geocoding + OSM/Sentinel Hub links |
 | ASEAN intelligence | ✅ Policy simulator, knowledge graph, cross-brief synthesis |
 | Intelligence cycle | ✅ Change tracking, urgency scoring, outcome feedback loop |
+| SDI Metadata Extractor | ✅ Bilingual LLM extraction of SDI indicators from RPJMN/Renstra docs |
+| Cross-K/L Consistency Checker | ✅ PGVector semantic similarity + field comparison, flags conflicts |
+| Security hardening | ✅ RBAC, audit logging, enhanced RLS policies (migrations 006–007) |
+| Performance optimization | ✅ HNSW vector indexes, composite + JSONB GIN indexes (migration 008) |
+| Monitoring & health checks | ✅ Query tracking, error logging, DB diagnostics (migrations 009–011) |
 
 ---
 
@@ -75,6 +81,8 @@ LangGraph Orchestrator
     ├── RPJMN Scorer Agent     (static Asta Cita 8-pillar + RDTII 7-pillar)
     ├── ASEAN Simulator Agent  (scenario modeling + knowledge graph)
     ├── Synthesizer Agent      (cross-brief pattern recognition)
+    ├── Metadata Extractor Agent (bilingual LLM extraction of SDI indicators from docs)
+    ├── Consistency Checker Agent (PGVector semantic similarity + cross-K/L conflict flags)
     └── Conversational RAG     (DeepAgents + PGVector retriever, SSE streaming)
     ↓
 Supabase (Postgres + pgvector)
@@ -86,6 +94,10 @@ Bellingcat OSINT Layer
     ├── environmental_tools.py (GFW deforestation + NASA FIRMS + Global Fishing Watch)
     ├── archive_tools.py       (Wayback Machine CDX auto-archiving)
     └── conflict_tools.py      (ACLED events + stability index)
+SDI / Bappenas Layer
+    ├── sdi_tools.py           (SDI reference lookup + PGVector indicator search)
+    ├── bappenas_tools.py      (K/L code mapping, sector codes, data.go.id integration)
+    └── document_processor.py  (PDF/text extraction + SHA-256 deduplication)
 ```
 
 ---
@@ -173,7 +185,9 @@ paparan-ai/
 │   │   │   ├── conversational.py   # SSE streaming RAG
 │   │   │   ├── rpjmn_scorer.py
 │   │   │   ├── asean_simulator.py
-│   │   │   └── synthesizer.py
+│   │   │   ├── synthesizer.py
+│   │   │   ├── metadata_extractor.py  # bilingual LLM extraction of SDI indicators
+│   │   │   └── consistency_checker.py # PGVector semantic similarity + cross-K/L flags
 │   │   ├── tools/
 │   │   │   ├── tavily_tools.py     # 7 tools, Bellingcat domains, cache-first
 │   │   │   ├── supabase_tools.py
@@ -183,6 +197,9 @@ paparan-ai/
 │   │   │   ├── rdtii_tools.py      # 7-pillar mapper
 │   │   │   ├── export_tools.py     # PDF, PPTX, diplomat PDF
 │   │   │   ├── knowledge_graph.py  # LangMem entity graph
+│   │   │   ├── sdi_tools.py        # SDI reference lookup + PGVector indicator search
+│   │   │   ├── bappenas_tools.py   # K/L code mapping, sector codes, data.go.id
+│   │   │   ├── document_processor.py # PDF/text extraction + SHA-256 deduplication
 │   │   │   └── bellingcat/
 │   │   │       ├── spatial_agent.py
 │   │   │       ├── maritime_tools.py
@@ -192,11 +209,20 @@ paparan-ai/
 │   │   │       └── conflict_tools.py
 │   │   └── db/
 │   │       └── schema.py           # PolicyBrief + rpjmn_alignment, spatial_context, etc.
-│   ├── supabase/migrations/
-│   │   ├── 001_initial_schema.sql
-│   │   ├── 002_feed_cache.sql
-│   │   ├── 003_bappenas_metadata.sql
-│   │   └── 004_rpjmn.sql           # brief_versions, brief_outcomes, rpjmn_alignments
+│   ├── supabase/
+│   │   ├── migrations_combined.sql # All 11 migrations in one file (recommended)
+│   │   └── migrations/
+│   │       ├── 001_initial_schema.sql
+│   │       ├── 002_feed_cache.sql
+│   │       ├── 003_bappenas_metadata.sql
+│   │       ├── 004_rpjmn.sql           # brief_versions, brief_outcomes, rpjmn_alignments
+│   │       ├── 005_storage.sql         # Supabase Storage bucket + RLS
+│   │       ├── 006_security_hardening.sql # RBAC, audit logging, input validation
+│   │       ├── 007_enhanced_rls.sql    # Enhanced RLS policies + analyst-level access
+│   │       ├── 008_performance_optimization.sql # HNSW indexes, composite + GIN indexes
+│   │       ├── 009_monitoring.sql      # Query tracking, error logging, health metrics
+│   │       ├── 010_maintenance.sql     # Data retention, archival, cleanup functions
+│   │       └── 011_health_checks.sql   # Health check functions + DB diagnostics
 │   └── tests/                      # 39 tests, all passing
 │       ├── conftest.py             # Stubs all external deps, fixes sys.path
 │       ├── test_rpjmn_tools.py
@@ -238,11 +264,8 @@ Paparan requires a few API keys to function fully.
 1. Once your Supabase project is ready, go to **Database → Extensions**.
 2. Search for `vector` and enable the **pgvector** extension.
 3. Go to **Database → SQL Editor → New query**.
-4. You must run the migrations in exact order. Open the files in your code editor, copy the contents, and run them sequentially in Supabase:
-   - Run `supabase/migrations/001_initial_schema.sql`
-   - Run `backend/supabase/migrations/002_feed_cache.sql`
-   - Run `backend/supabase/migrations/003_bappenas_metadata.sql`
-   - Run `backend/supabase/migrations/004_rpjmn.sql`
+4. Open `backend/supabase/migrations_combined.sql`, copy the entire contents, paste into the SQL editor, and click **Run**. This applies all 11 migrations in one step.
+   - *Alternatively*, run the individual migration files in exact order (001 through 011) from `backend/supabase/migrations/`.
 5. Go to **Project Settings → API** and copy your `Project URL`, `anon` public key, and `service_role` secret key.
 6. Go to **Project Settings → Database** and copy the `Connection string (URI)`. Ensure you select **psycopg** mode (should look like `postgresql+psycopg://...`).
 
@@ -539,6 +562,8 @@ Expected: **39 passed** — all tests mock external dependencies via `conftest.p
 
 ## 💡 Key Design Decisions
 
+**SDI compliance** — Metadata Extractor uses a bilingual (Indonesian/English) LLM prompt to extract indicators per Perpres 195/2024 SDI standards from uploaded RPJMN/Renstra PDFs. Consistency Checker uses PGVector semantic similarity + field comparison to flag cross-K/L conflicts before briefs are published.
+
 **Intelligence cycle** — Paparan implements the full OSINT intelligence cycle: collection (scraper + Tavily), processing (agents), analysis (RPJMN scoring, synthesis), dissemination (PDF/PPTX/diplomat export), and feedback (outcome ratings).
 
 **Graceful degradation** — Every Bellingcat tool catches all exceptions and returns a structured fallback. Agents never crash due to a missing API key or network timeout.
@@ -585,7 +610,7 @@ A: Ensure your `ANTHROPIC_API_KEY` or `ZAI_API_KEY` is correctly set and has ava
 A: Ensure you have installed the required system dependencies for `reportlab` and `python-pptx` if you are running outside of Docker.
 
 **Q: Migrations fail to run on Supabase.**  
-A: Make sure you run them in the exact order specified (001 through 004). The `pgvector` extension must be enabled *before* running `001_initial_schema.sql`.
+A: Make sure pgvector is enabled *before* running any migrations. Use `migrations_combined.sql` for the simplest path — it applies all 11 migrations in one step. If running individually, they must be executed in exact order (001 through 011).
 
 ---
 
