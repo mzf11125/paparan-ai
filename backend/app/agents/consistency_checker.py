@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Literal, TypedDict
 
-from langchain_anthropic import AnthropicEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from langchain_postgres import PGVector
 from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END
@@ -18,8 +18,16 @@ from app.db.sdi_schema import (
     ConsistencyCheckResult,
 )
 
-# Initialize embeddings for semantic comparison
-embeddings = AnthropicEmbeddings(model="voyage-3")
+# Lazy initialization of embeddings for semantic comparison
+def get_embeddings():
+    """Get embeddings instance, initialized on first use."""
+    from functools import lru_cache
+    @lru_cache
+    def _get():
+        return OpenAIEmbeddings(model="text-embedding-3-small")
+    return _get()
+
+embeddings = None  # Will be initialized on first use via get_embeddings()
 
 # Direct PGVector connection for raw SQL queries
 from psycopg2 import sql

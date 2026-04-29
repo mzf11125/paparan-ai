@@ -19,7 +19,7 @@ import { CommandPalette } from '@/components/ui/CommandPalette'
 import { Toaster } from '@/components/ui/Toast'
 import { initializeBriefStore } from '@/services/briefService'
 import { mockBriefs } from '@/data/mockBriefs'
-import { useAppStore } from '@/contexts/AppContext'
+import { useAppStore, useAuthInitializer } from '@/contexts/AppContext'
 
 initializeBriefStore(mockBriefs)
 
@@ -28,8 +28,21 @@ const queryClient = new QueryClient({
 })
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAppStore()
+  const { isAuthenticated, isAuthLoading } = useAppStore()
   const location = useLocation()
+
+  // Show loading state while restoring session
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-[#0A0B0D] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-3 border-[#3B82F6] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-[#94A3B8] text-sm">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />
   }
@@ -39,6 +52,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   const commandPalette = useCommandPalette()
   const theme = useAppStore(s => s.theme)
+  // Initialize auth state on app load - this properly restores session
+  useAuthInitializer()
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
@@ -79,6 +94,13 @@ function AppRoutes() {
 }
 
 function App() {
+  const { theme } = useAppStore()
+
+  // Set dark mode class on mount
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark')
+  }, [theme])
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>

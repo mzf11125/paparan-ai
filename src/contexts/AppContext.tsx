@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { Paparan } from '@/types/paparan'
@@ -10,11 +11,17 @@ export interface User {
   avatar?: string
 }
 
+export interface AuthError {
+  message: string
+  code?: string
+  retryAfter?: number // seconds until retry
+}
+
 export interface AuthState {
   user: User | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (email: string) => Promise<{ error?: string; magicLinkSent?: boolean }>
+  login: (email: string) => Promise<{ error?: string; magicLinkSent?: boolean; authError?: AuthError }>
   logout: () => Promise<void>
   setUser: (user: User | null) => void
 }
@@ -44,9 +51,12 @@ export interface AppStore {
   user: User | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (email: string) => Promise<{ error?: string; magicLinkSent?: boolean }>
+  isAuthLoading: boolean // True while restoring session on app load
+  login: (email: string) => Promise<{ error?: string; magicLinkSent?: boolean; authError?: AuthError }>
   logout: () => Promise<void>
   setUser: (user: User | null) => void
+  setAuthLoading: (loading: boolean) => void
+  initializeAuth: () => Promise<void>
 
   // Briefs data
   briefs: Paparan[]
@@ -95,7 +105,9 @@ export const useAppStore = create<AppStore>()(
       user: null,
       isAuthenticated: false,
       isLoading: false,
+      isAuthLoading: true, // Start with true to prevent redirects during session restoration
       setUser: (user) => set({ user, isAuthenticated: !!user }),
+      setAuthLoading: (loading) => set({ isAuthLoading: loading }),
       login: async (email: string) => {
         set({ isLoading: true })
         const { error } = await supabase.auth.signInWithOtp({
@@ -103,12 +115,42 @@ export const useAppStore = create<AppStore>()(
           options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
         })
         set({ isLoading: false })
-        if (error) return { error: error.message }
+        if (error) {
+          // Parse Supabase error for better handling
+          const authError: AuthError = { message: error.message, code: error.status?.toString() }
+
+          // Detect rate limiting errors
+          if (error.message?.toLowerCase().includes('rate limit') ||
+              error.message?.toLowerCase().includes('too many requests') ||
+              error.status === 429) {
+            authError.message = 'Too many sign-in attempts. Please wait a moment before trying again.'
+            authError.code = 'RATE_LIMIT_EXCEEDED'
+            authError.retryAfter = 300 // 5 minutes default for OTP rate limit
+          }
+
+          return { error: authError.message, authError }
+        }
         return { magicLinkSent: true }
       },
       logout: async () => {
         await supabase.auth.signOut()
         set({ user: null, isAuthenticated: false })
+      },
+      initializeAuth: async () => {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          set({
+            user: {
+              email: session.user.email!,
+              name: session.user.user_metadata?.full_name || session.user.email!.split('@')[0],
+              avatar: session.user.user_metadata?.avatar_url,
+            },
+            isAuthenticated: true,
+            isAuthLoading: false,
+          })
+        } else {
+          set({ isAuthLoading: false })
+        }
       },
 
       // Briefs data
@@ -171,7 +213,7 @@ export const useAppStore = create<AppStore>()(
       // UI state
       sidebarCollapsed: false,
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
-      theme: 'light',
+      theme: 'dark', // Default to dark mode for app interior
       setTheme: (theme) => set({ theme }),
       viewMode: 'grid',
       setViewMode: (mode) => set({ viewMode: mode }),
@@ -268,4 +310,46 @@ export const useBriefStats = () => {
       .slice(0, 10)
       .map(([tag, count]) => ({ tag, count }))
   }
+}
+
+/**
+ * Hook to initialize auth state on app load.
+ * This should be called once in the App component to:
+ * 1. Restore session from Supabase on app load
+ * 2. Listen for auth state changes (token refresh, sign out, etc.)
+ * 3. Sync auth state with Zustand store
+ *
+ * IMPORTANT: This must be called before any ProtectedRoute components
+ * to ensure auth state is restored before checking authentication.
+ */
+export function useAuthInitializer() {
+  useEffect(() => {
+    // CRITICAL: Initialize auth on app load to restore session
+    const store = useAppStore.getState()
+    store.initializeAuth()
+
+    // Then listen for auth state changes (token refresh, sign out, etc.)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      const store = useAppStore.getState()
+
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        if (session?.user) {
+          store.setUser({
+            email: session.user.email!,
+            name: session.user.user_metadata?.full_name ?? session.user.email!.split('@')[0],
+            avatar: session.user.user_metadata?.avatar_url,
+          })
+        }
+      } else if (event === 'SIGNED_OUT') {
+        store.setUser(null)
+      }
+
+      // Always clear loading state after any auth event
+      store.setAuthLoading(false)
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
 }

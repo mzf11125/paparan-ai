@@ -6,21 +6,23 @@ import { briefService, initializeBriefStore } from '@/services/briefService'
 import { mockBriefs } from '@/data/mockBriefs'
 import { Paparan } from '@/types/paparan'
 import { cn } from '@/utils/formatters'
+import { ErrorState } from '@/components/ui/ErrorState'
+import { Newspaper } from 'lucide-react'
 
 initializeBriefStore(mockBriefs)
 
 const REGION_COLORS: Record<string, string> = {
-  APAC: 'text-blue bg-blue/10 border-blue/20',
-  EMEA: 'text-green bg-green/10 border-green/20',
-  Americas: 'text-amber bg-amber/10 border-amber/20',
-  ASEAN: 'text-primary bg-primary-light border-primary/20',
-  Global: 'text-text-secondary bg-bg-surface border-border',
+  APAC: 'text-[#60A5FA] bg-[rgba(96,165,250,0.15)] border-[rgba(96,165,250,0.20)]',
+  EMEA: 'text-[#4ADE80] bg-[rgba(74,222,128,0.15)] border-[rgba(74,222,128,0.20)]',
+  Americas: 'text-[#FBBF24] bg-[rgba(251,191,36,0.15)] border-[rgba(251,191,36,0.20)]',
+  ASEAN: 'text-[#3B82F6] bg-[rgba(59,130,246,0.15)] border-[rgba(59,130,246,0.20)]',
+  Global: 'text-[#94A3B8] bg-[rgba(255,255,255,0.04)] border-[rgba(255,255,255,0.08)]',
 }
 
 const IMPACT_STYLES: Record<string, string> = {
-  HIGH: 'bg-red/15 text-red border border-red/30',
-  MEDIUM: 'bg-amber/15 text-amber border border-amber/30',
-  LOW: 'bg-green/15 text-green border border-green/30',
+  HIGH: 'bg-[rgba(239,68,68,0.15)] text-[#EF4444] border border-[rgba(239,68,68,0.30)]',
+  MEDIUM: 'bg-[rgba(245,158,11,0.15)] text-[#F59E0B] border border-[rgba(245,158,11,0.30)]',
+  LOW: 'bg-[rgba(16,185,129,0.15)] text-[#10B981] border border-[rgba(16,185,129,0.30)]',
 }
 
 function getTopImpact(brief: Paparan) {
@@ -32,9 +34,9 @@ function getTopImpact(brief: Paparan) {
 function NewsTicker({ briefs }: { briefs: Paparan[] }) {
   const items = briefs.slice(0, 10)
   return (
-    <div className="bg-primary/10 border-b border-primary/20 overflow-hidden">
+    <div className="bg-[rgba(59,130,246,0.10)] border-b border-[rgba(59,130,246,0.20)] overflow-hidden">
       <div className="flex items-center">
-        <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold uppercase tracking-widest">
+        <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-[#3B82F6] text-white text-xs font-bold uppercase tracking-widest">
           <Radio className="w-3 h-3 animate-pulse" aria-hidden="true" />
           Live
         </div>
@@ -44,14 +46,14 @@ function NewsTicker({ briefs }: { briefs: Paparan[] }) {
               <NavLink
                 key={`${brief.id}-${i}`}
                 to={`/briefs/${brief.id}`}
-                className="inline-flex items-center gap-3 px-6 py-2 text-sm text-text-secondary hover:text-text transition-colors"
+                className="inline-flex items-center gap-3 px-6 py-2 text-sm text-[#94A3B8] hover:text-[#F1F5F9] transition-colors"
               >
                 <span className={cn('text-xs font-semibold px-1.5 py-0.5 rounded border', REGION_COLORS[brief.region] || REGION_COLORS.Global)}>
                   {brief.region}
                 </span>
-                <span className="font-medium text-text">{brief.title}</span>
-                <span className="text-text-tertiary mx-1">·</span>
-                <span className="text-text-tertiary text-xs">{brief.date}</span>
+                <span className="font-medium text-[#F1F5F9]">{brief.title}</span>
+                <span className="text-[#64748B] mx-1">·</span>
+                <span className="text-[#64748B] text-xs">{brief.date}</span>
               </NavLink>
             ))}
           </div>
@@ -64,39 +66,39 @@ function NewsTicker({ briefs }: { briefs: Paparan[] }) {
 function FeaturedStory({ brief }: { brief: Paparan }) {
   const impact = getTopImpact(brief)
   return (
-    <div className="relative bg-bg-elevated border border-border rounded-xl overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-blue to-primary" />
+    <div className="relative bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-xl overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3B82F6] via-[#60A5FA] to-[#3B82F6]" />
       <div className="p-6 lg:p-8">
         <div className="flex items-center gap-3 mb-4 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red/15 text-red border border-red/30 rounded text-xs font-bold uppercase tracking-wider">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[rgba(239,68,68,0.15)] text-[#EF4444] border border-[rgba(239,68,68,0.30)] rounded text-xs font-bold uppercase tracking-wider">
             <AlertTriangle className="w-3 h-3" aria-hidden="true" />
             Top Story
           </span>
           <span className={cn('px-2.5 py-1 rounded text-xs font-semibold border', REGION_COLORS[brief.region] || REGION_COLORS.Global)}>
             {brief.region}
           </span>
-          <span className="text-xs text-text-tertiary ml-auto flex items-center gap-1">
+          <span className="text-xs text-[#64748B] ml-auto flex items-center gap-1">
             <Clock className="w-3 h-3" aria-hidden="true" />
             {brief.date}
           </span>
         </div>
         <NavLink to={`/briefs/${brief.id}`} className="block group">
-          <h2 className="text-2xl lg:text-3xl font-display font-bold text-text leading-tight mb-3 group-hover:text-primary transition-colors">
+          <h2 className="text-2xl lg:text-3xl font-display font-bold text-[#F1F5F9] leading-tight mb-3 group-hover:text-[#3B82F6] transition-colors">
             {brief.title}
           </h2>
         </NavLink>
-        <p className="text-text-secondary leading-relaxed mb-6 max-w-3xl">
+        <p className="text-[#94A3B8] leading-relaxed mb-6 max-w-3xl">
           {brief.executiveSummary[0]}
         </p>
         <div className="flex items-center gap-4 flex-wrap">
           <NavLink
             to={`/briefs/${brief.id}`}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg text-sm font-semibold transition-colors"
           >
             Read Full Brief
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </NavLink>
-          <div className="flex items-center gap-2 text-sm text-text-tertiary">
+          <div className="flex items-center gap-2 text-sm text-[#64748B]">
             <span>{brief.developments.length} developments</span>
             <span>·</span>
             <span className={cn('px-2 py-0.5 rounded text-xs font-semibold', IMPACT_STYLES[impact])}>
@@ -113,28 +115,28 @@ function NewsCard({ brief }: { brief: Paparan }) {
   const impact = getTopImpact(brief)
   const hasNew = brief.developments.some(d => d.delta === 'NEW')
   return (
-    <article className="bg-bg-elevated border border-border rounded-lg overflow-hidden hover:border-primary/50 transition-all duration-200">
+    <article className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg overflow-hidden hover:border-[rgba(59,130,246,0.50)] transition-all duration-200">
       <div className="p-5">
         <div className="flex items-center gap-2 mb-3 flex-wrap">
           <span className={cn('px-2 py-0.5 rounded text-xs font-semibold border', REGION_COLORS[brief.region] || REGION_COLORS.Global)}>
             {brief.region}
           </span>
           {hasNew && (
-            <span className="px-2 py-0.5 bg-primary/15 text-primary border border-primary/30 rounded text-xs font-semibold">New</span>
+            <span className="px-2 py-0.5 bg-[rgba(59,130,246,0.15)] text-[#3B82F6] border border-[rgba(59,130,246,0.30)] rounded text-xs font-semibold">New</span>
           )}
           <span className={cn('ml-auto px-2 py-0.5 rounded text-xs font-semibold', IMPACT_STYLES[impact])}>
             {impact}
           </span>
         </div>
         <NavLink to={`/briefs/${brief.id}`} className="block group">
-          <h3 className="font-display font-semibold text-text leading-snug mb-2 group-hover:text-primary transition-colors line-clamp-2">
+          <h3 className="font-display font-semibold text-[#F1F5F9] leading-snug mb-2 group-hover:text-[#3B82F6] transition-colors line-clamp-2">
             {brief.title}
           </h3>
         </NavLink>
-        <p className="text-sm text-text-secondary leading-relaxed line-clamp-2 mb-3">
+        <p className="text-sm text-[#94A3B8] leading-relaxed line-clamp-2 mb-3">
           {brief.executiveSummary[0]}
         </p>
-        <div className="flex items-center justify-between text-xs text-text-tertiary">
+        <div className="flex items-center justify-between text-xs text-[#64748B]">
           <span className="flex items-center gap-1">
             <Clock className="w-3 h-3" aria-hidden="true" />
             {brief.date}
@@ -158,16 +160,16 @@ function NewsSidebar({ briefs, activeRegion, onRegionChange }: {
 
   return (
     <aside className="space-y-5">
-      <div className="bg-bg-elevated border border-border rounded-lg p-4">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-text-tertiary mb-3">Overview</h3>
+      <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-4">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-[#64748B] mb-3">Overview</h3>
         <div className="space-y-3">
           {[
-            { icon: <FileText className="w-4 h-4 text-primary" />, label: 'Total Briefs', value: briefs.length, cls: 'text-text' },
-            { icon: <AlertTriangle className="w-4 h-4 text-red" />, label: 'High Impact', value: highCount, cls: 'text-red' },
-            { icon: <Globe className="w-4 h-4 text-green" />, label: 'Regions', value: regions.length - 1, cls: 'text-text' },
+            { icon: <FileText className="w-4 h-4 text-[#3B82F6]" />, label: 'Total Briefs', value: briefs.length, cls: 'text-[#F1F5F9]' },
+            { icon: <AlertTriangle className="w-4 h-4 text-[#EF4444]" />, label: 'High Impact', value: highCount, cls: 'text-[#EF4444]' },
+            { icon: <Globe className="w-4 h-4 text-[#10B981]" />, label: 'Regions', value: regions.length - 1, cls: 'text-[#F1F5F9]' },
           ].map(({ icon, label, value, cls }) => (
             <div key={label} className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-text-secondary">{icon}{label}</span>
+              <span className="flex items-center gap-2 text-sm text-[#94A3B8]">{icon}{label}</span>
               <span className={cn('font-bold tabular-nums', cls)}>{value}</span>
             </div>
           ))}
@@ -176,14 +178,14 @@ function NewsSidebar({ briefs, activeRegion, onRegionChange }: {
 
       <button
         onClick={() => navigate('/editor')}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer"
+        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer"
       >
         <Zap className="w-4 h-4" aria-hidden="true" />
         Generate Instant Brief
       </button>
 
-      <div className="bg-bg-elevated border border-border rounded-lg p-4">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-text-tertiary mb-3 flex items-center gap-2">
+      <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-4">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-[#64748B] mb-3 flex items-center gap-2">
           <Globe className="w-3.5 h-3.5" aria-hidden="true" />
           Filter by Region
         </h3>
@@ -195,8 +197,8 @@ function NewsSidebar({ briefs, activeRegion, onRegionChange }: {
               className={cn(
                 'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer',
                 activeRegion === region
-                  ? 'bg-primary text-white border-primary'
-                  : 'text-text-secondary border-border hover:border-primary/50 hover:text-text'
+                  ? 'bg-[#3B82F6] text-white border-[#3B82F6]'
+                  : 'text-[#94A3B8] border-[rgba(255,255,255,0.12)] hover:border-[rgba(59,130,246,0.50)] hover:text-[#F1F5F9]'
               )}
             >
               {region}
@@ -205,8 +207,8 @@ function NewsSidebar({ briefs, activeRegion, onRegionChange }: {
         </div>
       </div>
 
-      <div className="bg-bg-elevated border border-border rounded-lg p-4">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-text-tertiary mb-3 flex items-center gap-2">
+      <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-4">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-[#64748B] mb-3 flex items-center gap-2">
           <TrendingUp className="w-3.5 h-3.5" aria-hidden="true" />
           Trending Topics
         </h3>
@@ -215,7 +217,7 @@ function NewsSidebar({ briefs, activeRegion, onRegionChange }: {
             <NavLink
               key={tag}
               to="/briefs"
-              className="px-2.5 py-1 bg-bg-surface hover:bg-primary-light hover:text-primary text-text-secondary border border-border hover:border-primary/30 rounded text-xs font-medium transition-all"
+              className="px-2.5 py-1 bg-[rgba(255,255,255,0.04)] hover:bg-[rgba(59,130,246,0.15)] hover:text-[#3B82F6] text-[#94A3B8] border border-[rgba(255,255,255,0.12)] hover:border-[rgba(59,130,246,0.30)] rounded text-xs font-medium transition-all"
             >
               {tag}
             </NavLink>
@@ -231,9 +233,15 @@ export function NewsFeedPage() {
   const [activeRegion, setActiveRegion] = useState('All')
   const navigate = useNavigate()
 
-  const { data: briefs = [] } = useQuery({
+  const { data: briefs = [], isLoading, error, refetch } = useQuery({
     queryKey: ['briefs', 'all'],
-    queryFn: () => briefService.getAllBriefs(),
+    queryFn: async () => {
+      const timeout = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Request timed out')), 8000)
+      )
+      return Promise.race([briefService.getAllBriefs(), timeout]) as Promise<Paparan[]>
+    },
+    retry: 1,
   })
 
   const featuredBrief = useMemo(
@@ -252,6 +260,59 @@ export function NewsFeedPage() {
     navigate('/briefs')
   }
 
+  // Error state
+  if (error) {
+    return (
+      <div className="-mx-4 lg:-mx-8 -mt-6 lg:-mt-8 px-4 lg:px-8 py-12">
+        <ErrorState
+          message={error instanceof Error ? error.message : 'Failed to load briefs. Please try again.'}
+          onRetry={() => refetch()}
+        />
+      </div>
+    )
+  }
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="-mx-4 lg:-mx-8 -mt-6 lg:-mt-8">
+        <div className="px-4 lg:px-8 py-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 bg-[#111318] rounded w-1/3" />
+            <div className="h-4 bg-[#111318] rounded w-1/4" />
+            <div className="grid grid-cols-3 gap-4 mt-8">
+              {[1, 2, 3, 4, 5, 6].map(i => (
+                <div key={i} className="h-48 bg-[#111318] rounded-lg" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Empty state
+  if (briefs.length === 0) {
+    return (
+      <div className="-mx-4 lg:-mx-8 -mt-6 lg:-mt-8 px-4 lg:px-8 py-12">
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <Newspaper className="w-16 h-16 text-[#475569] mb-4" />
+          <h3 className="text-xl font-semibold text-[#F1F5F9] mb-2">No briefs available</h3>
+          <p className="text-[#94A3B8] text-sm max-w-md mb-6">
+            Get started by generating your first policy intelligence brief.
+          </p>
+          <button
+            onClick={() => navigate('/editor')}
+            className="flex items-center gap-2 px-5 py-2.5 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg text-sm font-semibold transition-colors"
+          >
+            <PlusCircle className="w-4 h-4" />
+            Generate Brief
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="-mx-4 lg:-mx-8 -mt-6 lg:-mt-8">
       {briefs.length > 0 && <NewsTicker briefs={briefs} />}
@@ -260,26 +321,26 @@ export function NewsFeedPage() {
         {/* Header + Search */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="flex-1">
-            <h1 className="text-2xl font-display font-bold text-text">Intelligence Feed</h1>
-            <p className="text-sm text-text-secondary mt-0.5">
+            <h1 className="text-2xl font-display font-bold text-[#F1F5F9]">Intelligence Feed</h1>
+            <p className="text-sm text-[#94A3B8] mt-0.5">
               Latest policy developments across {Array.from(new Set(briefs.map(b => b.region))).length} regions
             </p>
           </div>
           <form onSubmit={handleSearch} className="flex items-center gap-2 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64748B]" aria-hidden="true" />
               <input
                 type="search"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search briefs…"
-                className="w-full pl-9 pr-4 py-2.5 bg-bg-elevated border border-border rounded-lg text-sm text-text placeholder:text-text-tertiary focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+                className="w-full pl-9 pr-4 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.12)] rounded-lg text-sm text-[#F1F5F9] placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] transition-all"
               />
             </div>
             <button
               type="button"
               onClick={() => navigate('/editor')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-semibold transition-colors whitespace-nowrap cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg text-sm font-semibold transition-colors whitespace-nowrap cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" aria-hidden="true" />
               <span className="hidden sm:inline">Generate Brief</span>
@@ -295,15 +356,15 @@ export function NewsFeedPage() {
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-text-tertiary flex items-center gap-2">
-                <Radio className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
+              <h2 className="text-xs font-bold uppercase tracking-wider text-[#64748B] flex items-center gap-2">
+                <Radio className="w-3.5 h-3.5 text-[#3B82F6]" aria-hidden="true" />
                 Latest Updates
-                {activeRegion !== 'All' && <span className="text-primary">— {activeRegion}</span>}
+                {activeRegion !== 'All' && <span className="text-[#3B82F6]">— {activeRegion}</span>}
               </h2>
-              <span className="text-xs text-text-tertiary tabular-nums">{feedBriefs.length} stories</span>
+              <span className="text-xs text-[#64748B] tabular-nums">{feedBriefs.length} stories</span>
             </div>
             {feedBriefs.length === 0 ? (
-              <div className="py-12 text-center text-text-tertiary text-sm">No briefs found for this region.</div>
+              <div className="py-12 text-center text-[#64748B] text-sm">No briefs found for this region.</div>
             ) : (
               <div className="grid sm:grid-cols-2 gap-4">
                 {feedBriefs.map(brief => <NewsCard key={brief.id} brief={brief} />)}

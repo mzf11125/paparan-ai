@@ -135,46 +135,87 @@
   --spring-snappy: cubic-bezier(0.12, 0.95, 0.28, 1);
 }
 
+/* ─── PAPARAN BRIEF APP DARK THEME TOKENS ─── */
+:root {
+  /* App Interior - Dark Theme (matching landing page) */
+  --pb-bg:          #0A0B0D;   /* Page canvas - matches landing */
+  --pb-bg-card:     #111318;   /* Cards, panels */
+  --pb-bg-input:    #181B22;   /* Inputs, selects */
+  --pb-bg-hover:    #1F2330;   /* Hover states */
+  --pb-bg-active:   rgba(59,130,246,0.10); /* Active nav item */
+
+  /* Borders */
+  --pb-border-xs:   rgba(255,255,255,0.05);
+  --pb-border-sm:   rgba(255,255,255,0.08);
+  --pb-border-md:   rgba(255,255,255,0.12);
+  --pb-border-lg:   rgba(255,255,255,0.20);
+
+  /* Text */
+  --pb-text-1: #F1F5F9;   /* Headings, primary */
+  --pb-text-2: #94A3B8;   /* Body, secondary */
+  --pb-text-3: #475569;   /* Muted, labels */
+  --pb-text-4: #334155;   /* Disabled */
+
+  /* Brand */
+  --pb-blue:       #3B82F6;
+  --pb-blue-hover: #2563EB;
+  --pb-blue-glow:  rgba(59,130,246,0.20);
+  --pb-green:      #10B981;  /* LIVE signal, success */
+  --pb-red:        #EF4444;  /* HIGH impact, errors */
+  --pb-amber:      #F59E0B;  /* MED impact, warnings */
+
+  /* Shadows */
+  --pb-shadow-sm:  0 1px 3px rgba(0,0,0,0.5), 0 0 0 1px var(--pb-border-xs);
+  --pb-shadow-md:  0 4px 16px rgba(0,0,0,0.6), 0 0 0 1px var(--pb-border-xs);
+  --pb-shadow-glow: 0 0 32px var(--pb-blue-glow);
+
+  /* Radius */
+  --pb-r-sm: 8px;
+  --pb-r-md: 12px;
+  --pb-r-lg: 16px;
+  --pb-r-xl: 20px;
+}
+
 /* Dark mode overrides */
 .dark {
   color-scheme: dark;
-  --color-bg: #0f172a;
-  --color-bg-elevated: #1e293b;
-  --color-bg-surface: #334155;
-  --color-bg-subtle: #475569;
-  --color-text: #f8fafc;
-  --color-text-secondary: #94a3b8;
-  --color-text-tertiary: #64748b;
-  --color-text-inverse: #0f172a;
+  --color-bg: var(--pb-bg);
+  --color-bg-elevated: var(--pb-bg-card);
+  --color-bg-surface: var(--pb-bg-input);
+  --color-bg-subtle: var(--pb-bg-hover);
+  --color-text: var(--pb-text-1);
+  --color-text-secondary: var(--pb-text-2);
+  --color-text-tertiary: var(--pb-text-3);
+  --color-text-inverse: var(--pb-text-1);
 
-  --color-primary: #3b82f6;
-  --color-primary-dark: #2563eb;
+  --color-primary: var(--pb-blue);
+  --color-primary-dark: var(--pb-blue-hover);
   --color-primary-light: rgba(59, 130, 246, 0.15);
   --color-primary-lighter: rgba(59, 130, 246, 0.08);
 
-  --color-navy: #3b82f6;
-  --color-navy-light: #2563eb;
-  --color-navy-lighter: rgba(59, 130, 246, 0.15);
+  --color-navy: var(--pb-blue);
+  --color-navy-light: var(--pb-blue-hover);
+  --color-navy-lighter: var(--pb-blue-glow);
   --color-navy-dark: #1d4ed8;
   --color-navy-subtle: rgba(59, 130, 246, 0.1);
 
   --color-blue: #60a5fa;
   --color-blue-light: rgba(96, 165, 250, 0.15);
   --color-blue-lighter: rgba(96, 165, 250, 0.08);
-  --color-amber: #f59e0b;
+  --color-amber: var(--pb-amber);
   --color-amber-light: rgba(245, 158, 11, 0.15);
   --color-amber-lighter: rgba(245, 158, 11, 0.08);
-  --color-red: #f87171;
-  --color-red-light: rgba(248, 113, 113, 0.15);
-  --color-red-lighter: rgba(248, 113, 113, 0.08);
-  --color-green: #4ade80;
-  --color-green-light: rgba(74, 222, 128, 0.15);
-  --color-green-lighter: rgba(74, 222, 128, 0.08);
+  --color-red: var(--pb-red);
+  --color-red-light: rgba(239, 68, 68, 0.15);
+  --color-red-lighter: rgba(239, 68, 68, 0.08);
+  --color-green: var(--pb-green);
+  --color-green-light: rgba(16, 185, 129, 0.15);
+  --color-green-lighter: rgba(16, 185, 129, 0.08);
 
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-border-strong: rgba(255, 255, 255, 0.15);
-  --color-border-subtle: rgba(255, 255, 255, 0.05);
-  --color-border-accent: #3b82f6;
+  --color-border: var(--pb-border-sm);
+  --color-border-strong: var(--pb-border-md);
+  --color-border-subtle: var(--pb-border-xs);
+  --color-border-accent: var(--pb-blue);
 }
 
 /* ============================================

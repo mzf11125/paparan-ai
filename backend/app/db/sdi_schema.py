@@ -1,11 +1,12 @@
 """SDI (Satu Data Indonesia) compliant Pydantic schemas."""
 from datetime import datetime
 from typing import Optional, Literal
+from enum import Enum
 from pydantic import BaseModel, Field, field_validator
 
 
 # Enums for SDI compliance
-class UnitType(str, Literal):
+class UnitType(str, Enum):
     """Unit type per SDI standard (Perpres 195/2024)."""
     nominal = "nominal"
     ratio = "ratio"
@@ -17,7 +18,7 @@ class UnitType(str, Literal):
     currency = "currency"
 
 
-class TemporalResolution(str, Literal):
+class TemporalResolution(str, Enum):
     """Temporal resolution per SDI standard."""
     realtime = "realtime"
     hourly = "hourly"
@@ -31,7 +32,7 @@ class TemporalResolution(str, Literal):
     quinary = "quinary"
 
 
-class AvailabilityStatus(str, Literal):
+class AvailabilityStatus(str, Enum):
     """Availability status per SDI standard."""
     available = "available"
     partial = "partial"
@@ -39,14 +40,14 @@ class AvailabilityStatus(str, Literal):
     discontinued = "discontinued"
 
 
-class ExtractionConfidence(str, Literal):
+class ExtractionConfidence(str, Enum):
     """Confidence level for AI extraction."""
     HIGH = "HIGH"
     MEDIUM = "MEDIUM"
     LOW = "LOW"
 
 
-class ConflictType(str, Literal):
+class ConflictType(str, Enum):
     """Type of consistency conflict detected."""
     duplicate = "duplicate"
     unit_mismatch = "unit_mismatch"
@@ -55,7 +56,7 @@ class ConflictType(str, Literal):
     kl_code_mismatch = "kl_code_mismatch"
 
 
-class ConflictStatus(str, Literal):
+class ConflictStatus(str, Enum):
     """Status of conflict resolution."""
     open = "open"
     in_review = "in_review"
@@ -244,7 +245,7 @@ class ConsistencyCheckResult(BaseModel):
 
 
 # Job Processing Models
-class ExtractionJobStatus(str, Literal):
+class ExtractionJobStatus(str, Enum):
     """Status of extraction job."""
     pending = "pending"
     processing = "processing"

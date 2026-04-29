@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings
+from pathlib import Path
 
 class Settings(BaseSettings):
     ANTHROPIC_API_KEY: str
@@ -10,6 +11,7 @@ class Settings(BaseSettings):
     LANGSMITH_API_KEY: str = ""
     LANGSMITH_TRACING: bool = False
     FRONTEND_URL: str = "http://localhost:5173"
+    ALLOWED_ORIGINS: str = "http://localhost:5173,http://localhost:5175,http://localhost:3000"
 
     # Source tiers
     PRIMARY_SOURCES: list[str] = [
@@ -51,13 +53,28 @@ class Settings(BaseSettings):
     ACLED_API_KEY: str = ""
     ACLED_EMAIL: str = ""
 
-    # LLM provider — "anthropic" (default) or "zai"
+    # LLM provider — "anthropic" (default), "zai", "agentrouter", or "zhipu"
     LLM_PROVIDER: str = "anthropic"
     ZAI_API_KEY: str = ""
     ZAI_BASE_URL: str = "https://api.z.ai/v1"
     ZAI_MODEL: str = "z1-preview"
 
+    # AgentRouter configuration
+    AGENTROUTER_API_KEY: str = ""
+    AGENTROUTER_BASE_URL: str = "https://agentrouter.org/"
+    AGENTROUTER_MODEL: str = "claude-sonnet-4-5-20250929"
+
+    # Zhipu AI GLM configuration
+    ZHIPU_API_KEY: str = ""
+    ZHIPU_BASE_URL: str = "https://open.bigmodel.cn/api/paas/v4/"
+    ZHIPU_MODEL: str = "glm-5"
+
+    # Email whitelist for access control (comma-separated string in .env)
+    WHITELISTED_EMAILS: str = ""
+
     class Config:
-        env_file = ".env"
+        # Use absolute path to backend .env file
+        env_file = Path(__file__).parent.parent / ".env"
+        extra = "ignore"
 
 settings = Settings()

@@ -48,9 +48,14 @@ from app.tools.bellingcat.archive_tools import archive_source
 
 app = FastAPI(title="Paparan API")
 
+# Parse ALLOWED_ORIGINS from env (comma-separated)
+allowed_origins = getattr(settings, 'ALLOWED_ORIGINS', settings.FRONTEND_URL)
+if isinstance(allowed_origins, str):
+    allowed_origins = [origin.strip() for origin in allowed_origins.split(',')]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -67,7 +72,20 @@ def get_user_id(authorization: str | None = Header(default=None)) -> str:
         client = get_client()
         user = client.auth.get_user(token)
         assert user and user.user
+
+        # Check email whitelist if configured
+        if settings.WHITELISTED_EMAILS:
+            whitelist = [e.strip() for e in settings.WHITELISTED_EMAILS.split(',')]
+            user_email = user.user.email
+            if user_email not in whitelist:
+                raise HTTPException(
+                    status_code=403,
+                    detail=f"Email {user_email} is not authorized to access this application"
+                )
+
         return user.user.id
+    except HTTPException:
+        raise
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
 

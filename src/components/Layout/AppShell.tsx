@@ -51,7 +51,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
       </a>
 
       {/* Top Navigation Bar — Official Style */}
-      <header className="sticky top-0 z-[60] bg-bg-elevated/95 backdrop-blur-md border-b border-border shadow-sm transition-shadow duration-200">
+      <header className="sticky top-0 z-[60] bg-[rgba(10,11,13,0.90)] backdrop-blur-md border-b border-b-[rgba(255,255,255,0.08)] shadow-sm transition-shadow duration-200">
         {/* Classification Banner */}
         {/* <div className="classification-banner classification-banner-unclassified py-1">
           <Shield className="w-3 h-3" />
@@ -75,15 +75,16 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
 
             {/* Breadcrumb-like path indicator */}
             <nav className="hidden lg:flex items-center gap-2 text-sm" aria-label="Breadcrumb">
-              <span className="text-text-tertiary">Paparan</span>
-              <span className="text-text-tertiary">/</span>
-              <span className="font-medium text-text">
+              <span className="text-[#64748B]">Paparan</span>
+              <span className="text-[#64748B]">/</span>
+              <span className="font-medium text-[#F1F5F9]">
                 {location.pathname === '/home' && 'News Feed'}
                 {location.pathname === '/briefs' && 'Briefs Library'}
                 {location.pathname === '/watchlist' && 'My Watchlist'}
                 {location.pathname === '/dashboard' && 'Dashboard'}
                 {location.pathname === '/editor' && 'Brief Editor'}
                 {location.pathname === '/settings' && 'Settings'}
+                {location.pathname === '/chat' && 'Chat'}
               </span>
             </nav>
           </div>
@@ -98,26 +99,26 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
             {/* Theme toggle */}
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 rounded-lg hover:bg-bg-surface transition-colors"
+              className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.04)] transition-colors"
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {theme === 'dark'
-                ? <Sun className="w-5 h-5 text-text-secondary" />
-                : <Moon className="w-5 h-5 text-text-secondary" />
+                ? <Sun className="w-5 h-5 text-[#94A3B8]" />
+                : <Moon className="w-5 h-5 text-[#94A3B8]" />
               }
             </button>
 
             <button
-              className="p-2 rounded-lg hover:bg-bg-surface transition-colors relative"
+              className="p-2 rounded-lg hover:bg-[rgba(255,255,255,0.04)] transition-colors relative"
               aria-label="Notifications"
             >
-              <Bell className="w-5 h-5 text-text-secondary" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-accent rounded-full" />
+              <Bell className="w-5 h-5 text-[#94A3B8]" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-[#3B82F6] rounded-full" />
             </button>
 
             <NavLink
               to="/editor"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
             >
               <PlusCircle className="w-4 h-4" />
               New Brief
@@ -126,7 +127,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-2 p-2 rounded-lg hover:bg-bg-surface transition-colors"
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-[rgba(255,255,255,0.04)] transition-colors"
               >
                 {user?.avatar ? (
                   <img
@@ -137,12 +138,12 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
                     className="w-8 h-8 rounded-full"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-sm font-medium">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#3B82F6] to-[#2563EB] flex items-center justify-center text-white text-sm font-medium">
                     {user?.name?.charAt(0) || 'U'}
                   </div>
                 )}
-                <span className="hidden md:block text-sm font-medium text-text">{user?.name || 'User'}</span>
-                <ChevronDown className="w-4 h-4 text-text-tertiary" />
+                <span className="hidden md:block text-sm font-medium text-[#F1F5F9]">{user?.name || 'User'}</span>
+                <ChevronDown className="w-4 h-4 text-[#64748B]" />
               </button>
 
               {/* User Dropdown Menu */}
@@ -152,17 +153,17 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
                     className="fixed inset-0 z-10"
                     onClick={() => setUserMenuOpen(false)}
                   />
-                  <div className="absolute right-0 top-full mt-2 w-48 bg-bg-elevated border border-border rounded-lg shadow-lg py-1 z-20">
-                    <div className="px-4 py-2 border-b border-border">
-                      <p className="text-xs font-medium text-text-tertiary">Signed in as</p>
-                      <p className="text-sm font-medium text-text truncate">{user?.email}</p>
+                  <div className="absolute right-0 top-full mt-2 w-48 bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg shadow-lg py-1 z-20">
+                    <div className="px-4 py-2 border-b border-b-[rgba(255,255,255,0.08)]">
+                      <p className="text-xs font-medium text-[#64748B]">Signed in as</p>
+                      <p className="text-sm font-medium text-[#F1F5F9] truncate">{user?.email}</p>
                     </div>
                     <button
                       onClick={() => {
                         logout()
                         setUserMenuOpen(false)
                       }}
-                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-text-secondary hover:text-text hover:bg-bg-surface transition-colors"
+                      className="w-full flex items-center gap-2 px-4 py-2 text-sm text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[rgba(255,255,255,0.04)] transition-colors"
                     >
                       <LogOut className="w-4 h-4" />
                       Sign out
@@ -191,7 +192,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
             {/* Sidebar */}
             <aside
               className={cn(
-                'fixed lg:sticky top-14 left-0 z-40 h-[calc(100vh-3.5rem)] bg-bg-elevated border-r border-border transition-transform duration-200 ease-in-out',
+                'fixed lg:sticky top-14 left-0 z-40 h-[calc(100vh-3.5rem)] bg-[#0D0F14] border-r border-r-[rgba(255,255,255,0.08)] transition-transform duration-200 ease-in-out',
                 sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
                 sidebarCollapsed ? 'w-16' : 'w-64'
               )}
@@ -204,15 +205,22 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
                     end={item.path === '/editor'}
                     className={({ isActive }) =>
                       cn(
-                        'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                        'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative',
                         isActive
-                          ? 'bg-primary-light text-primary'
-                          : 'text-text-secondary hover:bg-bg-surface hover:text-text'
+                          ? 'text-[#3B82F6] bg-[rgba(59,130,246,0.10)]'
+                          : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[rgba(255,255,255,0.04)]'
                       )
                     }
                   >
-                    <item.icon className="w-5 h-5 flex-shrink-0" />
-                    {!sidebarCollapsed && <span>{item.label}</span>}
+                    {({ isActive }) => (
+                      <>
+                        {isActive && (
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-[#3B82F6] rounded-r-full" />
+                        )}
+                        <item.icon className="w-5 h-5 flex-shrink-0" />
+                        {!sidebarCollapsed && <span>{item.label}</span>}
+                      </>
+                    )}
                   </NavLink>
                 ))}
               </nav>
@@ -241,6 +249,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
             'flex-1 min-h-[calc(100vh-4rem)]',
             fullWidth ? 'max-w-none' : 'max-w-6xl mx-auto px-4 lg:px-8 py-6 lg:py-8'
           )}
+          style={{ backgroundColor: 'var(--pb-bg)' }}
         >
           <Outlet />
         </main>
@@ -248,7 +257,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
 
       {/* Footer — Official Style */}
       {showSidebar && (
-        <footer className="border-t border-border-strong bg-bg-elevated py-6 mt-auto">
+        <footer className="border-t border-t-[rgba(255,255,255,0.08)] bg-[#0D0F14] py-6 mt-auto">
           {/* Official Footer Bar */}
           <div className="max-w-6xl mx-auto px-4 lg:px-8">
             {/* <div className="official-footer !py-0">
@@ -263,14 +272,14 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
               </div>
             </div> */}
 
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 mt-4 border-t border-border">
-              <div className="flex items-center gap-6 text-sm text-text-secondary">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 mt-4 border-t border-t-[rgba(255,255,255,0.08)]">
+              <div className="flex items-center gap-6 text-sm text-[#94A3B8]">
                 <span>© 2026 Paparan Brief</span>
-                <a href="#" className="hover:text-primary transition-colors">Privacy</a>
-                <a href="#" className="hover:text-primary transition-colors">Terms</a>
-                <a href="#" className="hover:text-primary transition-colors">Contact</a>
+                <a href="#" className="hover:text-[#3B82F6] transition-colors">Privacy</a>
+                <a href="#" className="hover:text-[#3B82F6] transition-colors">Terms</a>
+                <a href="#" className="hover:text-[#3B82F6] transition-colors">Contact</a>
               </div>
-              <div className="text-xs text-text-tertiary">
+              <div className="text-xs text-[#64748B]">
                 Classification: Unclassified
               </div>
             </div>
