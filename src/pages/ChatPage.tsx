@@ -14,7 +14,6 @@ export function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -25,7 +24,6 @@ export function ChatPage() {
     const text = input.trim()
     if (!text || loading) return
     setInput('')
-    setError(null)
     setMessages(prev => [...prev, { role: 'user', content: text }])
     setLoading(true)
 
@@ -68,7 +66,6 @@ export function ChatPage() {
       const errorMessage = err instanceof Error
         ? err.message
         : 'Failed to connect to chat service. Please try again.'
-      setError(errorMessage)
       setMessages(prev => [
         ...prev.slice(0, -1),
         { role: 'assistant', content: errorMessage, error: true },

@@ -39,8 +39,8 @@ class Settings(BaseSettings):
     SUPPORTED_FILE_EXTENSIONS: list[str] = [".pdf", ".txt", ".md", ".markdown"]
 
     # Extraction agent configuration
-    EXTRACTION_MODEL: str = "claude-opus-4-5"
-    EXTRACTION_MAX_TOKENS: int = 128000
+    EXTRACTION_MODEL: str = "glm-5.1"
+    EXTRACTION_MAX_TOKENS: int = 131072
     EXTRACTION_TIMEOUT_SECONDS: int = 60
 
     # Job processing
@@ -53,21 +53,24 @@ class Settings(BaseSettings):
     ACLED_API_KEY: str = ""
     ACLED_EMAIL: str = ""
 
-    # LLM provider — "anthropic" (default), "zai", "agentrouter", or "zhipu"
-    LLM_PROVIDER: str = "anthropic"
+    # LLM provider — "zai" (default), "anthropic", "agentrouter", or "zhipu"
+    LLM_PROVIDER: str = "zai"
     ZAI_API_KEY: str = ""
-    ZAI_BASE_URL: str = "https://api.z.ai/v1"
-    ZAI_MODEL: str = "z1-preview"
+    ZAI_BASE_URL: str = "https://open.bigmodel.cn/api/paas/v4/"
+    ZAI_MODEL: str = "glm-5.1"
+    ZAI_MAX_TOKENS: int = 131072
+    ZAI_TEMPERATURE: float = 0.7
+    ZAI_ENABLE_THINKING: bool = True
 
-    # AgentRouter configuration
+    # AgentRouter configuration (backup)
     AGENTROUTER_API_KEY: str = ""
     AGENTROUTER_BASE_URL: str = "https://agentrouter.org/"
     AGENTROUTER_MODEL: str = "claude-sonnet-4-5-20250929"
 
-    # Zhipu AI GLM configuration
+    # Zhipu AI GLM configuration (legacy, kept for compatibility)
     ZHIPU_API_KEY: str = ""
     ZHIPU_BASE_URL: str = "https://open.bigmodel.cn/api/paas/v4/"
-    ZHIPU_MODEL: str = "glm-5"
+    ZHIPU_MODEL: str = "glm-5.1"
 
     # Email whitelist for access control (comma-separated string in .env)
     WHITELISTED_EMAILS: str = ""

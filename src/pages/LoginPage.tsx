@@ -7,7 +7,7 @@ import { useAppStore, type AuthError } from '@/contexts/AppContext'
 type AuthMode = 'signin' | 'signup' | 'forgot-password'
 
 export function LoginPage() {
-  const { isAuthenticated, isLoading } = useAppStore()
+  const { isAuthenticated } = useAppStore()
   const setUser = useAppStore(s => s.setUser)
   const location = useLocation()
 
@@ -143,7 +143,7 @@ export function LoginPage() {
     if (error) {
       setError(error.message || 'Failed to create account')
     } else {
-      if (data.session) {
+      if (data.session && data.user) {
         setUser({
           email: data.user.email!,
           name: fullName,

@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAppStore } from '@/contexts/AppContext'
 
 export function AuthCallbackPage() {
   const navigate = useNavigate()
-  const location = useLocation()
   const setUser = useAppStore((s) => s.setUser)
   const [error, setError] = useState<string | null>(null)
 
