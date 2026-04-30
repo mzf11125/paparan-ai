@@ -2,12 +2,20 @@ from pydantic_settings import BaseSettings
 from pathlib import Path
 
 class Settings(BaseSettings):
-    ANTHROPIC_API_KEY: str
-    TAVILY_API_KEY: str
+    # Required: Supabase configuration
     SUPABASE_URL: str
     SUPABASE_ANON_KEY: str
     SUPABASE_SERVICE_ROLE_KEY: str
     DATABASE_URL: str
+
+    # Required: At least one LLM API key must be set
+    # These can be empty strings if the primary provider is configured
+    ANTHROPIC_API_KEY: str = ""
+
+    # Required: Tavily for web search (graceful degradation)
+    TAVILY_API_KEY: str = ""
+
+    # Optional: LangSmith tracing
     LANGSMITH_API_KEY: str = ""
     LANGSMITH_TRACING: bool = False
     # CORS Configuration — comma-separated list of allowed origins
