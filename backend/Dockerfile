@@ -21,7 +21,7 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY pyproject.toml ./
-COPY app ./app
+COPY backend/app ./app
 
 RUN pip install --upgrade pip setuptools wheel \
     && pip install .
