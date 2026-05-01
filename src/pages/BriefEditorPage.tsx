@@ -2,13 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Save, Eye, ArrowLeft, Plus, Trash2, Check, FileEdit, Sparkles, Loader2 } from 'lucide-react'
-import { briefService, initializeBriefStore } from '@/services/briefService'
-import { mockBriefs } from '@/data/mockBriefs'
+import { briefService } from '@/services/briefService'
 import { Paparan, Development } from '@/types/paparan'
 import { ClassificationBadge } from '@/components/ui/ClassificationBadge'
 import { cn } from '@/utils/formatters'
-
-initializeBriefStore(mockBriefs)
 
 const REGIONS = ['ASEAN', 'Indonesia', 'Malaysia', 'Singapore', 'Thailand', 'Philippines', 'Vietnam', 'Myanmar', 'Global']
 

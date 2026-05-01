@@ -5,62 +5,29 @@
 
 ## Current State
 
-Paparan.ai is a **Vite + React 19 + TypeScript** frontend prototype. There is no live backend — all data is mock. The README describes a planned Next.js + Supabase stack that has not yet been built.
+Paparan.ai is a **Vite + React 19 + TypeScript** frontend with a Python FastAPI + LangGraph backend. The frontend is wired to the live backend via `briefService.ts` and `api.ts` with an in-memory fallback for offline/dev use.
 
 ### What exists today
 | Area | Status |
 |---|---|
 | UI design system | ✅ Complete (classification badges, delta labels, ornaments, seals) |
 | Landing page | ✅ Complete |
-| Briefs library (mock) | ✅ Complete |
-| Brief detail view (mock) | ✅ Complete |
-| Brief editor (mock) | ✅ Complete |
-| News feed (mock) | ✅ Complete |
-| Watchlist (mock) | ✅ Complete |
-| Analytics dashboard (mock) | ✅ Complete |
-| Settings page (mock) | ✅ Complete |
-| Auth (login UI only) | ⚠️ UI exists, no backend |
-| Backend / database | ❌ None |
-| AI integration (Claude) | ❌ None |
-| Real data pipeline | ❌ None |
-| Alert system | ❌ None |
-| Document upload | ❌ None |
-| Export (PDF/Word/PPT) | ❌ None |
+| Briefs library | ✅ Live API + empty-state fallback |
+| Brief detail view | ✅ Live API |
+| Brief editor + AI generation | ✅ Calls `POST /api/paparan` |
+| News feed | ✅ Live API |
+| Watchlist | ✅ Complete |
+| Analytics dashboard | ✅ Complete |
+| Settings page | ✅ Complete |
+| Auth (Supabase magic link) | ✅ Wired |
+| Backend / database | ✅ FastAPI + LangGraph + Supabase |
+| AI integration (Claude / z.ai) | ✅ LangGraph StateGraph orchestrator |
+| RDTII evidence extraction | ✅ LLM clause extractor |
+| Export (PDF/PPTX/Diplomat) | ✅ humanizer-zh applied |
 
 ---
 
-## Migration: Vite → Next.js App Router
-
-The README targets Next.js 16 + Supabase. The codebase is currently Vite. This migration is a prerequisite for everything else.
-
-### Phase 0 — Framework Migration
-**Goal:** Move from Vite to Next.js App Router without breaking the UI.
-
-1. Scaffold Next.js app (`npx create-next-app@latest`)
-2. Move `src/components`, `src/hooks`, `src/utils`, `src/types`, `src/data` as-is
-3. Convert `src/pages/*.tsx` → `src/app/(app)/[route]/page.tsx`
-4. Convert `src/pages/LoginPage.tsx` → `src/app/(auth)/login/page.tsx`
-5. Move `src/assets/styles/index.css` → `src/app/globals.css`
-6. Replace `react-router-dom` with Next.js `<Link>` and `useRouter`
-7. Replace `AppContext` with Next.js server/client component split
-8. Verify build passes
-
-**File mapping:**
-```
-src/pages/LandingPage.tsx          → src/app/page.tsx
-src/pages/LoginPage.tsx            → src/app/(auth)/login/page.tsx
-src/pages/BriefsLibraryPage.tsx    → src/app/(app)/briefs/page.tsx
-src/pages/BriefDetailPage.tsx      → src/app/(app)/briefs/[id]/page.tsx
-src/pages/BriefEditorPage.tsx      → src/app/(app)/briefs/[id]/edit/page.tsx
-src/pages/NewsFeedPage.tsx         → src/app/(app)/feed/page.tsx
-src/pages/WatchlistPage.tsx        → src/app/(app)/watchlist/page.tsx
-src/pages/AnalyticsDashboardPage.tsx → src/app/(app)/analytics/page.tsx
-src/pages/SettingsPage.tsx         → src/app/(app)/settings/page.tsx
-```
-
----
-
-## Phase 1 — Auth + Database (P0)
+## Phase 1 — Auth + Database (✅ Done)
 
 **Goal:** Real users, real sessions, real data persistence.
 

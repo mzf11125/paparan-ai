@@ -60,6 +60,20 @@ class PolicyBrief(BaseModel):
     archived_sources: list | None = None
     environmental_indicators: dict | None = None
     conflict_context: dict | None = None
+    # RDTII regulatory evidence
+    rdtii_evidence: list | None = None
+
+
+class RegulatoryEvidence(BaseModel):
+    id: str = ""
+    brief_id: str = ""
+    source_url: str = ""
+    clause_text: str
+    pillar_id: str          # P1–P7
+    indicator_code: str     # e.g. "6.1"
+    country: str = ""
+    confidence: Confidence = "MEDIUM"
+    extracted_at: str = ""
 
 
 class FeedItem(BaseModel):

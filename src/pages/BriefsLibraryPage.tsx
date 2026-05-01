@@ -4,8 +4,7 @@ import { Grid3x3, List, Filter, FileText, Layers, X, Loader2, FolderOpen } from 
 import { BriefGrid, BriefGridSkeleton } from '@/components/brief/BriefGrid'
 import { AdvancedSearch, SavedSearchesList } from '@/components/ui/AdvancedSearch'
 import { RegionQuickSwitcher } from '@/components/Layout/RegionQuickSwitcher'
-import { briefService, initializeBriefStore } from '@/services/briefService'
-import { mockBriefs } from '@/data/mockBriefs'
+import { briefService } from '@/services/briefService'
 import { useAppStore, useFilteredBriefs } from '@/contexts/AppContext'
 import { exportService } from '@/services/exportService'
 import { cn } from '@/utils/formatters'
@@ -13,7 +12,6 @@ import { ErrorState } from '@/components/ui/ErrorState'
 import { useNavigate } from 'react-router-dom'
 
 // Initialize store with mock data
-initializeBriefStore(mockBriefs)
 
 const regions = ['All Regions', 'APAC', 'EMEA', 'Americas', 'ASEAN', 'Global']
 const sortOptions = [

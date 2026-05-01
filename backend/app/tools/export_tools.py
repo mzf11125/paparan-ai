@@ -1,6 +1,7 @@
 """PDF and PPTX export tools for policy briefs."""
 import io
 from app.db.schema import PolicyBrief
+from app.tools.text_utils import sanitize_text
 
 WATERMARK_COLORS = {
     "unclassified": (0.85, 0.85, 0.85),
@@ -39,6 +40,16 @@ def generate_pdf(brief: PolicyBrief, watermark: str = None) -> bytes:
     from reportlab.lib import colors
     from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
     from reportlab.lib.enums import TA_CENTER
+
+    # Sanitize all text fields before rendering
+    brief = brief.model_copy(update={
+        "title": sanitize_text(brief.title),
+        "currentSituation": sanitize_text(brief.currentSituation),
+        "implications": sanitize_text(brief.implications),
+        "executiveSummary": [sanitize_text(s) for s in brief.executiveSummary],
+        "risks": [sanitize_text(r) for r in brief.risks],
+        "opportunities": [sanitize_text(o) for o in brief.opportunities],
+    })
 
     buf = io.BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=A4, topMargin=2*cm, bottomMargin=2*cm,
@@ -113,6 +124,13 @@ def generate_pptx(brief: PolicyBrief) -> bytes:
     from pptx.util import Inches, Pt, Emu
     from pptx.dml.color import RGBColor
     from pptx.enum.text import PP_ALIGN
+
+    # Sanitize prose fields
+    brief = brief.model_copy(update={
+        "title": sanitize_text(brief.title),
+        "currentSituation": sanitize_text(brief.currentSituation),
+        "executiveSummary": [sanitize_text(s) for s in brief.executiveSummary],
+    })
 
     prs = Presentation()
     prs.slide_width = Inches(13.33)
@@ -224,6 +242,13 @@ def generate_diplomat_pdf(brief: PolicyBrief, to: str, from_name: str,
     from reportlab.lib import colors
     from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable, Table, TableStyle
 
+    # Sanitize all prose before rendering
+    brief = brief.model_copy(update={
+        "title": sanitize_text(brief.title),
+        "executiveSummary": [sanitize_text(s) for s in brief.executiveSummary],
+        "implications": sanitize_text(brief.implications),
+    })
+
     buf = io.BytesIO()
     doc = SimpleDocTemplate(buf, pagesize=A4, topMargin=2.5*cm, bottomMargin=2.5*cm,
                             leftMargin=3*cm, rightMargin=3*cm)
@@ -238,7 +263,7 @@ def generate_diplomat_pdf(brief: PolicyBrief, to: str, from_name: str,
         canvas.setFillColorRGB(1, 1, 1)
         canvas.setFont("Helvetica-Bold", 10)
         canvas.drawCentredString(A4[0]/2, A4[1] - 0.75*cm,
-                                 f"{'—' * 8}  {brief.classification.upper()}  {'—' * 8}")
+                                 f"{'=' * 8}  {brief.classification.upper()}  {'=' * 8}")
         # Bottom banner
         canvas.setFillColorRGB(0.1, 0.2, 0.5)
         canvas.rect(0, 0, A4[0], 1*cm, fill=1, stroke=0)

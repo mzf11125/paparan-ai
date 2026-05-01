@@ -23,9 +23,14 @@ from app.tools.bappenas_tools import (
 )
 from app.config import settings
 from app.llm import get_chat_model
+from app.tools.skills_loader import get_humanizer_prompt
+from app.tools.text_utils import sanitize_brief_text
 
 # Initialize model for extraction
 _model = get_chat_model()
+
+# Append humanizer rules (em dash ban, anti-AI-tell) to the extraction system prompt
+_HUMANIZER_ADDENDUM = "\n\n---\n" + get_humanizer_prompt()
 
 # SDI-compliant extraction prompt in Indonesian
 _SYSTEM_PROMPT = """Anda adalah ahli ekstraksi metadata indikator SDI (Satu Data Indonesia) dari dokumen RPJMN/Renstra.
@@ -304,8 +309,10 @@ Teks dokumen (bagian pertama, max 15000 karakter):
 
     try:
         # Call Claude for extraction
-        response = _model.invoke([{"role": "system", "content": _SYSTEM_PROMPT},
-                             {"role": "user", "content": prompt}])
+        response = _model.invoke([
+            {"role": "system", "content": _SYSTEM_PROMPT + _HUMANIZER_ADDENDUM},
+            {"role": "user", "content": prompt},
+        ])
 
         raw = response.content.strip()
 
@@ -315,7 +322,7 @@ Teks dokumen (bagian pertama, max 15000 karakter):
             if raw.startswith("json"):
                 raw = raw[4:].lstrip()
 
-        data = json.loads(raw)
+        data = sanitize_brief_text(json.loads(raw))
         indicators = data.get("indicators", [])
 
         # Validate and enrich each indicator

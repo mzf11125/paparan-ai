@@ -2,14 +2,11 @@ import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, NavLink } from 'react-router-dom'
 import { Search, PlusCircle, ArrowRight, Radio, Globe, AlertTriangle, Clock, TrendingUp, FileText, Zap } from 'lucide-react'
-import { briefService, initializeBriefStore } from '@/services/briefService'
-import { mockBriefs } from '@/data/mockBriefs'
+import { briefService } from '@/services/briefService'
 import { Paparan } from '@/types/paparan'
 import { cn } from '@/utils/formatters'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { Newspaper } from 'lucide-react'
-
-initializeBriefStore(mockBriefs)
 
 const REGION_COLORS: Record<string, string> = {
   APAC: 'text-[#60A5FA] bg-[rgba(96,165,250,0.15)] border-[rgba(96,165,250,0.20)]',

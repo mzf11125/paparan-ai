@@ -1,11 +1,13 @@
 import json
-from langchain.tools import tool
-from langchain_core.documents import Document
+import uuid
+from datetime import datetime
+
 from app.tools.tavily_tools import tavily_search
-from app.tools.supabase_tools import semantic_search
 from app.db.vector_store import feed_retriever
-from app.db.schema import PolicyBrief, Development, Source, Action
+from app.db.schema import PolicyBrief
 from app.llm import get_chat_model
+from app.tools.skills_loader import get_humanizer_prompt
+from app.tools.text_utils import sanitize_brief_text
 
 _model = get_chat_model()
 
@@ -23,18 +25,20 @@ BRIEF_SCHEMA = """Return ONLY valid JSON matching this schema:
   "tags": ["string"]
 }"""
 
+_SYSTEM = get_humanizer_prompt() + "\n\nReturn ONLY valid JSON. No prose outside the JSON object."
+
 
 def run_researcher(topic: str, region: str = "ASEAN") -> PolicyBrief:
-    # Cache-first: check vector store before hitting Tavily
     cached = feed_retriever.invoke(topic)
     cache_context = "\n\n".join(
-        f"Source: {d.metadata.get('url','')}\n{d.page_content}" for d in cached
+        f"Source: {d.metadata.get('url', '')}\n{d.page_content}" for d in cached
     )
 
-    # Supplement with live search if cache is thin
     live_context = ""
     if len(cached) < 3:
-        live_context = tavily_search.invoke({"query": f"{region} {topic} policy 2026", "topic": "news", "max_results": 5})
+        live_context = tavily_search.invoke(
+            {"query": f"{region} {topic} policy 2026", "topic": "news", "max_results": 5}
+        )
 
     prompt = f"""Research this ASEAN policy topic and produce a structured brief.
 
@@ -51,16 +55,17 @@ Live search results:
 
 Produce the JSON brief now. Use only information from the sources above."""
 
-    response = _model.invoke([{"role": "user", "content": prompt}])
+    response = _model.invoke([
+        {"role": "system", "content": _SYSTEM},
+        {"role": "user", "content": prompt},
+    ])
     raw = response.content.strip()
-    # Strip markdown code fences if present
     if raw.startswith("```"):
         raw = raw.split("```")[1]
         if raw.startswith("json"):
             raw = raw[4:]
-    data = json.loads(raw)
-    import uuid
-    from datetime import datetime
+
+    data = sanitize_brief_text(json.loads(raw))
     data["id"] = str(uuid.uuid4())
     data["date"] = datetime.utcnow().strftime("%Y-%m-%d")
     data["region"] = region

@@ -17,11 +17,8 @@ import { AseanDashboardPage } from '@/pages/AseanDashboardPage'
 import { useCommandPalette } from '@/components/ui/CommandPalette'
 import { CommandPalette } from '@/components/ui/CommandPalette'
 import { Toaster } from '@/components/ui/Toast'
-import { initializeBriefStore } from '@/services/briefService'
-import { mockBriefs } from '@/data/mockBriefs'
 import { useAppStore, useAuthInitializer } from '@/contexts/AppContext'
-
-initializeBriefStore(mockBriefs)
+import { briefService } from '@/services/briefService'
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 5 * 60 * 1000, retry: 1 } },
@@ -31,7 +28,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isAuthLoading } = useAppStore()
   const location = useLocation()
 
-  // Show loading state while restoring session
   if (isAuthLoading) {
     return (
       <div className="min-h-screen bg-[#0A0B0D] flex items-center justify-center">
@@ -52,8 +48,17 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   const commandPalette = useCommandPalette()
   const theme = useAppStore(s => s.theme)
-  // Initialize auth state on app load - this properly restores session
+  const { isAuthenticated } = useAppStore()
+  const setBriefs = useAppStore(s => s.setBriefs)
+  const briefs = useAppStore(s => s.briefs)
+
   useAuthInitializer()
+
+  // Fetch briefs from live API once authenticated
+  useEffect(() => {
+    if (!isAuthenticated) return
+    briefService.getAllBriefs().then(setBriefs).catch(() => {/* stay with empty store */})
+  }, [isAuthenticated, setBriefs])
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
@@ -86,7 +91,7 @@ function AppRoutes() {
       <CommandPalette
         isOpen={commandPalette.isOpen}
         onClose={commandPalette.close}
-        briefs={mockBriefs}
+        briefs={briefs}
       />
       <Toaster />
     </>
@@ -96,7 +101,6 @@ function AppRoutes() {
 function App() {
   const { theme } = useAppStore()
 
-  // Set dark mode class on mount
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark')
   }, [theme])

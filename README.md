@@ -73,17 +73,15 @@ React Frontend (Vite + React 19)
     ↓ REST + Supabase JWT
 FastAPI Backend (Railway / Docker)
     ↓
-LangGraph Orchestrator
-    ├── Scraper Agent          (Tavily → Supabase feed_items + Wayback auto-archive)
-    ├── Gov Intelligence Agent (DeepAgents + SDI tools + spatial + conflict + maritime)
-    ├── Financial Analyst Agent (DeepAgents + corporate actor + stability index)
-    ├── Deep Research Agent    (cache-first PGVector → Tavily, claude-opus-4-5 / z.ai)
-    ├── RPJMN Scorer Agent     (static Asta Cita 8-pillar + RDTII 7-pillar)
-    ├── ASEAN Simulator Agent  (scenario modeling + knowledge graph)
-    ├── Synthesizer Agent      (cross-brief pattern recognition)
-    ├── Metadata Extractor Agent (bilingual LLM extraction of SDI indicators from docs)
-    ├── Consistency Checker Agent (PGVector semantic similarity + cross-K/L conflict flags)
-    └── Conversational RAG     (DeepAgents + PGVector retriever, SSE streaming)
+LangGraph StateGraph Orchestrator
+    ├── route_request          (conditional: bappenas | financial | default)
+    ├── run_gov_intel          (DeepAgents + SDI tools + spatial + conflict + maritime)
+    ├── run_analyst            (DeepAgents + corporate actor + stability index)
+    ├── run_researcher         (cache-first PGVector → Tavily, humanizer-zh prompt)
+    ├── score_rpjmn            (Asta Cita 8-pillar + RDTII 7-pillar, Indonesia/ASEAN only)
+    ├── extract_rdtii          (LLM clause extraction → RegulatoryEvidence, digital trade topics)
+    ├── enrich_osint           (spatial + environmental + archive enrichment)
+    └── save_brief             (version chaining + Supabase persist)
     ↓
 Supabase (Postgres + pgvector)
     ↓
@@ -99,6 +97,35 @@ SDI / Bappenas Layer
     ├── bappenas_tools.py      (K/L code mapping, sector codes, data.go.id integration)
     └── document_processor.py  (PDF/text extraction + SHA-256 deduplication)
 ```
+
+### LangGraph Graph Topology
+
+```mermaid
+graph TD
+    A[route_request] -->|bappenas| C[run_researcher]
+    A -->|financial| B[run_analyst]
+    A -->|default| D[run_gov_intel]
+    B --> C
+    D --> C
+    C --> E[score_rpjmn]
+    E --> F[extract_rdtii]
+    F --> G[enrich_osint]
+    G --> H[save_brief]
+    H --> END
+
+    style A fill:#1a3a6b,color:#fff
+    style E fill:#1a6b3a,color:#fff
+    style F fill:#1a6b3a,color:#fff
+```
+
+**State schema (`OrchestratorState`):**
+
+| Field | Type | Description |
+|---|---|---|
+| `request` | `GenerateBriefRequest` | Topic, region, classification |
+| `user_id` | `str` | For version chaining |
+| `brief` | `PolicyBrief \| None` | Populated by `run_researcher`, enriched by subsequent nodes |
+| `route` | `"bappenas" \| "financial" \| "default"` | Set by `route_request` |
 
 ---
 
@@ -467,7 +494,36 @@ LANGSMITH_TRACING=true
 
 ---
 
-## 🎯 Policy Alignment (RPJMN & RDTII)
+## 🖊 Document Humanizer (Anti-AI-Detection)
+
+All AI-generated text in policy briefs, diplomat memos, and PPTX exports is processed through the **humanizer-zh** writing skill (`/.agents/skills/humanizer-zh/SKILL.md`).
+
+Key rules enforced at the LLM prompt level and as a post-processing pass:
+
+- **No em dashes or en dashes** (`—`, `–`) — replaced with commas, periods, or restructured sentences. Em dashes are a strong AI-detection signal in enterprise document scanners.
+- No AI-tell phrases ("it is worth noting", "in conclusion", "furthermore", "robust", "leverage")
+- Varied sentence length — no uniform rhythm
+- Active voice preferred
+- Concrete specifics over vague generalities
+
+The `sanitize_text()` utility in `backend/app/tools/text_utils.py` provides a safety-net post-processing pass that strips any remaining dashes from generated text before it reaches PDF/PPTX rendering.
+
+---
+
+## 🔗 RDTII Regulatory Evidence
+
+Beyond keyword scoring, Paparan now extracts **clause-level regulatory evidence** from policy documents and maps each clause to an RDTII pillar and indicator.
+
+The `rdtii_extractor.py` agent uses Claude to:
+1. Identify specific clauses in policy text relevant to digital trade
+2. Map each clause to a pillar (P1–P7) and indicator code (e.g. `3.1`, `6.2`)
+3. Return structured `RegulatoryEvidence` objects stored in the `rdtii_evidence` Supabase table
+
+Evidence is extracted automatically when a brief topic contains digital trade keywords. Results are attached to the `PolicyBrief` as `rdtii_evidence[]` and visible in the ASEAN Dashboard.
+
+---
+
+
 
 ### RPJMN 2025–2029 Asta Cita Pillars
 

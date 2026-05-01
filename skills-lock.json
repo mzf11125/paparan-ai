@@ -4,7 +4,52 @@
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
+      "skillPath": "frontend-design",
       "computedHash": "063a0e6448123cd359ad0044cc46b0e490cc7964d45ef4bb9fd842bd2ffbca67"
+    },
+    "humanizer-zh": {
+      "source": "op7418/humanizer-zh",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "7bd195e3bcdcc24f078dfd4e3b3e37e8ac321c36f410a41241fc4175eab1825a"
+    },
+    "langchain-fundamentals": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "langchain-fundamentals"
+    },
+    "langchain-rag": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "langchain-rag"
+    },
+    "langgraph-fundamentals": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "langgraph-fundamentals"
+    },
+    "langgraph-persistence": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "langgraph-persistence"
+    },
+    "langgraph-docs": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "skillPath": "langgraph-docs"
+    },
+    "knowledge-work-plugins": {
+      "source": "anthropics/knowledge-work-plugins",
+      "sourceType": "github"
+    },
+    "financial-services-plugins": {
+      "source": "anthropics/financial-services-plugins",
+      "sourceType": "github"
+    },
+    "global-government-analysis": {
+      "source": "https://github.com/hack23/riksdagsmonitor",
+      "sourceType": "github",
+      "skillPath": "global-government-analysis"
     }
   }
 }
