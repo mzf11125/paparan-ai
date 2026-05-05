@@ -4,12 +4,10 @@ import {
   MapPin,
   Calendar,
   Edit,
-  Share2,
   ArrowRight,
   Bookmark,
   BookmarkCheck,
   Copy,
-  Eye,
 } from 'lucide-react'
 import { Paparan } from '@/types/paparan'
 import { cn } from '@/utils/formatters'
@@ -34,15 +32,11 @@ export function BriefCard({
   className = '',
   loading = false,
   onShare,
-  showQuickActions = true,
-  classification = 'unclassified',
   bookmarkedOverride,
 }: BriefCardProps) {
   const [copied, setCopied] = useState(false)
   const displayTags = brief.tags?.slice(0, 3) || []
   const { isInWatchlist, toggleWatchlist } = useAppStore()
-
-  // Use override if provided, otherwise use store
   const bookmarked = bookmarkedOverride ?? isInWatchlist(brief.id)
 
   const handleCopyLink = async (e: React.MouseEvent) => {
@@ -75,19 +69,6 @@ export function BriefCard({
     }
   }
 
-  // Classification badge styles
-  const classificationStyles = {
-    unclassified: 'classification-badge-unclassified',
-    official: 'classification-badge-official',
-    confidential: 'classification-badge-confidential',
-  }
-
-  const classificationLabels = {
-    unclassified: 'UNCLASSIFIED',
-    official: 'OFFICIAL',
-    confidential: 'CONFIDENTIAL',
-  }
-
   if (loading) {
     return <BriefCardSkeleton variant={variant} />
   }
@@ -105,8 +86,8 @@ export function BriefCard({
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <span className={cn('classification-badge', classificationStyles[classification])}>
-                {classificationLabels[classification]}
+              <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded-full bg-[#5183EB]/10 text-[#5183EB] border border-[#5183EB]/20">
+                {brief.region}
               </span>
             </div>
             <h3 className="font-display font-semibold text-text line-clamp-1 group-hover:text-primary transition-colors">
@@ -145,100 +126,119 @@ export function BriefCard({
   return (
     <article
       className={cn(
-        'bg-bg-elevated border border-border rounded-lg overflow-hidden',
-        'hover:border-primary transition-all duration-200 group',
+        'group relative bg-white/70 dark:bg-white/[0.04]',
+        'border border-black/[0.06] dark:border-white/[0.08]',
+        'rounded-2xl overflow-hidden',
+        'backdrop-blur-sm',
+        'shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)]',
+        'hover:shadow-[0_4px_24px_rgba(81,131,235,0.12),0_1px_3px_rgba(0,0,0,0.06)]',
+        'hover:border-[#5183EB]/30',
+        'transition-all duration-300 ease-out',
+        'hover:-translate-y-0.5',
         className
       )}
     >
-      {/* Card Header — Simplified */}
-      <div className="p-6">
-        {/* Region Badge */}
-        <div className="flex items-center gap-2 mb-4">
-          <span className="px-2.5 py-1 bg-primary-lighter text-primary text-xs font-semibold uppercase tracking-wider rounded-official border border-primary/20">
+      {/* Impact accent bar */}
+      {brief.developments?.some(d => d.impact === 'HIGH') && (
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-red-400 via-orange-400 to-red-400 opacity-70" />
+      )}
+
+      <div className="p-5">
+        {/* Top row — region + date */}
+        <div className="flex items-center justify-between mb-3">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[#5183EB]/10 text-[#5183EB] text-[11px] font-semibold uppercase tracking-wider rounded-full border border-[#5183EB]/20">
+            <MapPin className="w-3 h-3" />
             {brief.region}
           </span>
-          <time className="ml-auto text-xs text-text-tertiary tabular-nums">
-            {brief.date}
-          </time>
+          <div className="flex items-center gap-2">
+            <time className="text-[11px] text-gray-400 tabular-nums flex items-center gap-1">
+              <Calendar className="w-3 h-3" />
+              {brief.date}
+            </time>
+            <button
+              onClick={handleBookmark}
+              className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+              title={bookmarked ? 'Remove bookmark' : 'Bookmark'}
+            >
+              {bookmarked
+                ? <BookmarkCheck className="w-3.5 h-3.5 text-[#5183EB]" />
+                : <Bookmark className="w-3.5 h-3.5 text-gray-300 group-hover:text-gray-400 transition-colors" />
+              }
+            </button>
+          </div>
         </div>
 
-        <NavLink
-          to={`/briefs/${brief.id}`}
-          className="block group/link"
-        >
-          <h3 className="font-display font-bold text-lg text-text leading-snug group-hover/link:text-primary transition-colors">
+        {/* Title */}
+        <NavLink to={`/briefs/${brief.id}`} className="block">
+          <h3 className="font-display font-bold text-[15px] leading-snug text-gray-900 dark:text-white group-hover:text-[#5183EB] transition-colors duration-200 line-clamp-2">
             {brief.title}
           </h3>
         </NavLink>
 
-        {/* Executive Summary Preview */}
-        <p className="mt-4 text-sm text-text-secondary leading-relaxed">
+        {/* Summary */}
+        <p className="mt-2.5 text-[13px] text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2">
           {brief.executiveSummary[0]}
         </p>
 
+        {/* Impact pills */}
+        {brief.developments && brief.developments.length > 0 && (
+          <div className="flex items-center gap-1.5 mt-3">
+            {(['HIGH', 'MEDIUM', 'LOW'] as const).map(level => {
+              const count = brief.developments.filter(d => d.impact === level).length
+              if (!count) return null
+              const styles = {
+                HIGH: 'bg-red-50 text-red-600 border-red-100 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20',
+                MEDIUM: 'bg-orange-50 text-orange-600 border-orange-100 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20',
+                LOW: 'bg-gray-50 text-gray-500 border-gray-100 dark:bg-white/5 dark:text-gray-400 dark:border-white/10',
+              }
+              return (
+                <span key={level} className={cn('inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full border', styles[level])}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
+                  {count} {level}
+                </span>
+              )
+            })}
+          </div>
+        )}
+
         {/* Tags */}
         {displayTags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-4 text-xs text-text-tertiary">
-            {displayTags.map((tag) => (
-              <span key={tag}>{tag}</span>
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            {displayTags.map(tag => (
+              <span key={tag} className="px-2 py-0.5 text-[11px] text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-white/5 rounded-md border border-gray-100 dark:border-white/[0.06]">
+                {tag}
+              </span>
             ))}
           </div>
         )}
       </div>
 
-      {/* Card Footer — Official Style */}
-      <div className="px-6 py-4 bg-bg-surface border-t border-border flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          {/* Quick Actions */}
-          {showQuickActions && (
-            <div className="flex items-center gap-1">
-              <NavLink
-                to={`/briefs/${brief.id}`}
-                className="p-2 rounded hover:bg-bg-elevated hover:text-primary transition-colors"
-                title="View brief"
-              >
-                <Eye className="w-4 h-4 text-text-tertiary" />
-              </NavLink>
-              <NavLink
-                to={`/editor/${brief.id}`}
-                className="p-2 rounded hover:bg-bg-elevated hover:text-primary transition-colors"
-                title="Edit brief"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Edit className="w-4 h-4 text-text-tertiary" />
-              </NavLink>
-              <button
-                className="p-2 rounded hover:bg-bg-elevated hover:text-primary transition-colors relative"
-                title={copied ? 'Copied!' : 'Copy link'}
-                onClick={handleCopyLink}
-              >
-                {copied ? (
-                  <Copy className="w-4 h-4 text-green" />
-                ) : (
-                  <Share2 className="w-4 h-4 text-text-tertiary" />
-                )}
-              </button>
-              <button
-                className="p-2 rounded hover:bg-bg-elevated transition-colors"
-                title={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
-                onClick={handleBookmark}
-              >
-                {bookmarked ? (
-                  <BookmarkCheck className="w-4 h-4 text-primary" />
-                ) : (
-                  <Bookmark className="w-4 h-4 text-text-tertiary" />
-                )}
-              </button>
-            </div>
-          )}
+      {/* Footer */}
+      <div className="px-5 py-3 bg-gray-50/80 dark:bg-white/[0.02] border-t border-black/[0.04] dark:border-white/[0.06] flex items-center justify-between">
+        <div className="flex items-center gap-0.5">
+          <button
+            onClick={handleCopyLink}
+            className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+            title={copied ? 'Copied!' : 'Copy link'}
+          >
+            <Copy className="w-3.5 h-3.5" />
+          </button>
+          <NavLink
+            to={`/editor/${brief.id}`}
+            onClick={e => e.stopPropagation()}
+            className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+            title="Edit"
+          >
+            <Edit className="w-3.5 h-3.5" />
+          </NavLink>
         </div>
 
         <NavLink
           to={`/briefs/${brief.id}`}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-bg-elevated border border-border rounded text-sm font-medium text-text hover:border-primary hover:text-primary transition-all group-hover:shadow-sm"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#5183EB] hover:bg-[#3d6fd4] text-white text-[12px] font-semibold rounded-xl transition-all duration-200 hover:shadow-[0_4px_12px_rgba(81,131,235,0.35)] hover:-translate-y-px"
         >
-          View Brief
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          Read Brief
+          <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
         </NavLink>
       </div>
     </article>

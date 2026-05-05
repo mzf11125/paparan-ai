@@ -50,8 +50,8 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
         Skip to main content
       </a>
 
-      {/* Top Navigation Bar — Official Style */}
-      <header className="sticky top-0 z-[60] bg-[rgba(10,11,13,0.90)] backdrop-blur-md border-b border-b-[rgba(255,255,255,0.08)] shadow-sm transition-shadow duration-200">
+      {/* Top Navigation Bar — Glassmorphism */}
+      <header className="sticky top-0 z-[60] bg-white/80 dark:bg-[rgba(10,11,13,0.85)] backdrop-blur-md border-b border-black/[0.06] dark:border-white/[0.08] shadow-[0_1px_0_rgba(0,0,0,0.04)] transition-shadow duration-200">
         {/* Classification Banner */}
         {/* <div className="classification-banner classification-banner-unclassified py-1">
           <Shield className="w-3 h-3" />
@@ -118,7 +118,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
 
             <NavLink
               to="/editor"
-              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+              className="hidden sm:flex items-center gap-2 px-4 py-2 bg-[#5183EB] hover:bg-[#3d6fd4] text-white rounded-xl text-sm font-semibold transition-all duration-200 shadow-[0_2px_8px_rgba(81,131,235,0.3)] hover:shadow-[0_4px_16px_rgba(81,131,235,0.4)] hover:-translate-y-px"
             >
               <PlusCircle className="w-4 h-4" />
               New Brief
@@ -207,7 +207,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
                       cn(
                         'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors relative',
                         isActive
-                          ? 'text-[#3B82F6] bg-[rgba(59,130,246,0.10)]'
+                          ? 'text-[#5183EB] bg-[rgba(81,131,235,0.10)]'
                           : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[rgba(255,255,255,0.04)]'
                       )
                     }
@@ -215,7 +215,7 @@ export function AppShell({ showSidebar = true, fullWidth = false }: AppShellProp
                     {({ isActive }) => (
                       <>
                         {isActive && (
-                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-[#3B82F6] rounded-r-full" />
+                          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-[#5183EB] rounded-r-full" />
                         )}
                         <item.icon className="w-5 h-5 flex-shrink-0" />
                         {!sidebarCollapsed && <span>{item.label}</span>}
