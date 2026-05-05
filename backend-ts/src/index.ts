@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { stream } from "hono/streaming";
@@ -18,15 +19,15 @@ app.use("*", async (c, next) => {
 });
 
 // ── Auth helper ───────────────────────────────────────────────────────────────
-const supabaseAdmin = createClient(
+const supabaseAdmin = () => createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.VITE_SUPABASE_ANON_KEY!
 );
 
 async function getUserId(authHeader: string | undefined): Promise<string | null> {
   if (!authHeader?.startsWith("Bearer ")) return null;
   const token = authHeader.slice(7);
-  const { data } = await supabaseAdmin.auth.getUser(token);
+  const { data } = await supabaseAdmin().auth.getUser(token);
   return data.user?.id ?? null;
 }
 
