@@ -5,6 +5,7 @@ import { stream } from "hono/streaming";
 import { createClient } from "@supabase/supabase-js";
 import { runOrchestrator } from "./agents/orchestrator.js";
 import { getBriefs, getBriefById } from "./db/client.js";
+import { generatePdf, generatePptx } from "./tools/export.js";
 import type { GenerateBriefRequest } from "./db/schema.js";
 
 const app = new Hono();
@@ -75,6 +76,24 @@ app.post("/api/paparan", async (c) => {
       await s.write(`data: ${JSON.stringify({ type: "error", message: (err as Error).message })}\n\n`);
     }
   });
+});
+
+/** POST /api/export/pdf — body: PolicyBrief JSON */
+app.post("/api/export/pdf", async (c) => {
+  const brief = await c.req.json();
+  const pdf = await generatePdf(brief);
+  c.header("Content-Type", "application/pdf");
+  c.header("Content-Disposition", `attachment; filename="paparan-brief-${brief.id ?? "export"}.pdf"`);
+  return c.body(pdf);
+});
+
+/** POST /api/export/pptx — body: PolicyBrief JSON */
+app.post("/api/export/pptx", async (c) => {
+  const brief = await c.req.json();
+  const pptx = await generatePptx(brief);
+  c.header("Content-Type", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+  c.header("Content-Disposition", `attachment; filename="paparan-brief-${brief.id ?? "export"}.pptx"`);
+  return c.body(pptx);
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────
