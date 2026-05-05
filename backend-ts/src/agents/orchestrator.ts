@@ -175,6 +175,10 @@ async function nodeScore(state: OrchestratorState): Promise<Partial<Orchestrator
 
 async function nodeSave(state: OrchestratorState): Promise<Partial<OrchestratorState>> {
   if (!state.brief || process.env.DRY_RUN) return {};
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.warn("[save] SUPABASE_SERVICE_ROLE_KEY not set — skipping save");
+    return {};
+  }
   await saveBrief(state.brief);
   return {};
 }
