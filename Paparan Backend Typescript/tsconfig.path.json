@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["src/*"],
+      "@config/*": ["src/config/*"],
+      "@common/*": ["src/common/*"],
+      "@modules/*": ["src/modules/*"],
+      "@database/*": ["src/database/*"],
+      "@models/*": ["src/models/*"],
+      "@jobs/*": ["src/jobs/*"],
+      "@providers/*": ["src/providers/*"]
+    }
+  }
+}
