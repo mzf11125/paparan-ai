@@ -61,7 +61,7 @@ async function nodeDiscoverLegal(state: OrchestratorState): Promise<Partial<Orch
     isIndonesia ? pasalSearch(topic) : Promise.resolve(""),
   ]);
 
-  return { legalContext: [tavilyCtx, pasalCtx].filter(Boolean).join("\n\n---\n\n") };
+  return { legalContext: [tavilyCtx, pasalCtx].filter(Boolean).join("\n\n---\n\n").slice(0, 3000) };
 }
 
 async function nodeResearchAndRdtii(state: OrchestratorState): Promise<Partial<OrchestratorState>> {
