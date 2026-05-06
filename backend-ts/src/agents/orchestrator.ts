@@ -1,7 +1,7 @@
 import { StateGraph, END } from "@langchain/langgraph";
 import { v4 as uuid } from "uuid";
 import type { PolicyBrief, GenerateBriefRequest, RdtiiEvidence } from "../db/schema.js";
-import { llm, tavilySearch, pasalSearch, verifyCitation } from "../tools/llm.js";
+import { llm, tavilySearch, pasalSearch } from "../tools/llm.js";
 import { scoreRpjmn, scoreRdtii, urgencyScore } from "../tools/scoring.js";
 import { saveBrief } from "../db/client.js";
 
@@ -64,14 +64,16 @@ async function nodeDiscoverLegal(state: OrchestratorState): Promise<Partial<Orch
   return { legalContext: [tavilyCtx, pasalCtx].filter(Boolean).join("\n\n---\n\n") };
 }
 
-async function nodeResearch(state: OrchestratorState): Promise<Partial<OrchestratorState>> {
+async function nodeResearchAndRdtii(state: OrchestratorState): Promise<Partial<OrchestratorState>> {
   if (process.env.DRY_RUN) {
     console.log("[dry-run] nodeResearch — would call LLM with topic:", state.request.topic);
-    return { brief: null };
+    return { brief: null, rdtiiEvidence: [] };
   }
 
   const { topic, region, classification = "unclassified" } = state.request;
-  const prompt = `Research this ASEAN policy topic and produce a structured brief.
+  const isDigital = DIGITAL_KW.some(k => topic.toLowerCase().includes(k));
+
+  const researchPrompt = `Research this ASEAN policy topic and produce a structured brief.
 
 Topic: ${topic}
 Region: ${region}
@@ -83,9 +85,26 @@ ${BRIEF_SCHEMA}
 
 Produce the JSON brief now. Use only information from the sources above.`;
 
-  const raw = await llm(SYSTEM, prompt);
-  const cleaned = raw.replace(/^```json?\n?/, "").replace(/\n?```$/, "").trim();
-  const data = JSON.parse(cleaned) as Omit<PolicyBrief, "id" | "date" | "region" | "classification">;
+  const rdtiiPrompt = isDigital ? `Extract RDTII regulatory evidence from the following legal context.
+
+Topic: ${topic}
+Region: ${region}
+
+Legal context:
+${state.legalContext || "(none)"}
+
+For each relevant clause, return a JSON array:
+[{"clause_text":"verbatim excerpt","pillar_id":"P1|P2|P3|P4|P5|P6|P7","indicator_code":"e.g. 6.1","source_url":"url","confidence":"HIGH|MEDIUM|LOW","country":"${region}"}]
+
+Return ONLY the JSON array. If no relevant clauses found, return [].` : null;
+
+  const [rawBrief, rawRdtii] = await Promise.all([
+    llm(SYSTEM, researchPrompt),
+    rdtiiPrompt ? llm("You are an RDTII regulatory clause extractor.", rdtiiPrompt) : Promise.resolve("[]"),
+  ]);
+
+  const cleanedBrief = rawBrief.replace(/^```json?\n?/, "").replace(/\n?```$/, "").trim();
+  const data = JSON.parse(cleanedBrief) as Omit<PolicyBrief, "id" | "date" | "region" | "classification">;
 
   const brief: PolicyBrief = {
     ...data,
@@ -96,58 +115,21 @@ Produce the JSON brief now. Use only information from the sources above.`;
     lastUpdated: new Date().toISOString(),
   };
 
-  return { brief };
-}
-
-async function nodeExtractRdtii(state: OrchestratorState): Promise<Partial<OrchestratorState>> {
-  if (!state.brief) return {};
-  const { topic, region } = state.request;
-  const isDigital = DIGITAL_KW.some(k => topic.toLowerCase().includes(k));
-  if (!isDigital) return {};
-  if (process.env.DRY_RUN) return { rdtiiEvidence: [] };
-
-  // Ask LLM to extract clause-level RDTII evidence from the legal context
-  const prompt = `Extract RDTII regulatory evidence from the following legal context.
-
-Topic: ${topic}
-Region: ${region}
-
-Legal context:
-${state.legalContext || "(none)"}
-
-For each relevant clause, return a JSON array:
-[{
-  "clause_text": "verbatim excerpt",
-  "pillar_id": "P1|P2|P3|P4|P5|P6|P7",
-  "indicator_code": "e.g. 6.1",
-  "source_url": "url",
-  "confidence": "HIGH|MEDIUM|LOW",
-  "country": "${region}"
-}]
-
-Return ONLY the JSON array. If no relevant clauses found, return [].`;
-
-  const raw = await llm("You are an RDTII regulatory clause extractor.", prompt);
-  const cleaned = raw.replace(/^```json?\n?/, "").replace(/\n?```$/, "").trim();
-
-  let clauses: Array<Omit<RdtiiEvidence, "id" | "brief_id" | "extracted_at">> = [];
-  try { clauses = JSON.parse(cleaned); } catch { return {}; }
-
-  // Verify citations
-  const evidence: RdtiiEvidence[] = await Promise.all(
-    clauses.map(async (c) => {
-      const verified = c.source_url ? await verifyCitation(c.source_url, c.clause_text) : false;
-      return {
+  let rdtiiEvidence: RdtiiEvidence[] = [];
+  if (isDigital) {
+    try {
+      const cleanedRdtii = rawRdtii.replace(/^```json?\n?/, "").replace(/\n?```$/, "").trim();
+      const clauses = JSON.parse(cleanedRdtii) as Array<Omit<RdtiiEvidence, "id" | "brief_id" | "extracted_at">>;
+      rdtiiEvidence = clauses.map(c => ({
         ...c,
         id: uuid(),
-        brief_id: state.brief!.id,
+        brief_id: brief.id,
         extracted_at: new Date().toISOString(),
-        confidence: verified ? c.confidence : "LOW",
-      };
-    })
-  );
+      }));
+    } catch { /* ignore parse errors */ }
+  }
 
-  return { rdtiiEvidence: evidence };
+  return { brief, rdtiiEvidence };
 }
 
 async function nodeScore(state: OrchestratorState): Promise<Partial<OrchestratorState>> {
@@ -197,15 +179,13 @@ const graph = new StateGraph<OrchestratorState>({
 })
   .addNode("node_route", nodeRoute)
   .addNode("discover_legal", nodeDiscoverLegal)
-  .addNode("research", nodeResearch)
-  .addNode("extract_rdtii", nodeExtractRdtii)
+  .addNode("research", nodeResearchAndRdtii)
   .addNode("score", nodeScore)
   .addNode("save", nodeSave)
   .addEdge("__start__", "node_route")
   .addEdge("node_route", "discover_legal")
   .addEdge("discover_legal", "research")
-  .addEdge("research", "extract_rdtii")
-  .addEdge("extract_rdtii", "score")
+  .addEdge("research", "score")
   .addEdge("score", "save")
   .addEdge("save", END);
 

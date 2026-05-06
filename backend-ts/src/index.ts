@@ -36,9 +36,13 @@ const supabaseAdmin = () => createClient(
 
 async function getUserId(authHeader: string | undefined): Promise<string | null> {
   if (!authHeader?.startsWith("Bearer ")) return null;
-  const token = authHeader.slice(7);
-  const { data } = await supabaseAdmin().auth.getUser(token);
-  return data.user?.id ?? null;
+  try {
+    const token = authHeader.slice(7);
+    const { data } = await supabaseAdmin().auth.getUser(token);
+    return data.user?.id ?? null;
+  } catch {
+    return null;
+  }
 }
 
 // ── Routes ────────────────────────────────────────────────────────────────────
@@ -65,7 +69,6 @@ app.get("/api/briefs/:id", async (c) => {
  * Response: SSE stream — events: { type: "chunk"|"done"|"error", data?: PolicyBrief }
  */
 app.post("/api/paparan", async (c) => {
-  const userId = await getUserId(c.req.header("Authorization"));
   const body = await c.req.json<GenerateBriefRequest>();
 
   if (!body.topic?.trim() || !body.region?.trim()) {
@@ -78,6 +81,7 @@ app.post("/api/paparan", async (c) => {
   return stream(c, async (s) => {
     await s.write(": ping\n\n");
     try {
+      const userId = await getUserId(c.req.header("Authorization"));
       const brief = await runOrchestrator(body, userId ?? "anonymous");
       await s.write(`data: ${JSON.stringify({ type: "chunk", data: brief })}\n\n`);
       await s.write(`data: ${JSON.stringify({ type: "done" })}\n\n`);
