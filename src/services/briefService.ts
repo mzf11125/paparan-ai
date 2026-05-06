@@ -88,7 +88,7 @@ class BriefServiceImpl implements BriefService {
   }
 
   async generateBrief(topic: string, region: string, classification = 'unclassified'): Promise<Paparan> {
-    return await apiClient.post<Paparan>('/api/paparan', { topic, region, classification })
+    return await apiClient.postStream<Paparan>('/api/paparan', { topic, region, classification })
   }
 
   private _applyFilters(briefs: Paparan[], filters?: BriefFilters): Paparan[] {

@@ -11,8 +11,17 @@ import type { GenerateBriefRequest } from "./db/schema.js";
 const app = new Hono();
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
+const ALLOWED_ORIGINS = new Set([
+  process.env.FRONTEND_URL ?? "https://paparanbrief.com",
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:4173",
+]);
+
 app.use("*", async (c, next) => {
-  c.header("Access-Control-Allow-Origin", process.env.FRONTEND_URL ?? "*");
+  const origin = c.req.header("Origin") ?? "";
+  const allowOrigin = ALLOWED_ORIGINS.has(origin) ? origin : (process.env.FRONTEND_URL ?? "*");
+  c.header("Access-Control-Allow-Origin", allowOrigin);
   c.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   c.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   if (c.req.method === "OPTIONS") return c.text("", 200);
@@ -22,7 +31,7 @@ app.use("*", async (c, next) => {
 // ── Auth helper ───────────────────────────────────────────────────────────────
 const supabaseAdmin = () => createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.VITE_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY!
 );
 
 async function getUserId(authHeader: string | undefined): Promise<string | null> {
