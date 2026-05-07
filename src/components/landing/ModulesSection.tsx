@@ -6,7 +6,7 @@ const MODULES = [
     icon: Bell,
     name: 'Monitor',
     tagline: 'Catch policy signals before they become crises.',
-    description: 'Real-time alerts on legislative and regulatory developments across ASEAN and 140+ global markets — with draft-ready insights attached.',
+    description: 'Real-time alerts on legislative and regulatory developments across ASEAN and Southeast Asia — with draft-ready insights attached.',
     // Data dashboard / analytics screen
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=75',
     imageAlt: 'Policy monitoring dashboard with real-time alerts',

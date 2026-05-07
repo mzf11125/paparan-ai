@@ -136,7 +136,7 @@ export function LandingPage() {
                 Latest Intelligence
               </div>
               <h2 className="text-3xl font-display font-bold text-text mb-1">Featured Policy Briefs</h2>
-              <p className="text-text-secondary">Latest developments from across the region</p>
+              <p className="text-text-secondary">Latest developments from across ASEAN and Southeast Asia</p>
             </div>
             <Link to="/briefs" className="hidden sm:inline-flex items-center gap-2 font-medium text-sm transition-colors duration-200 cursor-pointer text-primary hover:text-primary-dark">
               View all briefs <ArrowRight className="w-4 h-4" aria-hidden="true" />

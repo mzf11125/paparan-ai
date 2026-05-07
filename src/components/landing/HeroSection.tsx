@@ -79,7 +79,7 @@ export function HeroSection() {
 
         {/* Subhead */}
         <p className="text-lg lg:text-xl text-white/60 mb-12 leading-relaxed max-w-2xl mx-auto">
-          AI-powered briefs for government affairs, regulatory, and public sector teams across ASEAN and 140+ global markets.
+          The only AI-powered policy intelligence platform built specifically for ASEAN and Southeast Asia.
         </p>
 
         {/* CTAs */}
@@ -102,7 +102,7 @@ export function HeroSection() {
         {/* Trust stats */}
         <div className="flex flex-wrap items-center justify-center gap-10">
           {[
-            { value: '140+', label: 'Markets Covered' },
+            { value: 'ASEAN & SE Asia', label: 'Market Focus' },
             { value: '10M+', label: 'Documents Indexed' },
             { value: '24/7', label: 'Live Monitoring' },
           ].map(({ value, label }, i) => (
