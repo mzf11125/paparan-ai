@@ -1,0 +1,597 @@
+/* ============================================
+   PAPARAN AI — INSTITUTIONAL EDITORIAL DESIGN SYSTEM
+   Light-dominant. UNDP / FT / IBM lineage.
+   Newsreader (editorial serif) + IBM Plex Sans (institutional sans)
+   ============================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   COLOR TOKENS (light defaults)
+   Stored as RGB channels so Tailwind opacity
+   modifiers (bg-primary/10) work correctly.
+   ============================================ */
+
+:root {
+  color-scheme: light;
+
+  /* ── Font Stack (institutional editorial) ── */
+  --font-display: 'Newsreader', 'Source Serif 4', Georgia, serif;
+  --font-body:    'IBM Plex Sans', system-ui, sans-serif;
+  --font-ui:      'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono:    'IBM Plex Mono', 'JetBrains Mono', 'SF Mono', monospace;
+
+  /* ── Backgrounds (warm editorial paper) ── */
+  --color-bg-rgb:           251, 250, 246;   /* #FBFAF6 — warm paper */
+  --color-bg-elevated-rgb:  255, 255, 255;   /* #FFFFFF — pure white card */
+  --color-bg-surface-rgb:   246, 244, 237;   /* #F6F4ED — toned panel */
+  --color-bg-overlay-rgb:   255, 255, 255;
+  --color-bg-subtle-rgb:    238, 234, 224;   /* #EEEAE0 — hover */
+  --color-bg-paper-rgb:     255, 255, 255;
+
+  /* ── Text (deep ink) ── */
+  --color-text-rgb:           10, 14, 26;     /* #0A0E1A */
+  --color-text-secondary-rgb: 58, 68, 88;     /* #3A4458 */
+  --color-text-tertiary-rgb:  107, 116, 136;  /* #6B7488 */
+  --color-text-muted-rgb:     154, 160, 174;  /* #9AA0AE */
+  --color-text-inverse-rgb:   251, 250, 246;
+
+  /* ── Primary (deep institutional blue — US-gov / UNDP lineage) ── */
+  --color-primary-rgb:       11, 61, 145;     /* #0B3D91 */
+  --color-primary-hover-rgb: 8, 47, 119;      /* #082F77 */
+  --color-primary-dim-rgb:   5, 36, 96;       /* #052460 */
+
+  /* ── Accent (turquoise — brightened for visibility) ── */
+  --color-accent-rgb:        15, 168, 159;    /* #0FA89F */
+  --color-accent-hover-rgb:  12, 142, 134;    /* #0C8E86 */
+
+  /* ── Gold (warm editorial gold) ── */
+  --color-gold-rgb:        168, 121, 53;      /* #A87935 */
+  --color-gold-hover-rgb:  140, 100, 41;      /* #8C6429 */
+
+  /* ── Success bright (for decorative use + KPI growth) ── */
+  --color-success-bright-rgb: 34, 145, 78;    /* #22914E */
+
+  /* ── Semantic ── */
+  --color-success-rgb: 21, 96, 50;            /* #156032 — deeper editorial green */
+  --color-warning-rgb: 153, 75, 9;            /* #994B09 — burnt sienna */
+  --color-error-rgb:   158, 30, 30;           /* #9E1E1E — deep editorial red */
+  --color-info-rgb:    11, 61, 145;
+
+  /* ── Classification (UN / government) ── */
+  --color-unclassified-rgb: 21, 96, 50;
+  --color-official-rgb:     11, 61, 145;
+  --color-confidential-rgb: 153, 75, 9;
+  --color-secret-rgb:       158, 30, 30;
+
+  /* ── Delta / change ── */
+  --color-delta-new-rgb:         11, 61, 145;
+  --color-delta-updated-rgb:     153, 75, 9;
+  --color-delta-escalated-rgb:   158, 30, 30;
+  --color-delta-deescalated-rgb: 21, 96, 50;
+
+  /* ── Impact ── */
+  --color-impact-high-rgb:   158, 30, 30;
+  --color-impact-medium-rgb: 153, 75, 9;
+  --color-impact-low-rgb:    21, 96, 50;
+
+  /* ── Confidence ── */
+  --color-confidence-high-rgb:   21, 96, 50;
+  --color-confidence-medium-rgb: 153, 75, 9;
+  --color-confidence-low-rgb:    158, 30, 30;
+
+  /* ── Borders (hairlines on ink) ── */
+  --color-border-rgb:        10, 14, 26;
+  --color-border-strong-rgb: 10, 14, 26;
+  --color-border-subtle-rgb: 10, 14, 26;
+
+  /* Convenience opaque colors (legacy callsites) */
+  --color-bg:           rgb(var(--color-bg-rgb));
+  --color-bg-elevated:  rgb(var(--color-bg-elevated-rgb));
+  --color-bg-surface:   rgb(var(--color-bg-surface-rgb));
+  --color-bg-overlay:   rgb(var(--color-bg-overlay-rgb));
+  --color-bg-subtle:    rgb(var(--color-bg-subtle-rgb));
+  --color-bg-paper:     rgb(var(--color-bg-paper-rgb));
+  --color-text:           rgb(var(--color-text-rgb));
+  --color-text-secondary: rgb(var(--color-text-secondary-rgb));
+  --color-text-tertiary:  rgb(var(--color-text-tertiary-rgb));
+  --color-text-muted:     rgb(var(--color-text-muted-rgb));
+  --color-text-inverse:   rgb(var(--color-text-inverse-rgb));
+  --color-primary:        rgb(var(--color-primary-rgb));
+  --color-primary-hover:  rgb(var(--color-primary-hover-rgb));
+  --color-primary-dim:    rgb(var(--color-primary-dim-rgb));
+  --color-primary-light:  rgb(var(--color-primary-rgb) / 0.10);
+  --color-primary-subtle: rgb(var(--color-primary-rgb) / 0.05);
+  --color-primary-glow:   rgb(var(--color-primary-rgb) / 0.20);
+  --color-accent:        rgb(var(--color-accent-rgb));
+  --color-accent-hover:  rgb(var(--color-accent-hover-rgb));
+  --color-accent-light:  rgb(var(--color-accent-rgb) / 0.10);
+  --color-accent-subtle: rgb(var(--color-accent-rgb) / 0.05);
+  --color-gold:        rgb(var(--color-gold-rgb));
+  --color-gold-hover:  rgb(var(--color-gold-hover-rgb));
+  --color-gold-light:  rgb(var(--color-gold-rgb) / 0.10);
+  --color-gold-subtle: rgb(var(--color-gold-rgb) / 0.05);
+  --color-success:        rgb(var(--color-success-rgb));
+  --color-success-bright: rgb(var(--color-success-bright-rgb));
+  --color-warning: rgb(var(--color-warning-rgb));
+  --color-error:   rgb(var(--color-error-rgb));
+  --color-info:    rgb(var(--color-info-rgb));
+  --color-unclassified: rgb(var(--color-unclassified-rgb));
+  --color-official:     rgb(var(--color-official-rgb));
+  --color-confidential: rgb(var(--color-confidential-rgb));
+  --color-secret:       rgb(var(--color-secret-rgb));
+  --color-delta-new:         rgb(var(--color-delta-new-rgb));
+  --color-delta-updated:     rgb(var(--color-delta-updated-rgb));
+  --color-delta-escalated:   rgb(var(--color-delta-escalated-rgb));
+  --color-delta-deescalated: rgb(var(--color-delta-deescalated-rgb));
+  --color-delta-new-light:         rgb(var(--color-delta-new-rgb) / 0.10);
+  --color-delta-updated-light:     rgb(var(--color-delta-updated-rgb) / 0.10);
+  --color-delta-escalated-light:   rgb(var(--color-delta-escalated-rgb) / 0.10);
+  --color-delta-deescalated-light: rgb(var(--color-delta-deescalated-rgb) / 0.10);
+  --color-impact-high:   rgb(var(--color-impact-high-rgb));
+  --color-impact-medium: rgb(var(--color-impact-medium-rgb));
+  --color-impact-low:    rgb(var(--color-impact-low-rgb));
+  --color-impact-high-light:   rgb(var(--color-impact-high-rgb) / 0.10);
+  --color-impact-medium-light: rgb(var(--color-impact-medium-rgb) / 0.10);
+  --color-impact-low-light:    rgb(var(--color-impact-low-rgb) / 0.10);
+  --color-confidence-high:   rgb(var(--color-confidence-high-rgb));
+  --color-confidence-medium: rgb(var(--color-confidence-medium-rgb));
+  --color-confidence-low:    rgb(var(--color-confidence-low-rgb));
+  --color-confidence-high-light:   rgb(var(--color-confidence-high-rgb) / 0.10);
+  --color-confidence-medium-light: rgb(var(--color-confidence-medium-rgb) / 0.10);
+  --color-confidence-low-light:    rgb(var(--color-confidence-low-rgb) / 0.10);
+  --color-border:        rgb(var(--color-border-rgb) / 0.08);
+  --color-border-strong: rgb(var(--color-border-rgb) / 0.16);
+  --color-border-subtle: rgb(var(--color-border-rgb) / 0.04);
+  --color-border-teal:   rgb(var(--color-accent-rgb) / 0.30);
+  --color-border-gold:   rgb(var(--color-gold-rgb) / 0.30);
+
+  /* ── Spacing (8px base) ── */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+  --space-4xl: 6rem;
+  --space-5xl: 8rem;
+
+  /* ── Radius (less rounded = more institutional) ── */
+  --radius-sm:   3px;
+  --radius-md:   6px;
+  --radius-lg:   10px;
+  --radius-xl:   14px;
+  --radius-2xl:  20px;
+  --radius-full: 9999px;
+
+  /* ── Shadows (light, restrained) ── */
+  --shadow-sm:   0 1px 2px rgb(var(--color-text-rgb) / 0.04), 0 1px 1px rgb(var(--color-text-rgb) / 0.03);
+  --shadow-md:   0 4px 12px rgb(var(--color-text-rgb) / 0.06), 0 2px 4px rgb(var(--color-text-rgb) / 0.04);
+  --shadow-lg:   0 12px 32px rgb(var(--color-text-rgb) / 0.08), 0 4px 8px rgb(var(--color-text-rgb) / 0.05);
+  --shadow-xl:   0 24px 56px rgb(var(--color-text-rgb) / 0.12);
+  --shadow-teal: 0 4px 16px rgb(var(--color-accent-rgb) / 0.25);
+  --shadow-gold: 0 4px 16px rgb(var(--color-gold-rgb) / 0.22);
+
+  /* ── Glow shadows (4-tone decorative) ── */
+  --shadow-glow-primary: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.12), 0 8px 24px -6px rgb(var(--color-primary-rgb) / 0.30);
+  --shadow-glow-accent:  0 0 0 3px rgb(var(--color-accent-rgb)  / 0.14), 0 8px 24px -6px rgb(var(--color-accent-rgb)  / 0.35);
+  --shadow-glow-gold:    0 0 0 3px rgb(var(--color-gold-rgb)    / 0.12), 0 8px 24px -6px rgb(var(--color-gold-rgb)    / 0.30);
+  --shadow-glow-success: 0 0 0 3px rgb(var(--color-success-bright-rgb) / 0.14), 0 8px 24px -6px rgb(var(--color-success-bright-rgb) / 0.35);
+
+  /* ── Motion ── */
+  --spring-gentle:  cubic-bezier(0.25, 0.1, 0.25, 1);
+  --spring-default: cubic-bezier(0.16, 1, 0.3, 1);
+  --spring-snappy:  cubic-bezier(0.12, 0.95, 0.28, 1);
+  --spring-bounce:  cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --duration-instant: 80ms;
+  --duration-fast:    150ms;
+  --duration-base:    220ms;
+  --duration-slow:    320ms;
+  --duration-slower:  480ms;
+}
+
+/* ============================================
+   DARK MODE — paper inverted to ink
+   ============================================ */
+
+.dark {
+  color-scheme: dark;
+
+  --color-bg-rgb:           10, 14, 26;
+  --color-bg-elevated-rgb:  19, 24, 38;
+  --color-bg-surface-rgb:   26, 32, 50;
+  --color-bg-overlay-rgb:   26, 32, 50;
+  --color-bg-subtle-rgb:    35, 42, 63;
+  --color-bg-paper-rgb:     19, 24, 38;
+
+  --color-text-rgb:           245, 242, 234;
+  --color-text-secondary-rgb: 154, 165, 189;
+  --color-text-tertiary-rgb:  107, 116, 136;
+  --color-text-muted-rgb:     74, 81, 104;
+  --color-text-inverse-rgb:   10, 14, 26;
+
+  --color-primary-rgb:       91, 138, 237;     /* #5B8AED */
+  --color-primary-hover-rgb: 122, 159, 245;
+  --color-primary-dim-rgb:   62, 110, 215;
+
+  --color-accent-rgb:        45, 212, 191;     /* #2DD4BF — vibrant turquoise in dark */
+  --color-accent-hover-rgb:  56, 228, 207;
+  --color-success-bright-rgb: 74, 222, 128;   /* brighter green in dark */
+
+  --color-gold-rgb:        201, 160, 106;
+  --color-gold-hover-rgb:  220, 178, 128;
+
+  --color-success-rgb: 58, 191, 110;
+  --color-warning-rgb: 245, 158, 11;
+  --color-error-rgb:   239, 100, 100;
+  --color-info-rgb:    91, 138, 237;
+
+  --color-unclassified-rgb: 58, 191, 110;
+  --color-official-rgb:     91, 138, 237;
+  --color-confidential-rgb: 245, 158, 11;
+  --color-secret-rgb:       239, 100, 100;
+
+  --color-delta-new-rgb:         91, 138, 237;
+  --color-delta-updated-rgb:     245, 158, 11;
+  --color-delta-escalated-rgb:   239, 100, 100;
+  --color-delta-deescalated-rgb: 58, 191, 110;
+
+  --color-impact-high-rgb:   239, 100, 100;
+  --color-impact-medium-rgb: 245, 158, 11;
+  --color-impact-low-rgb:    58, 191, 110;
+
+  --color-confidence-high-rgb:   58, 191, 110;
+  --color-confidence-medium-rgb: 245, 158, 11;
+  --color-confidence-low-rgb:    239, 100, 100;
+
+  --color-border-rgb: 245, 242, 234;
+  --color-border:        rgb(var(--color-border-rgb) / 0.10);
+  --color-border-strong: rgb(var(--color-border-rgb) / 0.18);
+  --color-border-subtle: rgb(var(--color-border-rgb) / 0.06);
+
+  --shadow-sm:   0 1px 2px rgb(0 0 0 / 0.4), 0 1px 1px rgb(0 0 0 / 0.3);
+  --shadow-md:   0 4px 16px rgb(0 0 0 / 0.5), 0 2px 6px rgb(0 0 0 / 0.3);
+  --shadow-lg:   0 12px 32px rgb(0 0 0 / 0.6), 0 4px 8px rgb(0 0 0 / 0.4);
+  --shadow-xl:   0 24px 56px rgb(0 0 0 / 0.7);
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.6;
+    transition: background-color var(--duration-base) var(--spring-default),
+                color var(--duration-base) var(--spring-default);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    color: var(--color-text);
+    line-height: 1.15;
+    letter-spacing: -0.014em;
+    font-weight: 600;
+  }
+
+  ::selection {
+    background: rgb(var(--color-primary-rgb) / 0.15);
+    color: var(--color-text);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: var(--radius-full);
+    border: 2px solid var(--color-bg);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-border-strong); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ============================================
+   COMPONENT UTILITIES
+   ============================================ */
+
+@layer components {
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 16px;
+    padding: 8px 14px;
+    background: var(--color-primary);
+    color: rgb(var(--color-bg-elevated-rgb));
+    font-family: var(--font-ui);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    z-index: 9999;
+    transition: top var(--duration-fast) var(--spring-default);
+  }
+  .skip-link:focus { top: 12px; }
+
+  .surface-card {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: border-color var(--duration-fast),
+                box-shadow var(--duration-fast),
+                transform var(--duration-fast);
+  }
+  .surface-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .stat-card {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+  }
+
+  .input-base {
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    border-radius: var(--radius-md);
+    padding: 0.625rem 0.875rem;
+    font-family: var(--font-ui);
+    font-size: 0.9375rem;
+    transition: border-color var(--duration-fast), box-shadow var(--duration-fast);
+  }
+  .input-base::placeholder { color: var(--color-text-muted); }
+  .input-base:hover { border-color: var(--color-border-strong); }
+  .input-base:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgb(var(--color-primary-rgb) / 0.10);
+  }
+
+  .hairline-divide > * + * {
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* Editorial eyebrow — small caps tag for sections */
+  .editorial-eyebrow {
+    font-family: var(--font-ui);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+  }
+
+  /* Editorial double rule — masthead style */
+  .editorial-rule {
+    border-top: 2px solid var(--color-text);
+    border-bottom: 1px solid var(--color-text);
+    padding-block: 4px;
+  }
+
+  /* Pulled-quote / italic kicker */
+  .editorial-kicker {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    line-height: 1.45;
+  }
+
+  /* Drop cap for article opening */
+  .drop-cap::first-letter {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 4.25em;
+    line-height: 0.85;
+    float: left;
+    margin: 6px 10px 0 0;
+    color: var(--color-primary);
+  }
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+
+@layer utilities {
+  .tabular { font-variant-numeric: tabular-nums lining-nums; }
+  .text-balance { text-wrap: balance; }
+  .text-pretty  { text-wrap: pretty; }
+  .ink-gradient {
+    background-image: linear-gradient(180deg, var(--color-text) 0%, var(--color-text-secondary) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Subtle paper grain — atmospheric texture for hero/branded surfaces */
+  .paper-grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .paper-grain::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.5;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+  .dark .paper-grain::before { mix-blend-mode: screen; opacity: 0.25; }
+}
+
+/* ============================================
+   KEYFRAMES (used by Tailwind animation tokens)
+   ============================================ */
+
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.97) } to { opacity: 1; transform: scale(1) } }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-12px) } to { opacity: 1; transform: translateX(0) } }
+@keyframes shimmer { from { background-position: -200% 0 } to { background-position: 200% 0 } }
+@keyframes pulseSlow { 0%, 100% { opacity: 1 } 50% { opacity: 0.65 } }
+@keyframes ticker { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+@keyframes ripple { from { transform: scale(0); opacity: 0.5 } to { transform: scale(2.4); opacity: 0 } }
+@keyframes spin { from { transform: rotate(0) } to { transform: rotate(360deg) } }
+
+/* ============================================
+   NEW KEYFRAMES — decorative + purposeful motion
+   Each must convey state meaning (not just decoration).
+   All gated by prefers-reduced-motion below.
+   ============================================ */
+
+/* float: signals "floating" / decorative empty-state icons (motion-safe only) */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* glow-pulse: signals "unread" / "active" state on notification indicators */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0   rgb(var(--color-primary-rgb) / 0.45); }
+  50%      { box-shadow: 0 0 0 8px rgb(var(--color-primary-rgb) / 0); }
+}
+
+/* count-up: entrance reveal for numeric/stat text */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ribbon-shine: signals "premium/featured" on hero cards */
+@keyframes ribbonShine {
+  0%   { background-position: -120% 0; }
+  100% { background-position: 220% 0; }
+}
+
+/* tilt: signals "new / needs attention" on bell icon */
+@keyframes tiltBell {
+  0%, 100% { transform: rotate(0deg); }
+  20%      { transform: rotate(12deg); }
+  40%      { transform: rotate(-10deg); }
+  60%      { transform: rotate(6deg); }
+  80%      { transform: rotate(-4deg); }
+}
+
+/* slide-up: page section entrance */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Utility classes ── */
+.animate-float         { animation: float 5s ease-in-out infinite; }
+.animate-glow-pulse    { animation: glowPulse 1.8s ease-in-out infinite; }
+.animate-count-up      { animation: countUp 500ms cubic-bezier(0.2, 0.7, 0.1, 1) both; }
+.animate-ribbon-shine  { animation: ribbonShine 2.6s ease-in-out infinite; }
+.animate-tilt-bell     { animation: tiltBell 1.2s ease-in-out; }
+.animate-slide-up      { animation: slideUp 400ms cubic-bezier(0.2, 0.7, 0.1, 1) both; }
+
+/* Stagger helper: set --i on each child, --stagger-step optional */
+.stagger-children > * {
+  animation-delay: calc(var(--stagger-step, 40ms) * var(--i, 0));
+}
+
+/* ── Glow shadow utilities (mapped to CSS vars for dark-mode safety) ── */
+.shadow-glow-primary { box-shadow: var(--shadow-glow-primary); }
+.shadow-glow-accent  { box-shadow: var(--shadow-glow-accent); }
+.shadow-glow-gold    { box-shadow: var(--shadow-glow-gold); }
+.shadow-glow-success { box-shadow: var(--shadow-glow-success); }
+
+/* ── Card lift + glow combinations ── */
+.card-lift {
+  transition: transform 180ms cubic-bezier(0.2, 0.7, 0.1, 1),
+              box-shadow 180ms ease-out,
+              border-color 180ms ease-out;
+}
+.card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.card-lift:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+.card-glow-primary:hover { box-shadow: var(--shadow-glow-primary); }
+.card-glow-accent:hover  { box-shadow: var(--shadow-glow-accent); }
+.card-glow-gold:hover    { box-shadow: var(--shadow-glow-gold); }
+.card-glow-success:hover { box-shadow: var(--shadow-glow-success); }
+
+/* ── Input focus bloom ── */
+.input-bloom:focus-visible {
+  border-color: rgb(var(--color-primary-rgb));
+  box-shadow: 0 0 0 4px rgb(var(--color-primary-rgb) / 0.12);
+  background: rgb(var(--color-bg-elevated-rgb));
+  outline: none;
+}
+
+/* ── Skeleton shimmer (brighter via primary tint) ── */
+.shimmer-bright {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--color-bg-subtle-rgb)) 0%,
+    rgb(var(--color-primary-rgb) / 0.08) 50%,
+    rgb(var(--color-bg-subtle-rgb)) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* ============================================
+   REDUCED MOTION — always last, always wins
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-glow-pulse,
+  .animate-ribbon-shine,
+  .animate-tilt-bell,
+  .animate-slide-up,
+  .animate-count-up,
+  .shimmer-bright,
+  [class*="animate-fade-in"],
+  [class*="animate-scale-in"],
+  [class*="motion-safe:"] {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+  * {
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,16 +1,22 @@
 import React from 'react'
-import { cn } from '@/utils/formatters'
+import { cn } from '@/utils/cn'
+
+import type { ClassificationLevel } from '@/components/ui/ClassificationBadge'
 
 interface DocumentFrameProps {
   children: React.ReactNode
   className?: string
   variant?: 'default' | 'elevated' | 'subtle'
   showWatermark?: boolean
-  watermark?: string
+  watermark?: string | boolean
+  classification?: ClassificationLevel
 }
 
 export const DocumentFrame = React.forwardRef<HTMLDivElement, DocumentFrameProps>(
-  ({ children, className = '', variant = 'default', showWatermark = false, watermark = 'OFFICIAL' }, ref) => {
+  ({ children, className = '', variant = 'default', showWatermark = false, watermark, classification }, ref) => {
+    // Determine watermark text
+    const watermarkText = watermark === true ? (classification || '').toUpperCase() : (watermark as string) || ''
+    const shouldShowWatermark = showWatermark || watermark === true || typeof watermark === 'string'
     const variantStyles = {
       default: 'bg-document-bg border-2 border-document-frame shadow-md',
       elevated: 'bg-document-bg border-2 border-document-frame shadow-lg',
@@ -23,12 +29,12 @@ export const DocumentFrame = React.forwardRef<HTMLDivElement, DocumentFrameProps
       className={cn(
         'document-frame relative overflow-hidden',
         variantStyles[variant],
-        showWatermark && 'document-watermark',
+        shouldShowWatermark && 'document-watermark',
         className
       )}
       style={
-        showWatermark
-          ? { '--watermark-text': `"${watermark}"` } as React.CSSProperties
+        shouldShowWatermark && watermarkText
+          ? { '--watermark-text': `"${watermarkText}"` } as React.CSSProperties
           : undefined
       }
     >

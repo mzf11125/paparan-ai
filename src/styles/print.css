@@ -1,0 +1,176 @@
+/* ============================================
+   PAPARAN — PRINT STYLES (institutional report)
+   Activated by browser print preview / Ctrl+P.
+   ============================================ */
+
+@media print {
+  /* ── Page geometry ───────────────────────────────── */
+  @page {
+    size: A4;
+    margin: 18mm 16mm 22mm 16mm;
+    @bottom-right {
+      content: counter(page) " / " counter(pages);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9pt;
+      color: #6B7488;
+    }
+    @bottom-left {
+      content: "PaparanBrief";
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9pt;
+      color: #6B7488;
+    }
+  }
+
+  /* ── Reset to ink-on-paper ───────────────────────── */
+  html, body {
+    background: #ffffff !important;
+    color: #0A0E1A !important;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Hide app chrome ────────────────────────────── */
+  header[role="banner"],
+  nav[aria-label="Main navigation"],
+  aside,
+  footer,
+  .skip-link,
+  [data-print-hidden],
+  .reading-progress-container,
+  .ticker-track {
+    display: none !important;
+  }
+
+  /* Sticky strips become inline */
+  [class*="sticky"] {
+    position: static !important;
+  }
+
+  /* Drop shadows / blurs (printers can't render them) */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* ── Layout reset ─────────────────────────────── */
+  main {
+    display: block !important;
+    overflow: visible !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  article {
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+
+  /* ── Typography ─────────────────────────────── */
+  h1 {
+    font-size: 22pt;
+    line-height: 1.15;
+    page-break-after: avoid;
+  }
+  h2 {
+    font-size: 14pt;
+    line-height: 1.25;
+    margin-top: 14pt;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 11pt;
+    page-break-after: avoid;
+  }
+
+  p, li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* ── Links — show URL inline ────────────────── */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 8.5pt;
+    color: #3A4458;
+    word-break: break-all;
+  }
+  /* But not inside source-citation footers (already URL) */
+  a.no-print-url::after,
+  .citation a::after {
+    content: "";
+  }
+
+  /* ── Page-break helpers ─────────────────────── */
+  .print-page-break  { page-break-before: always; }
+  .print-no-break    { page-break-inside: avoid; }
+  section            { page-break-inside: auto; }
+  table, figure      { page-break-inside: avoid; }
+
+  /* ── Classification banner stays prominent ───── */
+  .classification-banner {
+    display: block !important;
+    text-align: center;
+    border: 1.5pt solid #0A0E1A;
+    padding: 4pt 8pt;
+    margin: 0 0 12pt 0;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 9pt;
+  }
+
+  /* ── Tables ─────────────────────────────────── */
+  table {
+    width: 100% !important;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 0.5pt solid #6B7488;
+    padding: 4pt 6pt;
+    text-align: left;
+    font-size: 9.5pt;
+  }
+  th {
+    background: #F4F4F1 !important;
+    font-weight: 600;
+  }
+
+  /* ── Source list footer style ───────────────── */
+  .sources-list,
+  [data-print-sources] {
+    border-top: 0.5pt solid #0A0E1A;
+    padding-top: 8pt;
+    margin-top: 14pt;
+    font-size: 9pt;
+  }
+}
+
+/* ============================================
+   DISTRACTION-FREE / READING MODE
+   Triggered by .distraction-free-mode on body
+   ============================================ */
+
+body.distraction-free-mode header[role="banner"],
+body.distraction-free-mode nav[aria-label="Main navigation"],
+body.distraction-free-mode aside,
+body.distraction-free-mode footer {
+  display: none !important;
+}
+
+body.distraction-free-mode main {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+body.distraction-free-mode {
+  background: rgb(var(--color-bg-rgb)) !important;
+}

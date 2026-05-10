@@ -1,448 +1,319 @@
 import { useState, useEffect } from 'react'
-import { User, Bell, Palette, Shield, Database, Moon, Sun, Grid3X3, List, Loader2, Check } from 'lucide-react'
-import { useAppStore } from '@/contexts/AppContext'
+import {
+  User, Bell, Palette, Shield, Moon, Sun, Grid3X3, List,
+  Loader2, Check, Settings, ChevronRight,
+} from 'lucide-react'
+import { useAppStore } from '@/stores'
 import { supabase } from '@/lib/supabase'
-import { cn } from '@/utils/formatters'
+import { cn } from '@/utils/cn'
+import { usePageMeta } from '@/hooks/usePageMeta'
 
 type TabId = 'profile' | 'preferences' | 'notifications' | 'data'
 
-const tabs = [
-  { id: 'profile' as TabId, label: 'Profile', icon: User },
-  { id: 'preferences' as TabId, label: 'Preferences', icon: Palette },
-  { id: 'notifications' as TabId, label: 'Notifications', icon: Bell },
-  { id: 'data' as TabId, label: 'Data & Privacy', icon: Shield }
+const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
+  { id: 'profile',       label: 'Profile',        icon: User },
+  { id: 'preferences',   label: 'Preferences',    icon: Palette },
+  { id: 'notifications', label: 'Notifications',  icon: Bell },
+  { id: 'data',          label: 'Data & Privacy', icon: Shield },
 ]
 
+function SettingRow({ label, description, children }: {
+  label: string; description?: string; children: React.ReactNode
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4 py-4 border-b border-border last:border-0">
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-text font-ui">{label}</p>
+        {description && <p className="text-xs text-text-secondary font-ui mt-0.5">{description}</p>}
+      </div>
+      <div className="flex-shrink-0">{children}</div>
+    </div>
+  )
+}
+
+function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () => void; label: string }) {
+  return (
+    <button
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      onClick={onChange}
+      className={cn(
+        'relative w-10 h-5.5 rounded-full transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-bg',
+        checked ? 'bg-primary' : 'bg-bg-subtle border border-border-strong'
+      )}
+    >
+      <span className={cn(
+        'absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200',
+        checked ? 'translate-x-5' : 'translate-x-0.5'
+      )} />
+    </button>
+  )
+}
+
 export function SettingsPage() {
+  usePageMeta({ title: 'Settings' })
   const [activeTab, setActiveTab] = useState<TabId>('profile')
   const { theme, setTheme, viewMode, setViewMode, user } = useAppStore()
-  const [isLoading, setIsLoading] = useState(false)
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [isLoading, setIsLoading]   = useState(false)
+  const [saveStatus, setSaveStatus] = useState<'idle'|'saving'|'saved'|'error'>('idle')
+
   const [settings, setSettings] = useState({
-    // Profile
     name: user?.name || '',
     email: user?.email || '',
     organization: '',
-
-    // Preferences
+    title: '',
     fontSize: 'medium',
-    sidebarCollapsed: false,
-
-    // Notifications
+    language: 'en',
     emailNotifications: true,
     pushNotifications: false,
     weeklyDigest: true,
     briefUpdates: true,
-
-    // Data
-    dataExportFormat: 'json'
+    escalationAlerts: true,
+    dataExportFormat: 'json',
   })
 
-  // Load real user data on mount
   useEffect(() => {
-    const loadProfile = async () => {
+    const load = async () => {
       setIsLoading(true)
       try {
-        const { data: { user: supabaseUser } } = await supabase.auth.getUser()
-        if (supabaseUser) {
+        const { data: { user: u } } = await supabase.auth.getUser()
+        if (u) {
           setSettings(prev => ({
             ...prev,
-            name: supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0] || '',
-            email: supabaseUser.email || '',
+            name:  u.user_metadata?.full_name || u.email?.split('@')[0] || '',
+            email: u.email || '',
           }))
         }
-      } catch (err) {
-        console.error('Failed to load profile:', err)
-      } finally {
-        setIsLoading(false)
-      }
+      } finally { setIsLoading(false) }
     }
-    loadProfile()
+    load()
   }, [])
 
-  // Save profile to Supabase
   const saveProfile = async () => {
     setSaveStatus('saving')
     try {
-      const { error } = await supabase.auth.updateUser({
-        data: { full_name: settings.name }
-      })
+      const { error } = await supabase.auth.updateUser({ data: { full_name: settings.name } })
       if (error) throw error
-
-      // Update local store
-      if (user) {
-        useAppStore.getState().setUser({ ...user, name: settings.name })
-      }
+      if (user) useAppStore.getState().setUser({ ...user, name: settings.name })
       setSaveStatus('saved')
       setTimeout(() => setSaveStatus('idle'), 2000)
-    } catch (err) {
-      console.error('Failed to save profile:', err)
+    } catch {
       setSaveStatus('error')
       setTimeout(() => setSaveStatus('idle'), 3000)
     }
   }
 
-  const updateSetting = <K extends keyof typeof settings>(
-    key: K,
-    value: typeof settings[K]
-  ) => {
-    setSettings((prev) => ({ ...prev, [key]: value }))
-  }
+  const update = <K extends keyof typeof settings>(key: K, value: typeof settings[K]) =>
+    setSettings(prev => ({ ...prev, [key]: value }))
+
+  const toggle = (key: keyof typeof settings) =>
+    setSettings(prev => ({ ...prev, [key]: !prev[key] }))
+
+  const FIELD_CLS = 'input-base w-full'
+  const LABEL_CLS = 'block text-xs font-semibold text-text-secondary font-ui mb-1.5 uppercase tracking-wide'
 
   return (
-    <div className="max-w-5xl mx-auto">
-      {/* Official Page Header */}
-      <div className="mb-8 pb-6 border-b border-[rgba(255,255,255,0.08)]">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-1 h-6 bg-[#3B82F6] rounded-full" />
-          <h1 className="text-3xl font-display font-bold text-[#F1F5F9]">Settings</h1>
+    <div className="px-4 lg:px-6 py-6 max-w-4xl">
+      {/* Header */}
+      <div className="mb-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-bg-subtle text-text-secondary text-[10px] font-bold uppercase tracking-widest rounded-full border border-border mb-3 font-ui">
+          <Settings className="w-3 h-3" />
+          Configuration
         </div>
-        <p className="text-[#94A3B8] font-ui">
-          Manage your account preferences and application settings
-        </p>
+        <h1 className="text-3xl font-display font-bold text-text">Settings</h1>
+        <p className="text-text-secondary text-sm mt-1 font-ui">Manage your account and preferences</p>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Official Sidebar Navigation */}
-        <nav className="lg:w-72 flex-shrink-0">
-          <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-2 space-y-1">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  'w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors font-ui',
-                  activeTab === tab.id
-                    ? 'bg-[rgba(59,130,246,0.10)] text-[#3B82F6] border-l-2 border-[#3B82F6]'
-                    : 'text-[#94A3B8] hover:bg-[rgba(255,255,255,0.04)]'
-                )}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Settings Info Box */}
-          <div className="mt-6 p-4 bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] rounded-lg">
-            <p className="text-xs text-[#64748B] font-ui leading-relaxed">
-              Changes to your settings are saved automatically and sync across devices.
-            </p>
-          </div>
+      <div className="flex gap-6">
+        {/* Sidebar tabs */}
+        <nav className="w-48 flex-shrink-0 space-y-1" aria-label="Settings navigation">
+          {TABS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={cn(
+                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium font-ui transition-all duration-150 text-left',
+                activeTab === id
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-text-secondary hover:text-text hover:bg-bg-subtle'
+              )}
+            >
+              <Icon className="w-4 h-4 flex-shrink-0" />
+              {label}
+              {activeTab === id && <ChevronRight className="w-3.5 h-3.5 ml-auto" />}
+            </button>
+          ))}
         </nav>
 
-        {/* Settings Content */}
+        {/* Content */}
         <div className="flex-1 min-w-0">
-          {/* Profile Tab */}
+          {/* Profile */}
           {activeTab === 'profile' && (
-            <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-6">
-              <h2 className="text-lg font-display font-semibold text-[#F1F5F9] mb-6">Profile Settings</h2>
+            <div className="surface-card p-6 space-y-5">
+              <h2 className="font-display font-bold text-text text-lg">Profile</h2>
 
-              <div className="space-y-6">
-                {isLoading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-6 h-6 text-[#3B82F6] animate-spin" />
+              {isLoading ? (
+                <div className="flex items-center gap-2 text-text-secondary text-sm font-ui">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Loading profile…
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Avatar */}
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-dim flex items-center justify-center text-white text-2xl font-bold font-display">
+                      {settings.name?.charAt(0)?.toUpperCase() || 'U'}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-text font-ui">{settings.name || 'User'}</p>
+                      <p className="text-sm text-text-secondary font-ui">{settings.email}</p>
+                    </div>
                   </div>
-                ) : (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-[#F1F5F9] mb-2 font-ui">
-                        Display Name
-                      </label>
-                      <input
-                        type="text"
-                        value={settings.name}
-                        onChange={(e) => updateSetting('name', e.target.value)}
-                        className="w-full px-4 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.12)] rounded-lg focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[rgba(59,130,246,0.20)] font-ui text-[#F1F5F9] transition-colors"
-                      />
-                    </div>
 
+                  <div className="grid sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#F1F5F9] mb-2 font-ui">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        value={settings.email}
-                        disabled
-                        className="w-full px-4 py-2.5 bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.08)] rounded-lg font-ui text-[#64748B] cursor-not-allowed"
-                        title="Email cannot be changed here"
-                      />
-                      <p className="text-xs text-[#64748B] mt-1">Email is managed through your authentication provider</p>
+                      <label className={LABEL_CLS}>Full Name</label>
+                      <input type="text" value={settings.name} onChange={e => update('name', e.target.value)} className={FIELD_CLS} placeholder="Your name" />
                     </div>
-
                     <div>
-                      <label className="block text-sm font-medium text-[#F1F5F9] mb-2 font-ui">
-                        Organization
-                      </label>
-                      <input
-                        type="text"
-                        value={settings.organization}
-                        onChange={(e) => updateSetting('organization', e.target.value)}
-                        className="w-full px-4 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.12)] rounded-lg focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[rgba(59,130,246,0.20)] font-ui text-[#F1F5F9] transition-colors"
-                      />
+                      <label className={LABEL_CLS}>Email</label>
+                      <input type="email" value={settings.email} disabled className={cn(FIELD_CLS, 'opacity-50 cursor-not-allowed')} />
                     </div>
+                    <div>
+                      <label className={LABEL_CLS}>Organization</label>
+                      <input type="text" value={settings.organization} onChange={e => update('organization', e.target.value)} className={FIELD_CLS} placeholder="Ministry / Agency" />
+                    </div>
+                    <div>
+                      <label className={LABEL_CLS}>Title</label>
+                      <input type="text" value={settings.title} onChange={e => update('title', e.target.value)} className={FIELD_CLS} placeholder="Policy Analyst" />
+                    </div>
+                  </div>
 
-                    <div className="pt-6 border-t border-[rgba(255,255,255,0.08)] flex items-center justify-between">
-                      <p className="text-sm text-[#94A3B8] font-ui">
-                        {saveStatus === 'saved' ? 'Profile saved successfully' : 'Changes require saving to take effect'}
-                      </p>
+                  <button
+                    onClick={saveProfile}
+                    disabled={saveStatus === 'saving'}
+                    className={cn(
+                      'flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold font-ui transition-all duration-150',
+                      saveStatus === 'saved'  ? 'bg-success/10 text-success border border-success/20' :
+                      saveStatus === 'error'  ? 'bg-error/10 text-error border border-error/20' :
+                      'bg-primary hover:bg-primary-hover text-white shadow-teal'
+                    )}
+                  >
+                    {saveStatus === 'saving' && <><Loader2 className="w-4 h-4 animate-spin" /> Saving…</>}
+                    {saveStatus === 'saved'  && <><Check className="w-4 h-4" /> Saved</>}
+                    {saveStatus === 'error'  && 'Save failed — retry'}
+                    {saveStatus === 'idle'   && 'Save Changes'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Preferences */}
+          {activeTab === 'preferences' && (
+            <div className="surface-card p-6">
+              <h2 className="font-display font-bold text-text text-lg mb-5">Preferences</h2>
+              <div>
+                <SettingRow label="Theme" description="Choose your preferred color scheme">
+                  <div className="flex items-center gap-1 bg-bg-surface border border-border rounded-lg p-1">
+                    {[
+                      { value: 'dark',  icon: Moon, label: 'Dark' },
+                      { value: 'light', icon: Sun,  label: 'Light' },
+                    ].map(({ value, icon: Icon, label }) => (
                       <button
-                        onClick={saveProfile}
-                        disabled={saveStatus === 'saving'}
+                        key={value}
+                        onClick={() => setTheme(value as 'dark' | 'light')}
                         className={cn(
-                          'flex items-center gap-2 px-4 py-2 rounded-lg font-ui text-sm transition-colors',
-                          saveStatus === 'saved'
-                            ? 'bg-[rgba(16,185,129,0.20)] text-[#10B981] border border-[rgba(16,185,129,0.30)]'
-                            : 'bg-[#3B82F6] hover:bg-[#2563EB] text-white',
-                          saveStatus === 'saving' && 'opacity-75 cursor-wait'
+                          'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold font-ui transition-all duration-150',
+                          theme === value ? 'bg-primary text-white' : 'text-text-secondary hover:text-text'
                         )}
                       >
-                        {saveStatus === 'saving' && <Loader2 className="w-4 h-4 animate-spin" />}
-                        {saveStatus === 'saved' && <Check className="w-4 h-4" />}
-                        {saveStatus === 'saved' ? 'Saved' : 'Save Changes'}
+                        <Icon className="w-3.5 h-3.5" />
+                        {label}
                       </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Preferences Tab */}
-          {activeTab === 'preferences' && (
-            <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-6">
-              <h2 className="text-lg font-display font-semibold text-[#F1F5F9] mb-6">Display Preferences</h2>
-
-              <div className="space-y-8">
-                {/* Theme */}
-                <div>
-                  <label className="block text-sm font-medium text-[#F1F5F9] mb-3 font-ui">
-                    Theme
-                  </label>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setTheme('light')}
-                      className={cn(
-                        'flex items-center gap-3 px-5 py-3 border-2 rounded-lg transition-colors font-ui text-sm',
-                        theme === 'light'
-                          ? 'border-[#3B82F6] bg-[rgba(59,130,246,0.10)] text-[#3B82F6]'
-                          : 'border-[rgba(255,255,255,0.12)] hover:border-[rgba(255,255,255,0.20)] bg-[#0A0B0D] text-[#94A3B8]'
-                      )}
-                    >
-                      <Sun className="w-4 h-4" />
-                      <span>Light</span>
-                    </button>
-                    <button
-                      onClick={() => setTheme('dark')}
-                      className={cn(
-                        'flex items-center gap-3 px-5 py-3 border-2 rounded-lg transition-colors font-ui text-sm',
-                        theme === 'dark'
-                          ? 'border-[#3B82F6] bg-[rgba(59,130,246,0.10)] text-[#3B82F6]'
-                          : 'border-[rgba(255,255,255,0.12)] hover:border-[rgba(255,255,255,0.20)] bg-[#0A0B0D] text-[#94A3B8]'
-                      )}
-                    >
-                      <Moon className="w-4 h-4" />
-                      <span>Dark</span>
-                    </button>
+                    ))}
                   </div>
-                </div>
+                </SettingRow>
 
-                {/* Font Size */}
-                <div>
-                  <label className="block text-sm font-medium text-[#F1F5F9] mb-3 font-ui">
-                    Font Size
-                  </label>
-                  <select
-                    value={settings.fontSize}
-                    onChange={(e) => updateSetting('fontSize', e.target.value)}
-                    className="px-4 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.12)] rounded-lg focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[rgba(59,130,246,0.20)] font-ui text-[#F1F5F9] transition-colors"
-                  >
-                    <option value="small">Small</option>
-                    <option value="medium">Medium</option>
-                    <option value="large">Large</option>
+                <SettingRow label="Default View" description="Grid or list layout for briefs">
+                  <div className="flex items-center gap-1 bg-bg-surface border border-border rounded-lg p-1">
+                    {[
+                      { value: 'grid', icon: Grid3X3, label: 'Grid' },
+                      { value: 'list', icon: List,    label: 'List' },
+                    ].map(({ value, icon: Icon, label }) => (
+                      <button
+                        key={value}
+                        onClick={() => setViewMode(value as 'grid' | 'list')}
+                        className={cn(
+                          'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold font-ui transition-all duration-150',
+                          viewMode === value ? 'bg-primary text-white' : 'text-text-secondary hover:text-text'
+                        )}
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </SettingRow>
+
+                <SettingRow label="Language" description="Interface language">
+                  <select value={settings.language} onChange={e => update('language', e.target.value)} className="input-base w-auto text-xs py-1.5">
+                    <option value="en">English</option>
+                    <option value="id">Bahasa Indonesia</option>
                   </select>
-                </div>
-
-                {/* Default View Mode */}
-                <div>
-                  <label className="block text-sm font-medium text-[#F1F5F9] mb-3 font-ui">
-                    Default Brief View
-                  </label>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setViewMode('grid')}
-                      className={cn(
-                        'flex items-center gap-3 px-5 py-3 border-2 rounded-lg transition-colors font-ui text-sm',
-                        viewMode === 'grid'
-                          ? 'border-[#3B82F6] bg-[rgba(59,130,246,0.10)] text-[#3B82F6]'
-                          : 'border-[rgba(255,255,255,0.12)] hover:border-[rgba(255,255,255,0.20)] bg-[#0A0B0D] text-[#94A3B8]'
-                      )}
-                    >
-                      <Grid3X3 className="w-4 h-4" />
-                      <span>Grid</span>
-                    </button>
-                    <button
-                      onClick={() => setViewMode('list')}
-                      className={cn(
-                        'flex items-center gap-3 px-5 py-3 border-2 rounded-lg transition-colors font-ui text-sm',
-                        viewMode === 'list'
-                          ? 'border-[#3B82F6] bg-[rgba(59,130,246,0.10)] text-[#3B82F6]'
-                          : 'border-[rgba(255,255,255,0.12)] hover:border-[rgba(255,255,255,0.20)] bg-[#0A0B0D] text-[#94A3B8]'
-                      )}
-                    >
-                      <List className="w-4 h-4" />
-                      <span>List</span>
-                    </button>
-                  </div>
-                </div>
+                </SettingRow>
               </div>
             </div>
           )}
 
-          {/* Notifications Tab */}
+          {/* Notifications */}
           {activeTab === 'notifications' && (
-            <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-6">
-              <h2 className="text-lg font-display font-semibold text-[#F1F5F9] mb-6">Notification Settings</h2>
-
-              <div className="space-y-1">
-                <div className="flex items-center justify-between py-4 border-b border-[rgba(255,255,255,0.08)]">
-                  <div>
-                    <p className="font-medium text-[#F1F5F9] font-ui">Email Notifications</p>
-                    <p className="text-sm text-[#94A3B8] font-ui">Receive updates via email</p>
-                  </div>
-                  <button
-                    onClick={() => updateSetting('emailNotifications', !settings.emailNotifications)}
-                    className={cn(
-                      'relative w-12 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50',
-                      settings.emailNotifications ? 'bg-[#3B82F6]' : 'bg-[rgba(255,255,255,0.12)]'
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-sm',
-                        settings.emailNotifications ? 'translate-x-6' : 'translate-x-1'
-                      )}
+            <div className="surface-card p-6">
+              <h2 className="font-display font-bold text-text text-lg mb-5">Notifications</h2>
+              <div>
+                {[
+                  { key: 'emailNotifications', label: 'Email Notifications',  desc: 'Receive updates via email' },
+                  { key: 'weeklyDigest',        label: 'Weekly Digest',        desc: 'Summary of intelligence activity' },
+                  { key: 'briefUpdates',        label: 'Brief Updates',        desc: 'When watched briefs are updated' },
+                  { key: 'escalationAlerts',    label: 'Escalation Alerts',    desc: 'Immediate alerts for HIGH impact escalations' },
+                  { key: 'pushNotifications',   label: 'Push Notifications',   desc: 'Browser push notifications' },
+                ].map(({ key, label, desc }) => (
+                  <SettingRow key={key} label={label} description={desc}>
+                    <Toggle
+                      checked={settings[key as keyof typeof settings] as boolean}
+                      onChange={() => toggle(key as keyof typeof settings)}
+                      label={label}
                     />
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between py-4 border-b border-[rgba(255,255,255,0.08)]">
-                  <div>
-                    <p className="font-medium text-[#F1F5F9] font-ui">Push Notifications</p>
-                    <p className="text-sm text-[#94A3B8] font-ui">Receive browser push notifications</p>
-                  </div>
-                  <button
-                    onClick={() => updateSetting('pushNotifications', !settings.pushNotifications)}
-                    className={cn(
-                      'relative w-12 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50',
-                      settings.pushNotifications ? 'bg-[#3B82F6]' : 'bg-[rgba(255,255,255,0.12)]'
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-sm',
-                        settings.pushNotifications ? 'translate-x-6' : 'translate-x-1'
-                      )}
-                    />
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between py-4 border-b border-[rgba(255,255,255,0.08)]">
-                  <div>
-                    <p className="font-medium text-[#F1F5F9] font-ui">Weekly Digest</p>
-                    <p className="text-sm text-[#94A3B8] font-ui">Summary of weekly brief updates</p>
-                  </div>
-                  <button
-                    onClick={() => updateSetting('weeklyDigest', !settings.weeklyDigest)}
-                    className={cn(
-                      'relative w-12 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50',
-                      settings.weeklyDigest ? 'bg-[#3B82F6]' : 'bg-[rgba(255,255,255,0.12)]'
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-sm',
-                        settings.weeklyDigest ? 'translate-x-6' : 'translate-x-1'
-                      )}
-                    />
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between py-4">
-                  <div>
-                    <p className="font-medium text-[#F1F5F9] font-ui">Brief Updates</p>
-                    <p className="text-sm text-[#94A3B8] font-ui">Notifications when followed briefs are updated</p>
-                  </div>
-                  <button
-                    onClick={() => updateSetting('briefUpdates', !settings.briefUpdates)}
-                    className={cn(
-                      'relative w-12 h-6 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#3B82F6]/50',
-                      settings.briefUpdates ? 'bg-[#3B82F6]' : 'bg-[rgba(255,255,255,0.12)]'
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-sm',
-                        settings.briefUpdates ? 'translate-x-6' : 'translate-x-1'
-                      )}
-                    />
-                  </button>
-                </div>
+                  </SettingRow>
+                ))}
               </div>
             </div>
           )}
 
-          {/* Data Tab */}
+          {/* Data & Privacy */}
           {activeTab === 'data' && (
-            <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-6">
-              <h2 className="text-lg font-display font-semibold text-[#F1F5F9] mb-6">Data & Privacy</h2>
+            <div className="surface-card p-6">
+              <h2 className="font-display font-bold text-text text-lg mb-5">Data & Privacy</h2>
+              <div>
+                <SettingRow label="Export Format" description="Format for data exports">
+                  <select value={settings.dataExportFormat} onChange={e => update('dataExportFormat', e.target.value)} className="input-base w-auto text-xs py-1.5">
+                    <option value="json">JSON</option>
+                    <option value="csv">CSV</option>
+                    <option value="pdf">PDF</option>
+                  </select>
+                </SettingRow>
 
-              <div className="space-y-8">
-                <div>
-                  <label className="block text-sm font-medium text-[#F1F5F9] mb-3 font-ui">
-                    Export Data
-                  </label>
-                  <div className="flex flex-wrap gap-3">
-                    <select
-                      value={settings.dataExportFormat}
-                      onChange={(e) => updateSetting('dataExportFormat', e.target.value)}
-                      className="px-4 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.12)] rounded-lg focus:outline-none focus:border-[#3B82F6] focus:ring-2 focus:ring-[rgba(59,130,246,0.20)] font-ui text-[#F1F5F9] transition-colors"
-                    >
-                      <option value="json">JSON</option>
-                      <option value="csv">CSV</option>
-                      <option value="pdf">PDF</option>
-                    </select>
-                    <button className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg font-medium transition-colors font-ui text-sm shadow-sm">
-                      <Database className="w-4 h-4" />
-                      Export All Data
-                    </button>
-                  </div>
-                </div>
+                <SettingRow label="Export All Data" description="Download all your briefs and data">
+                  <button className="px-4 py-2 border border-border text-text-secondary hover:text-text hover:border-border-strong rounded-lg text-xs font-semibold font-ui transition-all duration-150">
+                    Export
+                  </button>
+                </SettingRow>
 
-                <div className="pt-6 border-t border-[rgba(255,255,255,0.08)]">
-                  <p className="text-sm text-[#94A3B8] font-ui leading-relaxed">
-                    Export all your briefs, settings, and preferences in the selected format.
-                    Data exports include all personally identifiable information and can be
-                    used for data portability.
-                  </p>
-                </div>
-
-                {/* Danger Zone */}
-                <div className="pt-6 border-t border-[rgba(255,255,255,0.08)]">
-                  <div className="p-4 bg-[rgba(239,68,68,0.10)] border border-[rgba(239,68,68,0.20)] rounded-lg">
-                    <h3 className="font-medium text-[#EF4444] font-ui mb-2 flex items-center gap-2">
-                      <Shield className="w-4 h-4" />
-                      Danger Zone
-                    </h3>
-                    <p className="text-sm text-[#94A3B8] font-ui mb-4">
-                      Once you delete your account, there is no going back. Please be certain.
-                    </p>
-                    <button className="px-5 py-2.5 border border-[#EF4444] text-[#EF4444] hover:bg-[rgba(239,68,68,0.10)] hover:border-[rgba(239,68,68,0.40)] rounded-lg font-medium transition-colors font-ui text-sm">
-                      Delete Account
-                    </button>
-                  </div>
-                </div>
+                <SettingRow label="Delete Account" description="Permanently delete your account and all data">
+                  <button className="px-4 py-2 bg-error/10 text-error border border-error/20 hover:bg-error/20 rounded-lg text-xs font-semibold font-ui transition-all duration-150">
+                    Delete Account
+                  </button>
+                </SettingRow>
               </div>
             </div>
           )}

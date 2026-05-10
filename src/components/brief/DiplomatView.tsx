@@ -20,7 +20,7 @@ async function fetchKlCodes() {
 
 export function DiplomatView({ brief, onClose }: DiplomatViewProps) {
   const [to, setTo] = useState('')
-  const [fromName, setFromName] = useState('Paparan Intelligence Unit')
+  const [fromName, setFromName] = useState('PaparanBrief Intelligence Unit')
   const [distribution, setDistribution] = useState<string[]>([])
   const [showTalkingPoints, setShowTalkingPoints] = useState(false)
   const [talkingPoints, setTalkingPoints] = useState<string[]>([])
@@ -223,7 +223,7 @@ export function DiplomatView({ brief, onClose }: DiplomatViewProps) {
 
           {/* Footer */}
           <div className="border-t border-gray-200 pt-4 text-xs text-gray-400 flex items-center justify-between">
-            <span>Prepared by Paparan Policy Intelligence System</span>
+            <span>Prepared by PaparanBrief Policy Intelligence System</span>
             <span>{brief.source_count || brief.sources.length} sources · {brief.confidence_score || 'MEDIUM'} confidence</span>
           </div>
 

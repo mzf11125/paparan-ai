@@ -1,9 +1,9 @@
 import { Confidence } from "@/types/paparan";
 
 const confidenceConfig = {
-  HIGH: { color: "text-green-700", bg: "bg-green-100", label: "HIGH" },
-  MEDIUM: { color: "text-amber-700", bg: "bg-amber-100", label: "MED" },
-  LOW: { color: "text-red-700", bg: "bg-red-100", label: "LOW" },
+  HIGH:   { color: "text-success", bg: "bg-success/10",  label: "HIGH" },
+  MEDIUM: { color: "text-warning", bg: "bg-warning/10",  label: "MED" },
+  LOW:    { color: "text-error",   bg: "bg-error/10",    label: "LOW" },
 } as const;
 
 interface SourceTooltipProps {

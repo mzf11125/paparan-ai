@@ -1,325 +1,124 @@
-import { useEffect, useState } from 'react'
-import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react'
-import { cn } from '@/utils/formatters'
+import React, { useState, useEffect, useCallback, createContext, useContext } from 'react'
+import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react'
+import { cn } from '@/utils/cn'
 
-type ToastVariant = 'success' | 'error' | 'warning' | 'info'
-type ToastPosition = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center'
+type ToastType = 'success' | 'error' | 'warning' | 'info'
 
-interface ToastProps {
+interface Toast {
   id: string
-  variant?: ToastVariant
-  title?: string
-  message: string
+  type: ToastType
+  title: string
+  message?: string
   duration?: number
-  onClose?: (id: string) => void
-  position?: ToastPosition
-  showProgress?: boolean
-  action?: {
-    label: string
-    onClick: () => void
-  }
 }
 
-const variantConfig = {
-  success: {
-    icon: CheckCircle,
-    bgColor: 'bg-green-light',
-    textColor: 'text-green',
-    iconColor: 'text-green',
-    borderColor: 'border-green/30',
-  },
-  error: {
-    icon: AlertCircle,
-    bgColor: 'bg-red-light',
-    textColor: 'text-red',
-    iconColor: 'text-red',
-    borderColor: 'border-red/30',
-  },
-  warning: {
-    icon: AlertTriangle,
-    bgColor: 'bg-amber-light',
-    textColor: 'text-amber',
-    iconColor: 'text-amber',
-    borderColor: 'border-amber/30',
-  },
-  info: {
-    icon: Info,
-    bgColor: 'bg-blue-light',
-    textColor: 'text-blue',
-    iconColor: 'text-blue',
-    borderColor: 'border-blue/30',
-  },
+interface ToastContextValue {
+  addToast: (toast: Omit<Toast, 'id'>) => void
+  removeToast: (id: string) => void
 }
 
-const positionClasses = {
-  'top-right': 'top-4 right-4',
-  'top-left': 'top-4 left-4',
-  'bottom-right': 'bottom-4 right-4',
-  'bottom-left': 'bottom-4 left-4',
-  'top-center': 'top-4 left-1/2 -translate-x-1/2',
-  'bottom-center': 'bottom-4 left-1/2 -translate-x-1/2',
+const ToastContext = createContext<ToastContextValue | null>(null)
+
+export function useToast() {
+  const ctx = useContext(ToastContext)
+  if (!ctx) throw new Error('useToast must be used within ToastProvider')
+  return ctx
 }
 
-export function Toast({
-  id,
-  variant = 'info',
-  title,
-  message,
-  duration = 5000,
-  onClose,
-  showProgress = true,
-  action,
-}: ToastProps) {
-  const [progress, setProgress] = useState(100)
-  const [isExiting, setIsExiting] = useState(false)
-  const config = variantConfig[variant]
-  const Icon = config.icon
+const TOAST_STYLES: Record<ToastType, { bg: string; border: string; icon: React.ElementType; iconColor: string }> = {
+  success: { bg: 'bg-bg-overlay', border: 'border-success/25', icon: CheckCircle,    iconColor: 'text-success' },
+  error:   { bg: 'bg-bg-overlay', border: 'border-error/25',   icon: AlertCircle,    iconColor: 'text-error' },
+  warning: { bg: 'bg-bg-overlay', border: 'border-warning/25', icon: AlertTriangle,  iconColor: 'text-warning' },
+  info:    { bg: 'bg-bg-overlay', border: 'border-primary/25', icon: Info,           iconColor: 'text-primary' },
+}
+
+function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
+  const [visible, setVisible] = useState(false)
+  const { bg, border, icon: Icon, iconColor } = TOAST_STYLES[toast.type]
 
   useEffect(() => {
-    if (duration > 0) {
-      const interval = 10
-      const step = 100 / (duration / interval)
-      const timer = setInterval(() => {
-        setProgress((prev) => {
-          if (prev <= step) {
-            clearInterval(timer)
-            handleClose()
-            return 0
-          }
-          return prev - step
-        })
-      }, interval)
-
-      return () => clearInterval(timer)
-    }
-  }, [duration])
-
-  const handleClose = () => {
-    setIsExiting(true)
-    setTimeout(() => {
-      onClose?.(id)
-    }, 300)
-  }
-
-  const handleAction = () => {
-    action?.onClick()
-    handleClose()
-  }
+    // Animate in
+    const t1 = setTimeout(() => setVisible(true), 10)
+    // Auto-dismiss
+    const duration = toast.duration ?? 4000
+    const t2 = setTimeout(() => {
+      setVisible(false)
+      setTimeout(() => onRemove(toast.id), 300)
+    }, duration)
+    return () => { clearTimeout(t1); clearTimeout(t2) }
+  }, [toast.id, toast.duration, onRemove])
 
   return (
     <div
       className={cn(
-        'flex items-start gap-3 p-4 rounded-radius-lg shadow-lg border min-w-[320px] max-w-md',
-        config.bgColor,
-        config.textColor,
-        config.borderColor,
-        'animate-slide-in',
-        isExiting && 'animate-fade-out'
+        'flex items-start gap-3 p-4 rounded-xl border shadow-lg max-w-sm w-full',
+        'transition-all duration-300',
+        bg, border,
+        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
       )}
+      role="alert"
+      aria-live="polite"
     >
-      <Icon className={cn('w-5 h-5 flex-shrink-0 mt-0.5', config.iconColor)} />
+      <Icon className={cn('w-4 h-4 flex-shrink-0 mt-0.5', iconColor)} />
       <div className="flex-1 min-w-0">
-        {title && (
-          <p className="font-semibold text-sm mb-1">{title}</p>
-        )}
-        <p className="text-sm leading-relaxed">{message}</p>
-        {action && (
-          <button
-            onClick={handleAction}
-            className="mt-2 text-sm font-medium underline hover:no-underline"
-          >
-            {action.label}
-          </button>
+        <p className="text-sm font-semibold text-text font-ui">{toast.title}</p>
+        {toast.message && (
+          <p className="text-xs text-text-secondary font-ui mt-0.5">{toast.message}</p>
         )}
       </div>
       <button
-        onClick={handleClose}
-        className="flex-shrink-0 p-1 hover:bg-black/5 rounded transition-colors"
+        onClick={() => { setVisible(false); setTimeout(() => onRemove(toast.id), 300) }}
+        className="p-0.5 rounded text-text-tertiary hover:text-text transition-colors flex-shrink-0"
+        aria-label="Dismiss notification"
       >
-        <X className="w-4 h-4" />
+        <X className="w-3.5 h-3.5" />
       </button>
-      {showProgress && duration > 0 && (
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/10 rounded-b-lg overflow-hidden">
-          <div
-            className="h-full bg-current opacity-30 transition-all duration-100 ease-linear"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      )}
     </div>
   )
 }
 
-// Toast Container for managing multiple toasts
-interface ToastContainerProps {
-  toasts: Array<{
-    id: string
-    variant?: ToastVariant
-    title?: string
-    message: string
-    duration?: number
-    action?: {
-      label: string
-      onClick: () => void
-    }
-  }>
-  onClose: (id: string) => void
-  position?: ToastPosition
-}
+// Standalone toast trigger (for use outside context). Set by Toaster on mount.
+const globalAddToast: { current: ((toast: Omit<Toast, 'id'>) => void) | null } = { current: null }
 
-export function ToastContainer({ toasts, onClose, position = 'top-right' }: ToastContainerProps) {
-  if (toasts.length === 0) return null
+export function Toaster() {
+  const [toasts, setToasts] = useState<Toast[]>([])
 
-  return (
-    <div
-      className={cn(
-        'fixed z-50 flex flex-col gap-2 pointer-events-none',
-        positionClasses[position]
-      )}
-    >
-      {toasts.map((toast) => (
-        <div key={toast.id} className="pointer-events-auto">
-          <Toast
-            id={toast.id}
-            variant={toast.variant}
-            title={toast.title}
-            message={toast.message}
-            duration={toast.duration}
-            onClose={onClose}
-            position={position}
-            action={toast.action}
-          />
-        </div>
-      ))}
-    </div>
-  )
-}
-
-// Toast hook for easy usage
-let toastId = 0
-const toastListeners = new Set<(toasts: any[]) => void>()
-let currentToasts: any[] = []
-
-function notifyToastListeners() {
-  toastListeners.forEach((listener) => listener([...currentToasts]))
-}
-
-export const toast = {
-  success: (message: string, options?: Omit<ToastProps, 'id' | 'message' | 'variant'>) => {
-    const id = `toast-${toastId++}`
-    const newToast = { ...options, id, message, variant: 'success' as const }
-    currentToasts.push(newToast)
-    notifyToastListeners()
-    if (options?.duration !== 0) {
-      setTimeout(() => toast.remove(id), options?.duration || 5000)
-    }
-    return id
-  },
-  error: (message: string, options?: Omit<ToastProps, 'id' | 'message' | 'variant'>) => {
-    const id = `toast-${toastId++}`
-    const newToast = { ...options, id, message, variant: 'error' as const }
-    currentToasts.push(newToast)
-    notifyToastListeners()
-    if (options?.duration !== 0) {
-      setTimeout(() => toast.remove(id), options?.duration || 5000)
-    }
-    return id
-  },
-  warning: (message: string, options?: Omit<ToastProps, 'id' | 'message' | 'variant'>) => {
-    const id = `toast-${toastId++}`
-    const newToast = { ...options, id, message, variant: 'warning' as const }
-    currentToasts.push(newToast)
-    notifyToastListeners()
-    if (options?.duration !== 0) {
-      setTimeout(() => toast.remove(id), options?.duration || 5000)
-    }
-    return id
-  },
-  info: (message: string, options?: Omit<ToastProps, 'id' | 'message' | 'variant'>) => {
-    const id = `toast-${toastId++}`
-    const newToast = { ...options, id, message, variant: 'info' as const }
-    currentToasts.push(newToast)
-    notifyToastListeners()
-    if (options?.duration !== 0) {
-      setTimeout(() => toast.remove(id), options?.duration || 5000)
-    }
-    return id
-  },
-  remove: (id: string) => {
-    currentToasts = currentToasts.filter((t) => t.id !== id)
-    notifyToastListeners()
-  },
-  clear: () => {
-    currentToasts = []
-    notifyToastListeners()
-  },
-}
-
-export function useToast() {
-  const [toasts, setToasts] = useState<any[]>([])
-
-  useEffect(() => {
-    toastListeners.add(setToasts)
-    setToasts([...currentToasts])
-
-    return () => {
-      toastListeners.delete(setToasts)
-    }
+  const addToast = useCallback((toast: Omit<Toast, 'id'>) => {
+    const id = `toast-${Date.now()}-${Math.random()}`
+    setToasts(prev => [...prev, { ...toast, id }])
   }, [])
 
-  const remove = (id: string) => {
-    toast.remove(id)
-  }
+  const removeToast = useCallback((id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id))
+  }, [])
 
-  return {
-    toasts,
-    remove,
-    success: toast.success,
-    error: toast.error,
-    warning: toast.warning,
-    info: toast.info,
-    clear: toast.clear,
-  }
-}
-
-// Toast Provider component
-export function Toaster() {
-  const { toasts, remove } = useToast()
-
-  return <ToastContainer toasts={toasts} onClose={remove} position="top-right" />
-}
-
-// Inline toast for specific use cases
-interface InlineToastProps {
-  variant?: ToastVariant
-  message: string
-  onClose?: () => void
-  className?: string
-}
-
-export function InlineToast({ variant = 'info', message, onClose, className = '' }: InlineToastProps) {
-  const config = variantConfig[variant]
-  const Icon = config.icon
+  useEffect(() => {
+    globalAddToast.current = addToast
+    return () => { globalAddToast.current = null }
+  }, [addToast])
 
   return (
-    <div className={cn(
-      'flex items-center gap-3 px-4 py-3 rounded-lg',
-      config.bgColor,
-      config.textColor,
-      config.borderColor,
-      'border',
-      className
-    )}>
-      <Icon className={cn('w-5 h-5 flex-shrink-0', config.iconColor)} />
-      <p className="text-sm flex-1">{message}</p>
-      {onClose && (
-        <button
-          onClick={onClose}
-          className="flex-shrink-0 p-1 hover:bg-black/5 rounded transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      )}
-    </div>
+    <ToastContext.Provider value={{ addToast, removeToast }}>
+      {/* Portal */}
+      <div
+        className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"
+        aria-label="Notifications"
+      >
+        {toasts.map(toast => (
+          <div key={toast.id} className="pointer-events-auto">
+            <ToastItem toast={toast} onRemove={removeToast} />
+          </div>
+        ))}
+      </div>
+    </ToastContext.Provider>
   )
 }
+
+export function toast(options: Omit<Toast, 'id'>) {
+  globalAddToast.current?.(options)
+}
+
+toast.success = (title: string, message?: string) => toast({ type: 'success', title, message })
+toast.error   = (title: string, message?: string) => toast({ type: 'error',   title, message })
+toast.warning = (title: string, message?: string) => toast({ type: 'warning', title, message })
+toast.info    = (title: string, message?: string) => toast({ type: 'info',    title, message })

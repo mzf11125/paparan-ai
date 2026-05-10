@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { Paparan } from '@/types/paparan'
 import { BriefCard, BriefCardSkeleton } from './BriefCard'
 import { FileX, Loader2, RefreshCw, Grid3x3, List, Filter } from 'lucide-react'
-import { cn } from '@/utils/formatters'
+import { cn } from '@/utils/cn'
 
 interface BriefGridProps {
   briefs: Paparan[]
@@ -41,9 +41,10 @@ export function BriefGrid({
 
   const viewMode = externalViewMode || internalViewMode
 
-  // Staggered fade-in animation
+  // Staggered fade-in animation - enhanced with smoother timing
   useEffect(() => {
     if (!isLoading && briefs.length > 0) {
+      setVisibleCount(0) // Reset for new content
       const interval = setInterval(() => {
         setVisibleCount((prev) => {
           if (prev < briefs.length) {
@@ -52,7 +53,7 @@ export function BriefGrid({
           clearInterval(interval)
           return prev
         })
-      }, 50)
+      }, 60) // Slightly faster stagger (60ms)
 
       return () => clearInterval(interval)
     }
@@ -153,8 +154,10 @@ export function BriefGrid({
         {visibleBriefs.map((brief, index) => (
           <div
             key={brief.id}
-            className="animate-fade-in"
-            style={{ animationDelay: `${index * 30}ms` }}
+            className={cn(
+              'animate-fade-in-up',
+              index < 8 && `stagger-${index + 1}`
+            )}
           >
             <BriefCard brief={brief} variant={viewMode === 'list' ? 'compact' : 'default'} />
           </div>
@@ -252,12 +255,15 @@ interface ViewModeToggleProps {
 
 export function ViewModeToggle({ viewMode, onChange, className = '' }: ViewModeToggleProps) {
   return (
-    <div className={cn('flex items-center border border-border rounded-radius-lg overflow-hidden', className)}>
+    <div className={cn('flex items-center border border-border rounded-lg overflow-hidden', className)}>
       <button
         onClick={() => onChange('grid')}
         className={cn(
-          'p-2.5 transition-colors',
-          viewMode === 'grid' ? 'bg-primary text-white' : 'bg-bg-elevated hover:bg-bg-surface text-text-tertiary'
+          'p-2.5 transition-all duration-200',
+          'hover:bg-bg-surface active:scale-95',
+          viewMode === 'grid'
+            ? 'bg-primary text-white shadow-md'
+            : 'bg-bg-elevated text-text-tertiary hover:text-text'
         )}
         title="Grid view"
       >
@@ -266,8 +272,11 @@ export function ViewModeToggle({ viewMode, onChange, className = '' }: ViewModeT
       <button
         onClick={() => onChange('list')}
         className={cn(
-          'p-2.5 transition-colors',
-          viewMode === 'list' ? 'bg-primary text-white' : 'bg-bg-elevated hover:bg-bg-surface text-text-tertiary'
+          'p-2.5 transition-all duration-200',
+          'hover:bg-bg-surface active:scale-95',
+          viewMode === 'list'
+            ? 'bg-primary text-white shadow-md'
+            : 'bg-bg-elevated text-text-tertiary hover:text-text'
         )}
         title="List view"
       >

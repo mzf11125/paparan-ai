@@ -93,7 +93,7 @@ export function AdvancedSearch({ className = '', compact = false }: AdvancedSear
   const handleClearFilters = () => {
     clearFilters()
     setSearchQuery('')
-    toast.info('All filters cleared', { duration: 2500 })
+    toast.info('All filters cleared')
   }
 
   const handleSaveSearch = () => {
@@ -104,10 +104,7 @@ export function AdvancedSearch({ className = '', compact = false }: AdvancedSear
     addSavedSearch(savedSearchName, filters)
     setShowSaveModal(false)
     setSavedSearchName('')
-    toast.success('Search saved successfully', {
-      title: 'Saved Search',
-      duration: 3000,
-    })
+    toast.success('Search saved successfully')
   }
 
   const hasActiveFilters = activeFilterCount > 0
@@ -467,7 +464,7 @@ export function SavedSearchesList({ onSelect, className = '' }: SavedSearchesLis
             <button
               onClick={() => {
                 deleteSavedSearch(search.id)
-                toast.info('Search removed', { duration: 2000 })
+                toast.info('Search removed')
               }}
               className="p-1.5 hover:bg-bg-elevated rounded transition-colors opacity-0 group-hover:opacity-100"
               aria-label="Delete saved search"

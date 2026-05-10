@@ -40,8 +40,8 @@ const deltaConfig = {
 } as const
 
 const impactConfig = {
-  HIGH: { label: 'HIGH', color: 'text-red-700' },
-  MEDIUM: { label: 'MED', color: 'text-amber-700' },
+  HIGH: { label: 'HIGH', color: 'text-error' },
+  MEDIUM: { label: 'MED', color: 'text-warning' },
   LOW: { label: 'LOW', color: 'text-text-tertiary' },
 } as const
 

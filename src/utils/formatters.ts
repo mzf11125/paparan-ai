@@ -97,7 +97,6 @@ export function getSourceTypeColor(sourceType: string): string {
   return colors[sourceType as keyof typeof colors] || colors.other
 }
 
-// Class names utility for conditional classes
-export function cn(...classes: (string | boolean | undefined | null)[]): string {
-  return classes.filter(Boolean).join(' ')
-}
+// Class names utility — re-exported from the canonical clsx + twMerge helper.
+// Existing imports from '@/utils/formatters' continue to work without changes.
+export { cn } from './cn'

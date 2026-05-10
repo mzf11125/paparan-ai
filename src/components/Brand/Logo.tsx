@@ -1,151 +1,90 @@
-import { cn } from '@/utils/formatters'
+import { cn } from '@/utils/cn'
+import { BRAND_NAME, BRAND_TAGLINE } from '@/constants/brand'
 
 export interface LogoProps {
   variant?: 'wordmark' | 'icon' | 'compact'
   color?: 'full' | 'monochrome' | 'inverted'
   size?: 'sm' | 'md' | 'lg'
   className?: string
+  text?: string
 }
 
-export function Logo({ variant = 'wordmark', color = 'full', size = 'md', className }: LogoProps) {
-  const sizeClasses = {
-    sm: 'h-6',
-    md: 'h-8',
-    lg: 'h-10'
-  }
+export function Logo({ variant = 'wordmark', color = 'full', size = 'md', className, text = BRAND_NAME }: LogoProps) {
+  const iconSize = { sm: 22, md: 28, lg: 36 }[size]
+  const wordSize = {
+    sm: 'text-lg',
+    md: 'text-2xl',
+    lg: 'text-3xl',
+  }[size]
 
-  const iconSize = {
-    sm: 20,
-    md: 24,
-    lg: 32
-  }
+  const palette = {
+    full:       { mark: 'var(--color-primary)', word: 'var(--color-text)' },
+    monochrome: { mark: 'currentColor',         word: 'currentColor' },
+    inverted:   { mark: 'rgb(var(--color-bg-elevated-rgb))', word: 'rgb(var(--color-bg-elevated-rgb))' },
+  }[color]
 
-  const colors = {
-    full: {
-      primary: '#C8A96A',
-      text: '#2D2D2D'
-    },
-    monochrome: {
-      primary: '#2D2D2D',
-      text: '#2D2D2D'
-    },
-    inverted: {
-      primary: '#FFFFFF',
-      text: '#FFFFFF'
-    }
-  }
-
-  const currentColors = colors[color]
+  const Mark = (
+    <svg
+      width={iconSize}
+      height={iconSize}
+      viewBox="0 0 40 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="flex-shrink-0"
+      aria-hidden="true"
+    >
+      <circle cx="20" cy="20" r="18.5" stroke={palette.mark} strokeWidth="1.5" fill="none" />
+      <text
+        x="20"
+        y="27"
+        textAnchor="middle"
+        fontFamily="Newsreader, Source Serif 4, Georgia, serif"
+        fontSize="22"
+        fontWeight="600"
+        fill={palette.mark}
+        letterSpacing="-0.02em"
+      >
+        P
+      </text>
+    </svg>
+  )
 
   if (variant === 'icon') {
-    return (
-      <svg
-        width={iconSize[size]}
-        height={iconSize[size]}
-        viewBox="0 0 32 32"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className={cn('flex-shrink-0', className)}
-        aria-label="Paparan Brief Logo"
-      >
-        {/* Stylized letter P with document fold */}
-        <rect
-          x="4"
-          y="2"
-          width="24"
-          height="28"
-          rx="2"
-          fill="none"
-          stroke={currentColors.primary}
-          strokeWidth="2"
-        />
-        {/* P shape */}
-        <path
-          d="M12 8V24M12 8H18C20.2091 8 22 9.79086 22 12C22 14.2091 20.2091 16 18 16H12"
-          stroke={currentColors.primary}
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        {/* Document fold */}
-        <path
-          d="M22 2V8H28"
-          stroke={currentColors.primary}
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-          opacity="0"
-        />
-      </svg>
-    )
+    return <span className={cn('inline-flex', className)} aria-label={text}>{Mark}</span>
   }
 
   if (variant === 'compact') {
     return (
-      <div className={cn('flex items-center gap-2', className)} style={{ height: sizeClasses[size] }}>
-        <svg
-          width={iconSize[size]}
-          height={iconSize[size]}
-          viewBox="0 0 32 32"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="flex-shrink-0"
-          aria-label="Paparan Brief Logo"
-        >
-          <rect
-            x="4"
-            y="2"
-            width="24"
-            height="28"
-            rx="2"
-            fill="none"
-            stroke={currentColors.primary}
-            strokeWidth="2"
-          />
-          <path
-            d="M12 8V24M12 8H18C20.2091 8 22 9.79086 22 12C22 14.2091 20.2091 16 18 16H12"
-            stroke={currentColors.primary}
-            strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-        </svg>
+      <span className={cn('inline-flex items-center gap-2', className)} aria-label={text}>
+        {Mark}
         <span
-          className="font-serif font-bold tracking-tight"
-          style={{
-            color: currentColors.text,
-            fontSize: size === 'sm' ? '1rem' : size === 'md' ? '1.25rem' : '1.5rem'
-          }}
+          className={cn('font-display font-semibold tracking-tight leading-none', wordSize)}
+          style={{ color: palette.word }}
         >
-          Paparan
+          {text}
         </span>
-      </div>
+      </span>
     )
   }
 
-  // Wordmark variant (default)
+  // Wordmark variant — serif brand name with editorial kicker beneath
   return (
-    <div
-      className={cn('flex items-baseline gap-1', className)}
-      style={{ height: sizeClasses[size] }}
-    >
-      <span
-        className="font-serif font-bold tracking-tight"
-        style={{
-          color: currentColors.text,
-          fontSize: size === 'sm' ? '1.125rem' : size === 'md' ? '1.5rem' : '2rem'
-        }}
-      >
-        Paparan
+    <span className={cn('inline-flex items-center gap-2.5', className)} aria-label={`${text} — ${BRAND_TAGLINE}`}>
+      {Mark}
+      <span className="inline-flex flex-col leading-none gap-0.5">
+        <span
+          className={cn('font-display font-semibold tracking-tight leading-none', wordSize)}
+          style={{ color: palette.word }}
+        >
+          {text}
+        </span>
+        <span
+          className="text-[9px] font-mono uppercase tracking-[0.18em] leading-none opacity-80"
+          style={{ color: palette.word }}
+        >
+          Policy Intelligence
+        </span>
       </span>
-      <span
-        className="font-serif font-normal tracking-tight"
-        style={{
-          color: currentColors.primary,
-          fontSize: size === 'sm' ? '1.125rem' : size === 'md' ? '1.5rem' : '2rem'
-        }}
-      >
-        Brief
-      </span>
-    </div>
+    </span>
   )
 }

@@ -1,25 +1,26 @@
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, NavLink } from 'react-router-dom'
-import { Search, PlusCircle, ArrowRight, Radio, Globe, AlertTriangle, Clock, TrendingUp, FileText, Zap } from 'lucide-react'
+import {
+  Search, PlusCircle, ArrowRight, Radio, Globe, AlertTriangle,
+  Clock, TrendingUp, FileText, Zap, Newspaper, RefreshCw,
+} from 'lucide-react'
 import { briefService } from '@/services/briefService'
 import { Paparan } from '@/types/paparan'
-import { cn } from '@/utils/formatters'
+import { cn } from '@/utils/cn'
 import { ErrorState } from '@/components/ui/ErrorState'
-import { Newspaper } from 'lucide-react'
+import { regionColors, impactColors } from '@/lib/domainColors'
+import { usePageMeta } from '@/hooks/usePageMeta'
 
-const REGION_COLORS: Record<string, string> = {
-  APAC: 'text-[#60A5FA] bg-[rgba(96,165,250,0.15)] border-[rgba(96,165,250,0.20)]',
-  EMEA: 'text-[#4ADE80] bg-[rgba(74,222,128,0.15)] border-[rgba(74,222,128,0.20)]',
-  Americas: 'text-[#FBBF24] bg-[rgba(251,191,36,0.15)] border-[rgba(251,191,36,0.20)]',
-  ASEAN: 'text-[#3B82F6] bg-[rgba(59,130,246,0.15)] border-[rgba(59,130,246,0.20)]',
-  Global: 'text-[#94A3B8] bg-[rgba(255,255,255,0.04)] border-[rgba(255,255,255,0.08)]',
+/* ── helpers ── */
+function regionBadge(region?: string) {
+  const t = regionColors(region)
+  return cn(t.text, t.bg, 'border', t.border)
 }
 
-const IMPACT_STYLES: Record<string, string> = {
-  HIGH: 'bg-[rgba(239,68,68,0.15)] text-[#EF4444] border border-[rgba(239,68,68,0.30)]',
-  MEDIUM: 'bg-[rgba(245,158,11,0.15)] text-[#F59E0B] border border-[rgba(245,158,11,0.30)]',
-  LOW: 'bg-[rgba(16,185,129,0.15)] text-[#10B981] border border-[rgba(16,185,129,0.30)]',
+function impactBadge(impact?: 'HIGH' | 'MEDIUM' | 'LOW') {
+  const t = impactColors(impact)
+  return cn(t.bg, t.text, 'border', t.border)
 }
 
 function getTopImpact(brief: Paparan) {
@@ -28,13 +29,14 @@ function getTopImpact(brief: Paparan) {
   return 'LOW'
 }
 
+/* ── News Ticker ── */
 function NewsTicker({ briefs }: { briefs: Paparan[] }) {
   const items = briefs.slice(0, 10)
   return (
-    <div className="bg-[rgba(59,130,246,0.10)] border-b border-[rgba(59,130,246,0.20)] overflow-hidden">
+    <div className="bg-primary/5 border-b border-primary/15 overflow-hidden">
       <div className="flex items-center">
-        <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-[#3B82F6] text-white text-xs font-bold uppercase tracking-widest">
-          <Radio className="w-3 h-3 animate-pulse" aria-hidden="true" />
+        <div className="flex-shrink-0 flex items-center gap-2 px-4 py-2 bg-primary text-white text-[10px] font-bold uppercase tracking-widest font-ui">
+          <Radio className="w-3 h-3 animate-pulse-slow" aria-hidden="true" />
           Live
         </div>
         <div className="overflow-hidden flex-1">
@@ -43,14 +45,14 @@ function NewsTicker({ briefs }: { briefs: Paparan[] }) {
               <NavLink
                 key={`${brief.id}-${i}`}
                 to={`/briefs/${brief.id}`}
-                className="inline-flex items-center gap-3 px-6 py-2 text-sm text-[#94A3B8] hover:text-[#F1F5F9] transition-colors"
+                className="inline-flex items-center gap-3 px-6 py-2 text-sm text-text-secondary hover:text-text transition-colors"
               >
-                <span className={cn('text-xs font-semibold px-1.5 py-0.5 rounded border', REGION_COLORS[brief.region] || REGION_COLORS.Global)}>
+                <span className={cn('badge border', regionBadge(brief.region))}>
                   {brief.region}
                 </span>
-                <span className="font-medium text-[#F1F5F9]">{brief.title}</span>
-                <span className="text-[#64748B] mx-1">·</span>
-                <span className="text-[#64748B] text-xs">{brief.date}</span>
+                <span className="font-medium text-text">{brief.title}</span>
+                <span className="text-text-muted">·</span>
+                <span className="text-text-tertiary text-xs">{brief.date}</span>
               </NavLink>
             ))}
           </div>
@@ -60,81 +62,94 @@ function NewsTicker({ briefs }: { briefs: Paparan[] }) {
   )
 }
 
+/* ── Featured Story ── */
 function FeaturedStory({ brief }: { brief: Paparan }) {
   const impact = getTopImpact(brief)
   return (
-    <div className="relative bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-xl overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#3B82F6] via-[#60A5FA] to-[#3B82F6]" />
-      <div className="p-6 lg:p-8">
-        <div className="flex items-center gap-3 mb-4 flex-wrap">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-[rgba(239,68,68,0.15)] text-[#EF4444] border border-[rgba(239,68,68,0.30)] rounded text-xs font-bold uppercase tracking-wider">
-            <AlertTriangle className="w-3 h-3" aria-hidden="true" />
+    <article className="relative surface-card overflow-hidden group hover-card">
+      {/* Top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+
+      {/* Background glow */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative p-6 lg:p-8">
+        <div className="flex items-center gap-3 mb-5 flex-wrap">
+          <span className="badge bg-error/10 text-error border border-error/25">
+            <AlertTriangle className="w-2.5 h-2.5" aria-hidden="true" />
             Top Story
           </span>
-          <span className={cn('px-2.5 py-1 rounded text-xs font-semibold border', REGION_COLORS[brief.region] || REGION_COLORS.Global)}>
+          <span className={cn('badge border', regionBadge(brief.region))}>
             {brief.region}
           </span>
-          <span className="text-xs text-[#64748B] ml-auto flex items-center gap-1">
+          <span className={cn('badge', impactBadge(impact as 'HIGH' | 'MEDIUM' | 'LOW'))}>
+            {impact} Impact
+          </span>
+          <span className="ml-auto flex items-center gap-1.5 text-xs text-text-tertiary font-ui">
             <Clock className="w-3 h-3" aria-hidden="true" />
             {brief.date}
           </span>
         </div>
-        <NavLink to={`/briefs/${brief.id}`} className="block group">
-          <h2 className="text-2xl lg:text-3xl font-display font-bold text-[#F1F5F9] leading-tight mb-3 group-hover:text-[#3B82F6] transition-colors">
+
+        <NavLink to={`/briefs/${brief.id}`} className="block group/link">
+          <h2 className="text-2xl lg:text-3xl font-display font-bold text-text leading-tight mb-3 group-hover/link:text-primary transition-colors duration-150">
             {brief.title}
           </h2>
         </NavLink>
-        <p className="text-[#94A3B8] leading-relaxed mb-6 max-w-3xl">
+
+        <p className="text-text-secondary leading-relaxed mb-6 max-w-3xl text-sm lg:text-base">
           {brief.executiveSummary[0]}
         </p>
+
         <div className="flex items-center gap-4 flex-wrap">
           <NavLink
             to={`/briefs/${brief.id}`}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg text-sm font-semibold transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-semibold font-ui transition-all duration-150 shadow-teal hover:-translate-y-px"
           >
             Read Full Brief
             <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </NavLink>
-          <div className="flex items-center gap-2 text-sm text-[#64748B]">
-            <span>{brief.developments.length} developments</span>
-            <span>·</span>
-            <span className={cn('px-2 py-0.5 rounded text-xs font-semibold', IMPACT_STYLES[impact])}>
-              {impact} Impact
-            </span>
-          </div>
+          <span className="text-sm text-text-tertiary font-ui">
+            {brief.developments.length} developments
+          </span>
         </div>
       </div>
-    </div>
+    </article>
   )
 }
 
+/* ── News Card ── */
 function NewsCard({ brief }: { brief: Paparan }) {
   const impact = getTopImpact(brief)
   const hasNew = brief.developments.some(d => d.delta === 'NEW')
+
   return (
-    <article className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg overflow-hidden hover:border-[rgba(59,130,246,0.50)] transition-all duration-200">
-      <div className="p-5">
+    <article className="surface-card overflow-hidden hover-card group flex flex-col">
+      <div className="p-5 flex flex-col flex-1">
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className={cn('px-2 py-0.5 rounded text-xs font-semibold border', REGION_COLORS[brief.region] || REGION_COLORS.Global)}>
+          <span className={cn('badge border', regionBadge(brief.region))}>
             {brief.region}
           </span>
           {hasNew && (
-            <span className="px-2 py-0.5 bg-[rgba(59,130,246,0.15)] text-[#3B82F6] border border-[rgba(59,130,246,0.30)] rounded text-xs font-semibold">New</span>
+            <span className="badge bg-primary/10 text-primary border border-primary/25">New</span>
           )}
-          <span className={cn('ml-auto px-2 py-0.5 rounded text-xs font-semibold', IMPACT_STYLES[impact])}>
+          <span className={cn('badge ml-auto', impactBadge(impact as 'HIGH' | 'MEDIUM' | 'LOW'))}>
             {impact}
           </span>
         </div>
-        <NavLink to={`/briefs/${brief.id}`} className="block group">
-          <h3 className="font-display font-semibold text-[#F1F5F9] leading-snug mb-2 group-hover:text-[#3B82F6] transition-colors line-clamp-2">
+
+        <NavLink to={`/briefs/${brief.id}`} className="block group/link flex-1">
+          <h3 className="font-display font-bold text-text leading-snug mb-2 group-hover/link:text-primary transition-colors duration-150 line-clamp-2">
             {brief.title}
           </h3>
         </NavLink>
-        <p className="text-sm text-[#94A3B8] leading-relaxed line-clamp-2 mb-3">
+
+        <p className="text-sm text-text-secondary leading-relaxed line-clamp-2 mb-4 flex-1">
           {brief.executiveSummary[0]}
         </p>
-        <div className="flex items-center justify-between text-xs text-[#64748B]">
-          <span className="flex items-center gap-1">
+
+        <div className="flex items-center justify-between text-xs text-text-tertiary font-ui pt-3 border-t border-border">
+          <span className="flex items-center gap-1.5">
             <Clock className="w-3 h-3" aria-hidden="true" />
             {brief.date}
           </span>
@@ -145,57 +160,61 @@ function NewsCard({ brief }: { brief: Paparan }) {
   )
 }
 
+/* ── Sidebar ── */
 function NewsSidebar({ briefs, activeRegion, onRegionChange }: {
   briefs: Paparan[]
   activeRegion: string
   onRegionChange: (r: string) => void
 }) {
-  const regions = ['All', ...Array.from(new Set(briefs.map(b => b.region)))]
-  const tags = Array.from(new Set(briefs.flatMap(b => b.tags || []))).slice(0, 8)
-  const highCount = briefs.filter(b => b.developments.some(d => d.impact === 'HIGH')).length
   const navigate = useNavigate()
+  const regions  = ['All', ...Array.from(new Set(briefs.map(b => b.region)))]
+  const tags     = Array.from(new Set(briefs.flatMap(b => b.tags || []))).slice(0, 10)
+  const highCount = briefs.filter(b => b.developments.some(d => d.impact === 'HIGH')).length
 
   return (
-    <aside className="space-y-5">
-      <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-4">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-[#64748B] mb-3">Overview</h3>
+    <aside className="space-y-4">
+      {/* Stats */}
+      <div className="surface-card p-4">
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-text-muted font-ui mb-3">Overview</h3>
         <div className="space-y-3">
           {[
-            { icon: <FileText className="w-4 h-4 text-[#3B82F6]" />, label: 'Total Briefs', value: briefs.length, cls: 'text-[#F1F5F9]' },
-            { icon: <AlertTriangle className="w-4 h-4 text-[#EF4444]" />, label: 'High Impact', value: highCount, cls: 'text-[#EF4444]' },
-            { icon: <Globe className="w-4 h-4 text-[#10B981]" />, label: 'Regions', value: regions.length - 1, cls: 'text-[#F1F5F9]' },
+            { icon: <FileText className="w-4 h-4 text-primary" />, label: 'Total Briefs', value: briefs.length, cls: 'text-text' },
+            { icon: <AlertTriangle className="w-4 h-4 text-error" />, label: 'High Impact', value: highCount, cls: 'text-error' },
+            { icon: <Globe className="w-4 h-4 text-success" />, label: 'Regions', value: regions.length - 1, cls: 'text-text' },
           ].map(({ icon, label, value, cls }) => (
             <div key={label} className="flex items-center justify-between">
-              <span className="flex items-center gap-2 text-sm text-[#94A3B8]">{icon}{label}</span>
-              <span className={cn('font-bold tabular-nums', cls)}>{value}</span>
+              <span className="flex items-center gap-2 text-sm text-text-secondary font-ui">{icon}{label}</span>
+              <span className={cn('font-bold tabular-nums text-sm font-mono', cls)}>{value}</span>
             </div>
           ))}
         </div>
       </div>
 
+      {/* CTA */}
       <button
         onClick={() => navigate('/editor')}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg font-semibold text-sm transition-colors cursor-pointer"
+        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary hover:bg-primary-hover text-white rounded-lg font-semibold text-sm font-ui transition-all duration-150 shadow-teal hover:-translate-y-px"
       >
         <Zap className="w-4 h-4" aria-hidden="true" />
-        Generate Instant Brief
+        Generate Brief
       </button>
 
-      <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-4">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-[#64748B] mb-3 flex items-center gap-2">
+      {/* Region filter */}
+      <div className="surface-card p-4">
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-text-muted font-ui mb-3 flex items-center gap-2">
           <Globe className="w-3.5 h-3.5" aria-hidden="true" />
           Filter by Region
         </h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           {regions.map(region => (
             <button
               key={region}
               onClick={() => onRegionChange(region)}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer',
+                'px-3 py-1.5 rounded-lg text-xs font-semibold font-ui border transition-all duration-150',
                 activeRegion === region
-                  ? 'bg-[#3B82F6] text-white border-[#3B82F6]'
-                  : 'text-[#94A3B8] border-[rgba(255,255,255,0.12)] hover:border-[rgba(59,130,246,0.50)] hover:text-[#F1F5F9]'
+                  ? 'bg-primary text-white border-primary'
+                  : 'text-text-secondary border-border hover:border-primary/40 hover:text-text'
               )}
             >
               {region}
@@ -204,28 +223,46 @@ function NewsSidebar({ briefs, activeRegion, onRegionChange }: {
         </div>
       </div>
 
-      <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-4">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-[#64748B] mb-3 flex items-center gap-2">
-          <TrendingUp className="w-3.5 h-3.5" aria-hidden="true" />
-          Trending Topics
-        </h3>
-        <div className="flex flex-wrap gap-2">
-          {tags.map(tag => (
-            <NavLink
-              key={tag}
-              to="/briefs"
-              className="px-2.5 py-1 bg-[rgba(255,255,255,0.04)] hover:bg-[rgba(59,130,246,0.15)] hover:text-[#3B82F6] text-[#94A3B8] border border-[rgba(255,255,255,0.12)] hover:border-[rgba(59,130,246,0.30)] rounded text-xs font-medium transition-all"
-            >
-              {tag}
-            </NavLink>
-          ))}
+      {/* Trending topics */}
+      {tags.length > 0 && (
+        <div className="surface-card p-4">
+          <h3 className="text-[10px] font-bold uppercase tracking-widest text-text-muted font-ui mb-3 flex items-center gap-2">
+            <TrendingUp className="w-3.5 h-3.5" aria-hidden="true" />
+            Trending Topics
+          </h3>
+          <div className="flex flex-wrap gap-1.5">
+            {tags.map(tag => (
+              <NavLink
+                key={tag}
+                to="/briefs"
+                className="px-2.5 py-1 bg-bg-subtle hover:bg-primary/10 hover:text-primary text-text-secondary border border-border hover:border-primary/30 rounded-md text-xs font-medium font-ui transition-all duration-150"
+              >
+                {tag}
+              </NavLink>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </aside>
   )
 }
 
+/* ── Loading skeleton ── */
+function FeedSkeleton() {
+  return (
+    <div className="px-4 lg:px-6 py-6 space-y-6 animate-pulse">
+      <div className="h-7 skeleton w-48 rounded-lg" />
+      <div className="h-48 skeleton rounded-xl" />
+      <div className="grid sm:grid-cols-2 gap-4">
+        {[1,2,3,4].map(i => <div key={i} className="h-40 skeleton rounded-xl" />)}
+      </div>
+    </div>
+  )
+}
+
+/* ── Main Page ── */
 export function NewsFeedPage() {
+  usePageMeta({ title: 'Intelligence Feed' })
   const [searchQuery, setSearchQuery] = useState('')
   const [activeRegion, setActiveRegion] = useState('All')
   const navigate = useNavigate()
@@ -233,7 +270,7 @@ export function NewsFeedPage() {
   const { data: briefs = [], isLoading, error, refetch } = useQuery({
     queryKey: ['briefs', 'all'],
     queryFn: async () => {
-      const timeout = new Promise((_, reject) =>
+      const timeout = new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error('Request timed out')), 8000)
       )
       return Promise.race([briefService.getAllBriefs(), timeout]) as Promise<Paparan[]>
@@ -249,126 +286,136 @@ export function NewsFeedPage() {
   const feedBriefs = useMemo(() => {
     let result = briefs.filter(b => b.id !== featuredBrief?.id)
     if (activeRegion !== 'All') result = result.filter(b => b.region === activeRegion)
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      result = result.filter(b =>
+        b.title.toLowerCase().includes(q) ||
+        b.executiveSummary.some(s => s.toLowerCase().includes(q))
+      )
+    }
     return result
-  }, [briefs, featuredBrief, activeRegion])
+  }, [briefs, featuredBrief, activeRegion, searchQuery])
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    navigate('/briefs')
-  }
-
-  // Error state
   if (error) {
     return (
-      <div className="-mx-4 lg:-mx-8 -mt-6 lg:-mt-8 px-4 lg:px-8 py-12">
+      <div className="px-4 lg:px-6 py-12">
         <ErrorState
-          message={error instanceof Error ? error.message : 'Failed to load briefs. Please try again.'}
+          message={error instanceof Error ? error.message : 'Failed to load briefs.'}
           onRetry={() => refetch()}
         />
       </div>
     )
   }
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="-mx-4 lg:-mx-8 -mt-6 lg:-mt-8">
-        <div className="px-4 lg:px-8 py-6">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-[#111318] rounded w-1/3" />
-            <div className="h-4 bg-[#111318] rounded w-1/4" />
-            <div className="grid grid-cols-3 gap-4 mt-8">
-              {[1, 2, 3, 4, 5, 6].map(i => (
-                <div key={i} className="h-48 bg-[#111318] rounded-lg" />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  if (isLoading) return <FeedSkeleton />
 
-  // Empty state
   if (briefs.length === 0) {
     return (
-      <div className="-mx-4 lg:-mx-8 -mt-6 lg:-mt-8 px-4 lg:px-8 py-12">
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <Newspaper className="w-16 h-16 text-[#475569] mb-4" />
-          <h3 className="text-xl font-semibold text-[#F1F5F9] mb-2">No briefs available</h3>
-          <p className="text-[#94A3B8] text-sm max-w-md mb-6">
-            Get started by generating your first policy intelligence brief.
-          </p>
-          <button
-            onClick={() => navigate('/editor')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg text-sm font-semibold transition-colors"
-          >
-            <PlusCircle className="w-4 h-4" />
-            Generate Brief
-          </button>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
+        <div className="w-16 h-16 rounded-2xl bg-bg-subtle border border-border flex items-center justify-center mb-4">
+          <Newspaper className="w-8 h-8 text-text-tertiary" />
         </div>
+        <h3 className="text-xl font-display font-bold text-text mb-2">No briefs yet</h3>
+        <p className="text-text-secondary text-sm max-w-sm mb-6 font-ui">
+          Generate your first policy intelligence brief to get started.
+        </p>
+        <button
+          onClick={() => navigate('/editor')}
+          className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-semibold font-ui transition-all duration-150 shadow-teal"
+        >
+          <PlusCircle className="w-4 h-4" />
+          Generate Brief
+        </button>
       </div>
     )
   }
 
   return (
-    <div className="-mx-4 lg:-mx-8 -mt-6 lg:-mt-8">
+    <div className="flex flex-col min-h-full">
+      {/* Ticker */}
       {briefs.length > 0 && <NewsTicker briefs={briefs} />}
 
-      <div className="px-4 lg:px-8 py-6 space-y-6">
-        {/* Header + Search */}
+      <div className="flex-1 px-4 lg:px-6 py-6 space-y-6">
+        {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="flex-1">
-            <h1 className="text-2xl font-display font-bold text-[#F1F5F9]">Intelligence Feed</h1>
-            <p className="text-sm text-[#94A3B8] mt-0.5">
-              Latest policy developments across {Array.from(new Set(briefs.map(b => b.region))).length} regions
+            <h1 className="text-2xl font-display font-bold text-text">Intelligence Feed</h1>
+            <p className="text-sm text-text-secondary mt-0.5 font-ui">
+              {briefs.length} briefs across {Array.from(new Set(briefs.map(b => b.region))).length} regions
             </p>
           </div>
-          <form onSubmit={handleSearch} className="flex items-center gap-2 w-full sm:w-auto">
-            <div className="relative flex-1 sm:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#64748B]" aria-hidden="true" />
+
+          <form
+            onSubmit={e => { e.preventDefault(); navigate('/briefs') }}
+            className="flex items-center gap-2 w-full sm:w-auto"
+          >
+            <div className="relative flex-1 sm:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" aria-hidden="true" />
               <input
                 type="search"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 placeholder="Search briefs…"
-                className="w-full pl-9 pr-4 py-2.5 bg-[#181B22] border border-[rgba(255,255,255,0.12)] rounded-lg text-sm text-[#F1F5F9] placeholder:text-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] transition-all"
+                className="input-base pl-9 pr-4"
+                aria-label="Search briefs"
               />
             </div>
             <button
               type="button"
+              onClick={() => refetch()}
+              className="p-2.5 rounded-lg border border-border text-text-secondary hover:text-text hover:border-border-strong transition-colors"
+              aria-label="Refresh feed"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
               onClick={() => navigate('/editor')}
-              className="flex items-center gap-2 px-4 py-2.5 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg text-sm font-semibold transition-colors whitespace-nowrap cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-semibold font-ui transition-all duration-150 whitespace-nowrap"
             >
               <PlusCircle className="w-4 h-4" aria-hidden="true" />
-              <span className="hidden sm:inline">Generate Brief</span>
-              <span className="sm:hidden">Brief</span>
+              <span className="hidden sm:inline">Generate</span>
             </button>
           </form>
         </div>
 
-        {/* Featured Story */}
+        {/* Featured */}
         {featuredBrief && <FeaturedStory brief={featuredBrief} />}
 
-        {/* Main Grid */}
+        {/* Grid + Sidebar */}
         <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[#64748B] flex items-center gap-2">
-                <Radio className="w-3.5 h-3.5 text-[#3B82F6]" aria-hidden="true" />
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-text-muted font-ui flex items-center gap-2">
+                <Radio className="w-3.5 h-3.5 text-primary" aria-hidden="true" />
                 Latest Updates
-                {activeRegion !== 'All' && <span className="text-[#3B82F6]">— {activeRegion}</span>}
+                {activeRegion !== 'All' && (
+                  <span className="text-primary normal-case tracking-normal text-xs">— {activeRegion}</span>
+                )}
               </h2>
-              <span className="text-xs text-[#64748B] tabular-nums">{feedBriefs.length} stories</span>
+              <span className="text-xs text-text-tertiary tabular-nums font-ui">{feedBriefs.length} stories</span>
             </div>
+
             {feedBriefs.length === 0 ? (
-              <div className="py-12 text-center text-[#64748B] text-sm">No briefs found for this region.</div>
+              <div className="py-16 text-center text-text-tertiary text-sm font-ui surface-card rounded-xl">
+                No briefs found for this filter.
+              </div>
             ) : (
               <div className="grid sm:grid-cols-2 gap-4">
-                {feedBriefs.map(brief => <NewsCard key={brief.id} brief={brief} />)}
+                {feedBriefs.map((brief, i) => (
+                  <div key={brief.id} className={cn('animate-fade-in-up', `stagger-${Math.min(i + 1, 8)}`)}>
+                    <NewsCard brief={brief} />
+                  </div>
+                ))}
               </div>
             )}
           </div>
-          <NewsSidebar briefs={briefs} activeRegion={activeRegion} onRegionChange={setActiveRegion} />
+
+          <NewsSidebar
+            briefs={briefs}
+            activeRegion={activeRegion}
+            onRegionChange={setActiveRegion}
+          />
         </div>
       </div>
     </div>

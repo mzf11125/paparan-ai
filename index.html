@@ -1,12 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script type="module">
+      // Apply persisted theme synchronously to avoid white-flash on dark-mode users.
+      try {
+        const stored = localStorage.getItem('paparan-app-store')
+        if (stored) {
+          const parsed = JSON.parse(stored)
+          if (parsed?.state?.theme === 'dark') {
+            document.documentElement.classList.add('dark')
+          }
+        }
+      } catch {}
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Paparan Brief — Policy Intelligence Document</title>
+    <title>PaparanBrief — Policy Intelligence for ASEAN</title>
+    <meta name="description" content="PaparanBrief — editorial policy intelligence built for ASEAN and Southeast Asia." />
+    <meta name="theme-color" content="#FBFAF6" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0A0E1A" media="(prefers-color-scheme: dark)" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    >
   </head>
   <body>
     <div id="root"></div>

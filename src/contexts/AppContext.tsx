@@ -46,6 +46,25 @@ export interface SavedSearch {
   createdAt: Date
 }
 
+export type NotificationKind = 'alert' | 'watchlist' | 'classification' | 'system'
+
+export interface Notification {
+  id: string
+  kind: NotificationKind
+  title: string
+  body?: string
+  briefId?: string
+  createdAt: number
+  read: boolean
+}
+
+export interface OnboardingPreferences {
+  completed: boolean
+  regions: string[]
+  topics: string[]
+  cadence: 'realtime' | 'daily' | 'weekly' | 'off'
+}
+
 export interface AppStore {
   // Auth
   user: User | null
@@ -94,6 +113,26 @@ export interface AppStore {
   // Command palette
   commandPaletteOpen: boolean
   setCommandPaletteOpen: (open: boolean) => void
+
+  // Notifications
+  notifications: Notification[]
+  addNotification: (n: Omit<Notification, 'id' | 'createdAt' | 'read'>) => void
+  markNotificationRead: (id: string) => void
+  markAllNotificationsRead: () => void
+  removeNotification: (id: string) => void
+  clearAllNotifications: () => void
+
+  // Compare
+  compareIds: string[]
+  toggleCompare: (id: string) => void
+  isInCompare: (id: string) => boolean
+  clearCompare: () => void
+
+  // Onboarding
+  onboarding: OnboardingPreferences
+  setOnboarding: (prefs: Partial<OnboardingPreferences>) => void
+  completeOnboarding: () => void
+  resetOnboarding: () => void
 }
 
 const defaultFilters: BriefFilters = {}
@@ -137,6 +176,13 @@ export const useAppStore = create<AppStore>()(
         set({ user: null, isAuthenticated: false })
       },
       initializeAuth: async () => {
+        // Skip auth check if using mock Supabase
+        if (!import.meta.env.VITE_SUPABASE_URL) {
+          console.warn('Skipping auth initialization - mock mode')
+          set({ isAuthLoading: false })
+          return
+        }
+
         const { data: { session } } = await supabase.auth.getSession()
         if (session?.user) {
           set({
@@ -213,14 +259,51 @@ export const useAppStore = create<AppStore>()(
       // UI state
       sidebarCollapsed: false,
       setSidebarCollapsed: (collapsed) => set({ sidebarCollapsed: collapsed }),
-      theme: 'dark', // Default to dark mode for app interior
+      theme: 'light', // Light-dominant editorial default; user can opt into dark
       setTheme: (theme) => set({ theme }),
       viewMode: 'grid',
       setViewMode: (mode) => set({ viewMode: mode }),
 
       // Command palette
       commandPaletteOpen: false,
-      setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open })
+      setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+
+      // Notifications
+      notifications: [],
+      addNotification: (n) => set((state) => ({
+        notifications: [
+          { ...n, id: `notif-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`, createdAt: Date.now(), read: false },
+          ...state.notifications,
+        ].slice(0, 100),
+      })),
+      markNotificationRead: (id) => set((state) => ({
+        notifications: state.notifications.map((n) => n.id === id ? { ...n, read: true } : n),
+      })),
+      markAllNotificationsRead: () => set((state) => ({
+        notifications: state.notifications.map((n) => ({ ...n, read: true })),
+      })),
+      removeNotification: (id) => set((state) => ({
+        notifications: state.notifications.filter((n) => n.id !== id),
+      })),
+      clearAllNotifications: () => set({ notifications: [] }),
+
+      // Compare
+      compareIds: [],
+      toggleCompare: (id) => set((state) => {
+        if (state.compareIds.includes(id)) {
+          return { compareIds: state.compareIds.filter((x) => x !== id) }
+        }
+        if (state.compareIds.length >= 3) return state // max 3
+        return { compareIds: [...state.compareIds, id] }
+      }),
+      isInCompare: (id) => get().compareIds.includes(id),
+      clearCompare: () => set({ compareIds: [] }),
+
+      // Onboarding
+      onboarding: { completed: false, regions: [], topics: [], cadence: 'daily' },
+      setOnboarding: (prefs) => set((state) => ({ onboarding: { ...state.onboarding, ...prefs } })),
+      completeOnboarding: () => set((state) => ({ onboarding: { ...state.onboarding, completed: true } })),
+      resetOnboarding: () => set({ onboarding: { completed: false, regions: [], topics: [], cadence: 'daily' } }),
     }),
     {
       name: 'paparan-app-store',
@@ -231,7 +314,10 @@ export const useAppStore = create<AppStore>()(
         theme: state.theme,
         viewMode: state.viewMode,
         watchlist: state.watchlist,
-        savedSearches: state.savedSearches
+        savedSearches: state.savedSearches,
+        notifications: state.notifications,
+        compareIds: state.compareIds,
+        onboarding: state.onboarding,
       })
     }
   )
@@ -326,7 +412,18 @@ export function useAuthInitializer() {
   useEffect(() => {
     // CRITICAL: Initialize auth on app load to restore session
     const store = useAppStore.getState()
-    store.initializeAuth()
+
+    // Set a timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      if (store.isAuthLoading) {
+        console.warn('Auth initialization timeout - setting loading to false')
+        store.setAuthLoading(false)
+      }
+    }, 5000) // 5 second timeout
+
+    store.initializeAuth().finally(() => {
+      clearTimeout(timeoutId)
+    })
 
     // Then listen for auth state changes (token refresh, sign out, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -349,6 +446,7 @@ export function useAuthInitializer() {
     })
 
     return () => {
+      clearTimeout(timeoutId)
       subscription.unsubscribe()
     }
   }, [])

@@ -1,6 +1,10 @@
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Grid3x3, List, Filter, FileText, Layers, X, Loader2, FolderOpen } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import {
+  Grid3x3, List, Filter, FileText, Layers, X, Loader2,
+  FolderOpen, SlidersHorizontal, ChevronDown,
+} from 'lucide-react'
 import { BriefGrid, BriefGridSkeleton } from '@/components/brief/BriefGrid'
 import { AdvancedSearch, SavedSearchesList } from '@/components/ui/AdvancedSearch'
 import { RegionQuickSwitcher } from '@/components/Layout/RegionQuickSwitcher'
@@ -9,26 +13,24 @@ import { useAppStore, useFilteredBriefs } from '@/contexts/AppContext'
 import { exportService } from '@/services/exportService'
 import { cn } from '@/utils/formatters'
 import { ErrorState } from '@/components/ui/ErrorState'
-import { useNavigate } from 'react-router-dom'
+import { usePageMeta } from '@/hooks/usePageMeta'
 
-// Initialize store with mock data
-
-const regions = ['All Regions', 'APAC', 'EMEA', 'Americas', 'ASEAN', 'Global']
-const sortOptions = [
+const SORT_OPTIONS = [
   { value: 'date-desc', label: 'Newest First' },
-  { value: 'date-asc', label: 'Oldest First' },
-  { value: 'title-asc', label: 'Title A-Z' },
-  { value: 'impact', label: 'High Impact First' }
+  { value: 'date-asc',  label: 'Oldest First' },
+  { value: 'title-asc', label: 'Title A–Z' },
+  { value: 'impact',    label: 'High Impact First' },
 ]
 
 export function BriefsLibraryPage() {
+  usePageMeta({ title: 'Briefs Library' })
   const { viewMode, setViewMode, filters, clearFilters } = useAppStore()
   const filteredBriefs = useFilteredBriefs()
-  const [sortBy, setSortBy] = useState('date-desc')
+  const [sortBy, setSortBy]                   = useState('date-desc')
   const [showSavedSearches, setShowSavedSearches] = useState(false)
-  const [selectedIds] = useState<Set<string>>(new Set())
+  const [selectedIds]                         = useState<Set<string>>(new Set())
   const [synthesisResult, setSynthesisResult] = useState<Record<string, unknown> | null>(null)
-  const [synthesizing, setSynthesizing] = useState(false)
+  const [synthesizing, setSynthesizing]       = useState(false)
   const navigate = useNavigate()
 
   const { data: allBriefs = [], isLoading, error, refetch } = useQuery({
@@ -37,31 +39,23 @@ export function BriefsLibraryPage() {
     retry: 1,
   })
 
-  // Apply sorting to filtered briefs
   const sortedBriefs = useMemo(() => {
     const result = [...filteredBriefs]
     result.sort((a, b) => {
       switch (sortBy) {
-        case 'date-asc':
-          return new Date(a.date).getTime() - new Date(b.date).getTime()
-        case 'date-desc':
-          return new Date(b.date).getTime() - new Date(a.date).getTime()
-        case 'title-asc':
-          return a.title.localeCompare(b.title)
-        case 'impact':
-          const aHigh = a.developments.filter((d) => d.impact === 'HIGH').length
-          const bHigh = b.developments.filter((d) => d.impact === 'HIGH').length
-          return bHigh - aHigh
-        default:
-          return 0
+        case 'date-asc':  return new Date(a.date).getTime() - new Date(b.date).getTime()
+        case 'date-desc': return new Date(b.date).getTime() - new Date(a.date).getTime()
+        case 'title-asc': return a.title.localeCompare(b.title)
+        case 'impact': {
+          const aH = a.developments.filter(d => d.impact === 'HIGH').length
+          const bH = b.developments.filter(d => d.impact === 'HIGH').length
+          return bH - aH
+        }
+        default: return 0
       }
     })
     return result
   }, [filteredBriefs, sortBy])
-
-  const handleClearFilters = () => {
-    clearFilters()
-  }
 
   const handleSynthesize = async () => {
     if (selectedIds.size < 2) return
@@ -74,117 +68,108 @@ export function BriefsLibraryPage() {
     }
   }
 
-  // Error state
+  const hasActiveFilters = Object.values(filters).some(v => v !== undefined)
+
   if (error) {
     return (
-      <div className="space-y-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[rgba(59,130,246,0.15)] text-[#3B82F6] text-xs font-semibold uppercase tracking-wider rounded-lg mb-3">
-              <FileText className="w-3.5 h-3.5" />
-              Intelligence Repository
-            </div>
-            <h1 className="text-3xl font-display font-bold text-[#F1F5F9] mb-2">Briefs Library</h1>
-          </div>
-        </div>
+      <div className="px-4 lg:px-6 py-6 space-y-6">
+        <PageHeader count={0} />
         <ErrorState
-          message={error instanceof Error ? error.message : 'Failed to load briefs. Please try again.'}
+          message={error instanceof Error ? error.message : 'Failed to load briefs.'}
           onRetry={() => refetch()}
         />
       </div>
     )
   }
 
-  // Check if there are any active filters
-  const hasActiveFilters = Object.keys(filters).filter(k => filters[k as keyof typeof filters] !== undefined).length > 0
-
   return (
-    <div className="space-y-6">
-      {/* Page Header — Official Style */}
-      <div className="flex items-start justify-between">
+    <div className="px-4 lg:px-6 py-6 space-y-5">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[rgba(59,130,246,0.15)] text-[#3B82F6] text-xs font-semibold uppercase tracking-wider rounded-lg mb-3">
-            <FileText className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest rounded-full border border-primary/20 mb-3 font-ui">
+            <FileText className="w-3 h-3" />
             Intelligence Repository
           </div>
-          <h1 className="text-3xl font-display font-bold text-[#F1F5F9] mb-2">Briefs Library</h1>
-          <p className="text-[#94A3B8]">
-            Browse <span className="tabular-nums font-semibold text-[#F1F5F9]">{allBriefs.length}</span> policy intelligence briefs across <span className="tabular-nums font-semibold text-[#F1F5F9]">{regions.length - 1}</span> regions
+          <h1 className="text-3xl font-display font-bold text-text">Briefs Library</h1>
+          <p className="text-text-secondary text-sm mt-1 font-ui">
+            <span className="tabular-nums font-semibold text-text">{allBriefs.length}</span> policy intelligence briefs
           </p>
         </div>
+
         <button
           onClick={() => setShowSavedSearches(!showSavedSearches)}
-          className="flex items-center gap-2 px-4 py-2 border border-[rgba(255,255,255,0.12)] rounded-lg text-sm text-[#94A3B8] hover:border-[#3B82F6] hover:text-[#3B82F6] transition-all"
+          className={cn(
+            'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-ui font-medium border transition-all duration-150',
+            showSavedSearches
+              ? 'bg-primary/10 text-primary border-primary/30'
+              : 'text-text-secondary border-border hover:border-border-strong hover:text-text'
+          )}
         >
-          <Filter className="w-4 h-4" />
+          <SlidersHorizontal className="w-4 h-4" />
           Saved Searches
         </button>
       </div>
 
-      {/* Search and Filter Bar with Advanced Search */}
+      {/* Search */}
       <AdvancedSearch compact />
 
-      {/* Saved Searches Panel */}
+      {/* Saved searches panel */}
       {showSavedSearches && (
-        <SavedSearchesList
-          onSelect={() => setShowSavedSearches(false)}
-          className="bg-bg-elevated border border-border rounded-lg p-4"
-        />
+        <div className="surface-card p-4 animate-fade-in">
+          <SavedSearchesList
+            onSelect={() => setShowSavedSearches(false)}
+          />
+        </div>
       )}
 
-      {/* Filter Controls Bar */}
-      <div className="bg-[#111318] border border-[rgba(255,255,255,0.12)] rounded-lg p-4 shadow-sm flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          {/* Region Quick Switcher */}
-          <RegionQuickSwitcher />
+      {/* Filter bar */}
+      <div className="surface-card p-3 flex items-center gap-3 flex-wrap">
+        <RegionQuickSwitcher />
 
-          {/* Sort Select */}
+        {/* Sort */}
+        <div className="relative">
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="px-4 py-2 bg-[#181B22] border border-[rgba(255,255,255,0.12)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] transition-all text-sm text-[#F1F5F9]"
+            onChange={e => setSortBy(e.target.value)}
+            className="appearance-none pl-3 pr-8 py-2 bg-bg-surface border border-border rounded-lg text-sm text-text font-ui focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all cursor-pointer"
           >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
+            {SORT_OPTIONS.map(o => (
+              <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
-
-          {/* View Mode Toggle */}
-          <div className="flex items-center border border-[rgba(255,255,255,0.12)] rounded overflow-hidden">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={cn(
-                'p-2.5 transition-colors',
-                viewMode === 'grid' ? 'bg-[#3B82F6] text-white' : 'bg-[#111318] hover:bg-[rgba(255,255,255,0.04)]'
-              )}
-              title="Grid view"
-              aria-label="Grid view"
-            >
-              <Grid3x3 className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('list')}
-              className={cn(
-                'p-2.5 transition-colors',
-                viewMode === 'list' ? 'bg-[#3B82F6] text-white' : 'bg-[#111318] hover:bg-[rgba(255,255,255,0.04)]'
-              )}
-              title="List view"
-              aria-label="List view"
-            >
-              <List className="w-4 h-4" />
-            </button>
-          </div>
+          <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary pointer-events-none" />
         </div>
 
-        {/* Active Filters Display */}
+        {/* View toggle */}
+        <div className="flex items-center border border-border rounded-lg overflow-hidden ml-auto">
+          {[
+            { mode: 'grid', Icon: Grid3x3, label: 'Grid view' },
+            { mode: 'list', Icon: List,    label: 'List view' },
+          ].map(({ mode, Icon, label }) => (
+            <button
+              key={mode}
+              onClick={() => setViewMode(mode as 'grid' | 'list')}
+              className={cn(
+                'p-2 transition-colors',
+                viewMode === mode
+                  ? 'bg-primary text-white'
+                  : 'bg-bg-surface text-text-secondary hover:text-text hover:bg-bg-subtle'
+              )}
+              aria-label={label}
+            >
+              <Icon className="w-4 h-4" />
+            </button>
+          ))}
+        </div>
+
         {hasActiveFilters && (
           <button
-            onClick={handleClearFilters}
-            className="text-sm text-[#3B82F6] hover:text-[#2563EB] underline"
+            onClick={clearFilters}
+            className="flex items-center gap-1.5 text-xs text-primary hover:text-primary-hover font-ui font-medium transition-colors"
           >
-            Clear all filters
+            <X className="w-3.5 h-3.5" />
+            Clear filters
           </button>
         )}
       </div>
@@ -193,89 +178,71 @@ export function BriefsLibraryPage() {
       {isLoading ? (
         <BriefGridSkeleton count={6} />
       ) : allBriefs.length === 0 ? (
-        /* No briefs at all */
-        <div className="flex flex-col items-center justify-center py-20 text-center px-6">
-          <div className="w-16 h-16 rounded-2xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] flex items-center justify-center mb-4">
-            <FolderOpen className="w-8 h-8 text-[#64748B]" />
-          </div>
-          <h3 className="text-xl font-semibold text-[#F1F5F9] mb-2">No briefs in library</h3>
-          <p className="text-[#94A3B8] text-sm max-w-md mb-6">
-            Get started by generating your first policy intelligence brief.
-          </p>
-          <button
-            onClick={() => navigate('/editor')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#3B82F6] hover:bg-[#2563EB] text-white rounded-lg text-sm font-semibold transition-colors"
-          >
-            <FileText className="w-4 h-4" />
-            Create Brief
-          </button>
-        </div>
+        <EmptyLibrary onNavigate={() => navigate('/editor')} />
       ) : sortedBriefs.length === 0 ? (
-        /* No briefs match filters */
-        <div className="flex flex-col items-center justify-center py-20 text-center px-6">
-          <div className="w-16 h-16 rounded-2xl bg-[rgba(255,255,255,0.04)] border border-[rgba(255,255,255,0.08)] flex items-center justify-center mb-4">
-            <Filter className="w-8 h-8 text-[#64748B]" />
-          </div>
-          <h3 className="text-xl font-semibold text-[#F1F5F9] mb-2">No briefs match your filters</h3>
-          <p className="text-[#94A3B8] text-sm max-w-md mb-6">
-            Try adjusting your filter criteria to see more results.
-          </p>
-          <button
-            onClick={handleClearFilters}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.08)] border border-[rgba(255,255,255,0.12)] text-[#94A3B8] hover:text-[#F1F5F9] rounded-lg text-sm font-medium transition-colors"
-          >
-            Clear Filters
-          </button>
-        </div>
+        <EmptyFiltered onClear={clearFilters} />
       ) : (
         <>
           <div className="flex items-center justify-between">
-            <p className="text-sm text-[#94A3B8]">
-              Showing <span className="tabular-nums font-semibold text-[#F1F5F9]">{sortedBriefs.length}</span> of <span className="tabular-nums">{allBriefs.length}</span> briefs
+            <p className="text-sm text-text-secondary font-ui">
+              Showing <span className="tabular-nums font-semibold text-text">{sortedBriefs.length}</span>
+              {' '}of <span className="tabular-nums">{allBriefs.length}</span> briefs
             </p>
+
             {selectedIds.size >= 2 && (
               <button
                 onClick={handleSynthesize}
                 disabled={synthesizing}
-                className="flex items-center gap-2 px-4 py-2 bg-[#3B82F6] text-white rounded-lg text-sm font-medium hover:bg-[#2563EB] transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-semibold font-ui transition-all duration-150 disabled:opacity-50"
               >
-                {synthesizing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Layers className="w-4 h-4" />}
+                {synthesizing
+                  ? <Loader2 className="w-4 h-4 animate-spin" />
+                  : <Layers className="w-4 h-4" />}
                 Synthesize {selectedIds.size} Briefs
               </button>
             )}
           </div>
 
-          {/* Synthesis result modal */}
+          {/* Synthesis result */}
           {synthesisResult && (
-            <div className="bg-[#111318] border border-[rgba(59,130,246,0.30)] rounded-lg p-5 relative">
-              <button onClick={() => setSynthesisResult(null)}
-                className="absolute top-3 right-3 p-1 hover:bg-[rgba(255,255,255,0.04)] rounded">
-                <X className="w-4 h-4 text-[#64748B]" />
+            <div className="surface-card border-primary/20 p-5 relative animate-fade-in">
+              <button
+                onClick={() => setSynthesisResult(null)}
+                className="absolute top-3 right-3 p-1.5 hover:bg-bg-subtle rounded-lg transition-colors"
+                aria-label="Close synthesis"
+              >
+                <X className="w-4 h-4 text-text-tertiary" />
               </button>
-              <h3 className="font-semibold text-[#F1F5F9] mb-3 flex items-center gap-2">
-                <Layers className="w-4 h-4 text-[#3B82F6]" /> Cross-Brief Synthesis
+              <h3 className="font-display font-bold text-text mb-4 flex items-center gap-2">
+                <Layers className="w-4 h-4 text-primary" />
+                Cross-Brief Synthesis
               </h3>
               <div className="grid md:grid-cols-2 gap-4 text-sm">
                 {[
-                  { key: 'common_themes', label: 'Common Themes', color: 'text-[#3B82F6]' },
-                  { key: 'diverging_signals', label: 'Diverging Signals', color: 'text-[#F59E0B]' },
-                  { key: 'recommended_focus', label: 'Recommended Focus', color: 'text-[#10B981]' },
+                  { key: 'common_themes',    label: 'Common Themes',    color: 'text-primary' },
+                  { key: 'diverging_signals', label: 'Diverging Signals', color: 'text-warning' },
+                  { key: 'recommended_focus', label: 'Recommended Focus', color: 'text-success' },
                 ].map(({ key, label, color }) => {
                   const items = (synthesisResult[key] as string[]) || []
                   return items.length > 0 ? (
                     <div key={key}>
-                      <p className={cn('text-xs font-bold uppercase tracking-wider mb-1.5', color)}>{label}</p>
+                      <p className={cn('text-[10px] font-bold uppercase tracking-widest mb-2 font-ui', color)}>{label}</p>
                       <ul className="space-y-1">
-                        {items.map((item, i) => <li key={i} className="text-[#94A3B8]">• {item}</li>)}
+                        {items.map((item, i) => (
+                          <li key={i} className="text-text-secondary text-xs">• {item}</li>
+                        ))}
                       </ul>
                     </div>
                   ) : null
                 })}
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider mb-1.5 text-[#EF4444]">Aggregate Risk</p>
-                  <span className={cn('px-2 py-0.5 text-xs font-bold rounded uppercase',
-                    synthesisResult.aggregate_risk === 'HIGH' ? 'bg-[rgba(239,68,68,0.20)] text-[#EF4444]' :
-                    synthesisResult.aggregate_risk === 'MEDIUM' ? 'bg-[rgba(245,158,11,0.20)] text-[#F59E0B]' : 'bg-[rgba(16,185,129,0.20)] text-[#10B981]')}>
+                  <p className="text-[10px] font-bold uppercase tracking-widest mb-2 text-error font-ui">Aggregate Risk</p>
+                  <span className={cn(
+                    'badge',
+                    synthesisResult.aggregate_risk === 'HIGH'   ? 'bg-error/10 text-error border border-error/25' :
+                    synthesisResult.aggregate_risk === 'MEDIUM' ? 'bg-warning/10 text-warning border border-warning/25' :
+                    'bg-success/10 text-success border border-success/25'
+                  )}>
                     {synthesisResult.aggregate_risk as string}
                   </span>
                 </div>
@@ -286,6 +253,63 @@ export function BriefsLibraryPage() {
           <BriefGrid briefs={sortedBriefs} viewMode={viewMode} />
         </>
       )}
+    </div>
+  )
+}
+
+function PageHeader({ count }: { count: number }) {
+  return (
+    <div>
+      <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest rounded-full border border-primary/20 mb-3 font-ui">
+        <FileText className="w-3 h-3" />
+        Intelligence Repository
+      </div>
+      <h1 className="text-3xl font-display font-bold text-text">Briefs Library</h1>
+      <p className="text-text-secondary text-sm mt-1 font-ui">
+        <span className="tabular-nums font-semibold text-text">{count}</span> policy intelligence briefs
+      </p>
+    </div>
+  )
+}
+
+function EmptyLibrary({ onNavigate }: { onNavigate: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-24 text-center px-6">
+      <div className="w-16 h-16 rounded-2xl bg-bg-subtle border border-border flex items-center justify-center mb-4">
+        <FolderOpen className="w-8 h-8 text-text-tertiary" />
+      </div>
+      <h3 className="text-xl font-display font-bold text-text mb-2">No briefs yet</h3>
+      <p className="text-text-secondary text-sm max-w-sm mb-6 font-ui">
+        Generate your first policy intelligence brief to populate the library.
+      </p>
+      <button
+        onClick={onNavigate}
+        className="flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-semibold font-ui transition-all duration-150 shadow-teal"
+      >
+        <FileText className="w-4 h-4" />
+        Create Brief
+      </button>
+    </div>
+  )
+}
+
+function EmptyFiltered({ onClear }: { onClear: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-24 text-center px-6">
+      <div className="w-16 h-16 rounded-2xl bg-bg-subtle border border-border flex items-center justify-center mb-4">
+        <Filter className="w-8 h-8 text-text-tertiary" />
+      </div>
+      <h3 className="text-xl font-display font-bold text-text mb-2">No matches</h3>
+      <p className="text-text-secondary text-sm max-w-sm mb-6 font-ui">
+        Try adjusting your filters to see more results.
+      </p>
+      <button
+        onClick={onClear}
+        className="flex items-center gap-2 px-5 py-2.5 bg-bg-subtle hover:bg-bg-overlay border border-border text-text-secondary hover:text-text rounded-lg text-sm font-medium font-ui transition-all duration-150"
+      >
+        <X className="w-4 h-4" />
+        Clear Filters
+      </button>
     </div>
   )
 }

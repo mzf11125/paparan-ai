@@ -18,7 +18,7 @@ export const OfficialSeal = React.forwardRef<SVGSVGElement, OfficialSealProps>(
 
   const colors = monochrome
     ? { stroke: 'currentColor', secondary: 'currentColor' }
-    : { stroke: '#0369A1', secondary: '#025380' }
+    : { stroke: 'var(--color-primary)', secondary: 'var(--color-primary-dim)' }
 
   if (variant === 'icon-only') {
     return (
@@ -75,7 +75,7 @@ export const OfficialSeal = React.forwardRef<SVGSVGElement, OfficialSealProps>(
             fill={colors.stroke}
             className="font-ui"
           >
-            PAPARAN
+            PAPARANBRIEF
           </text>
           <text
             x="50"

@@ -66,7 +66,7 @@ export function FooterSection() {
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
           <span className="text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>
-            © 2026 Paparan Brief. All rights reserved.
+            © 2026 PaparanBrief. All rights reserved.
           </span>
           <div className="flex items-center gap-6">
             {['Privacy Policy', 'Terms of Service'].map((item) => (

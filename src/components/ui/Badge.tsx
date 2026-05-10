@@ -1,167 +1,96 @@
 import React from 'react'
-import { LucideIcon, X } from 'lucide-react'
-import { cn } from '@/utils/formatters'
+import { cn } from '@/utils/cn'
 
-type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'info' | 'subtle' | 'outline' | 'accent'
-type BadgeSize = 'xs' | 'sm' | 'md' | 'lg'
+type BadgeVariant = 'primary' | 'gold' | 'success' | 'warning' | 'error' | 'neutral' | 'outline'
 
 interface BadgeProps {
-  children?: React.ReactNode
+  children: React.ReactNode
   variant?: BadgeVariant
-  size?: BadgeSize
-  className?: string
+  size?: 'sm' | 'md'
   dot?: boolean
-  pulse?: boolean
-  dismissible?: boolean
-  onDismiss?: () => void
-  icon?: LucideIcon
-}
-
-const sizeClasses = {
-  xs: 'px-1.5 py-0.5 text-xs gap-1',
-  sm: 'px-2 py-0.5 text-xs gap-1.5',
-  md: 'px-2.5 py-1 text-sm gap-1.5',
-  lg: 'px-3 py-1.5 text-base gap-2',
-} as const
-
-const dotSizes = {
-  xs: 'w-1.5 h-1.5',
-  sm: 'w-2 h-2',
-  md: 'w-2 h-2',
-  lg: 'w-2.5 h-2.5',
-} as const
-
-const variantClasses = {
-  default: 'bg-accent/10 text-accent-dark border border-accent/20',
-  success: 'bg-green-light text-green border border-green/30',
-  warning: 'bg-amber-light text-amber border border-amber/30',
-  danger: 'bg-red-light text-red border border-red/30',
-  info: 'bg-blue-light text-blue border border-blue/30',
-  subtle: 'bg-bg-surface text-text-secondary border border-border',
-  outline: 'bg-transparent border border-border-strong text-text',
-  accent: 'bg-accent text-white border border-accent',
-} as const
-
-export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
-  (
-    {
-      children,
-      variant = 'default',
-      size = 'sm',
-      className = '',
-      dot = false,
-      pulse = false,
-      dismissible = false,
-      onDismiss,
-      icon: Icon,
-    },
-    ref
-  ) => {
-    return (
-      <span
-        ref={ref}
-        className={cn(
-          'inline-flex items-center justify-center rounded-radius-md font-sans font-medium uppercase tracking-wide transition-all duration-150',
-          sizeClasses[size],
-          variantClasses[variant],
-          pulse && 'animate-pulse-subtle',
-          className
-        )}
-      >
-        {dot && (
-          <span
-            className={cn(
-              'rounded-full bg-current',
-              dotSizes[size],
-              pulse && 'animate-pulse'
-            )}
-          />
-        )}
-        {Icon && !dot && <Icon className={cn('w-3.5 h-3.5 flex-shrink-0', size === 'lg' && 'w-4 h-4')} />}
-        {children && <span>{children}</span>}
-        {dismissible && onDismiss && (
-          <button
-            onClick={onDismiss}
-            className="ml-1 hover:opacity-70 transition-opacity"
-            type="button"
-          >
-            <X className={cn('w-3 h-3 flex-shrink-0', size === 'lg' && 'w-3.5 h-3.5')} />
-          </button>
-        )}
-      </span>
-    )
-  }
-)
-
-Badge.displayName = 'Badge'
-
-// Status Badge for delta types
-interface StatusBadgeProps {
-  delta: 'NEW' | 'UPDATED' | 'ESCALATED' | 'DE-ESCALATED'
-  size?: BadgeSize
   className?: string
 }
 
-export function StatusBadge({ delta, size = 'sm', className = '' }: StatusBadgeProps) {
-  const config = {
-    NEW: { variant: 'info' as const, label: 'New', icon: null },
-    UPDATED: { variant: 'warning' as const, label: 'Updated', icon: null },
-    ESCALATED: { variant: 'danger' as const, label: 'Escalated', pulse: true },
-    'DE-ESCALATED': { variant: 'success' as const, label: 'De-escalated', icon: null },
-  }
+const VARIANT_STYLES: Record<BadgeVariant, string> = {
+  primary: 'bg-primary/10 text-primary border-primary/25',
+  gold:    'bg-gold/10 text-gold border-gold/25',
+  success: 'bg-success/10 text-success border-success/25',
+  warning: 'bg-warning/10 text-warning border-warning/25',
+  error:   'bg-error/10 text-error border-error/25',
+  neutral: 'bg-bg-subtle text-text-secondary border-border',
+  outline: 'bg-transparent text-text-secondary border-border-strong',
+}
 
-  const { variant, label } = config[delta]
-  const pulse = delta === 'ESCALATED'
-
+export function Badge({ children, variant = 'neutral', size = 'md', dot = false, className = '' }: BadgeProps) {
   return (
-    <Badge variant={variant} size={size} pulse={pulse} className={className}>
-      {label}
-    </Badge>
+    <span className={cn(
+      'badge border',
+      VARIANT_STYLES[variant],
+      size === 'sm' && 'text-[9px] px-1.5 py-0.5',
+      className
+    )}>
+      {dot && <span className={cn('w-1.5 h-1.5 rounded-full', {
+        'bg-primary': variant === 'primary',
+        'bg-gold':    variant === 'gold',
+        'bg-success': variant === 'success',
+        'bg-warning': variant === 'warning',
+        'bg-error':   variant === 'error',
+        'bg-text-secondary': variant === 'neutral' || variant === 'outline',
+      })} />}
+      {children}
+    </span>
   )
 }
 
-// Count Badge for numbers
-interface CountBadgeProps {
-  count: number
-  max?: number
-  size?: BadgeSize
-  className?: string
+// Classification badge
+type ClassLevel = 'unclassified' | 'official' | 'confidential' | 'secret'
+
+const CLASS_STYLES: Record<ClassLevel, string> = {
+  unclassified: 'bg-success/10 text-success border-success/25',
+  official:     'bg-primary/10 text-primary border-primary/25',
+  confidential: 'bg-warning/10 text-warning border-warning/25',
+  secret:       'bg-error/10 text-error border-error/25',
 }
 
-export function CountBadge({ count, max = 99, size = 'xs', className = '' }: CountBadgeProps) {
-  const displayCount = count > max ? `${max}+` : count
-
+export function ClassificationBadge({ level, className = '' }: { level: ClassLevel; className?: string }) {
   return (
-    <Badge variant="accent" size={size} className={cn('min-w-[1.25rem] justify-center', className)}>
-      {displayCount}
-    </Badge>
+    <span className={cn('badge border uppercase', CLASS_STYLES[level], className)}>
+      {level}
+    </span>
   )
 }
 
-// Dot Badge for status indicators
-interface DotBadgeProps {
-  color?: 'green' | 'amber' | 'red' | 'blue' | 'gray'
-  pulse?: boolean
-  className?: string
+// Impact badge
+type ImpactLevel = 'HIGH' | 'MEDIUM' | 'LOW'
+
+const IMPACT_STYLES: Record<ImpactLevel, string> = {
+  HIGH:   'bg-error/10 text-error border-error/25',
+  MEDIUM: 'bg-warning/10 text-warning border-warning/25',
+  LOW:    'bg-success/10 text-success border-success/25',
 }
 
-const dotColors = {
-  green: 'bg-green',
-  amber: 'bg-amber',
-  red: 'bg-red',
-  blue: 'bg-blue',
-  gray: 'bg-text-tertiary',
-}
-
-export function DotBadge({ color = 'gray', pulse = false, className = '' }: DotBadgeProps) {
+export function ImpactBadge({ level, className = '' }: { level: ImpactLevel; className?: string }) {
   return (
-    <span
-      className={cn(
-        'inline-block w-2 h-2 rounded-full',
-        dotColors[color],
-        pulse && 'animate-pulse',
-        className
-      )}
-    />
+    <span className={cn('badge border', IMPACT_STYLES[level], className)}>
+      {level}
+    </span>
+  )
+}
+
+// Delta badge
+type DeltaType = 'NEW' | 'UPDATED' | 'ESCALATED' | 'DE-ESCALATED'
+
+const DELTA_STYLES: Record<DeltaType, string> = {
+  'NEW':          'bg-primary/10 text-primary border-primary/25',
+  'UPDATED':      'bg-warning/10 text-warning border-warning/25',
+  'ESCALATED':    'bg-error/10 text-error border-error/25',
+  'DE-ESCALATED': 'bg-success/10 text-success border-success/25',
+}
+
+export function DeltaBadge({ type, className = '' }: { type: DeltaType; className?: string }) {
+  return (
+    <span className={cn('badge border', DELTA_STYLES[type], className)}>
+      {type}
+    </span>
   )
 }

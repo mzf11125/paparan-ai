@@ -26,7 +26,7 @@ export const routes: RouteConfig[] = [
     path: '/',
     element: <LandingPage />,
     meta: {
-      title: 'Paparan Brief',
+      title: 'PaparanBrief',
       description: 'Policy intelligence briefs for strategic decision-making',
       showInNav: false
     }

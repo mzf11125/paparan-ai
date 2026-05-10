@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { Check, ChevronDown, Search, X } from 'lucide-react'
-import { cn } from '@/utils/formatters'
+import { cn } from '@/utils/cn'
 
 export interface SelectOption {
   value: string
@@ -99,7 +99,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
 
     const selectedOption = options.find((opt) => opt.value === value)
 
-    const handleSelect = (optionValue: string) => {
+    const handleSelect = useCallback((optionValue: string) => {
       const option = options.find((opt) => opt.value === optionValue)
       if (option && !option.disabled) {
         onChange(optionValue)
@@ -107,7 +107,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
         setSearchQuery('')
         setFocusedIndex(-1)
       }
-    }
+    }, [options, onChange])
 
     const handleClear = (e: React.MouseEvent) => {
       e.stopPropagation()
@@ -160,7 +160,7 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
             break
         }
       },
-      [isOpen, focusedIndex, flatOptions]
+      [isOpen, focusedIndex, flatOptions, handleSelect]
     )
 
     // Close on click outside
@@ -199,11 +199,19 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
             onKeyDown={handleKeyDown}
             disabled={disabled}
             className={cn(
-              'w-full flex items-center justify-between px-4 py-2.5 border rounded-radius-lg',
-              'transition-all duration-200',
-              'focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent',
-              'disabled:bg-bg-surface disabled:cursor-not-allowed',
-              error ? 'border-red' : 'border-border-strong hover:border-accent/50',
+              // Base styles
+              'w-full flex items-center justify-between px-4 py-2.5 border rounded-lg',
+              'transition-all duration-200 ease-out',
+              // Focus states
+              'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:shadow-[0_0_0_4px_rgba(37,99,235,0.1)]',
+              // Hover state
+              'hover:border-primary/40 hover:shadow-sm',
+              // Active state
+              'active:scale-[0.99]',
+              // Disabled state
+              'disabled:bg-bg-surface disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:border-border-strong',
+              // Error state
+              error ? 'border-red-500' : 'border-border-strong',
               'bg-bg-elevated',
               className
             )}
@@ -293,12 +301,18 @@ export const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
                             onClick={() => handleSelect(option.value)}
                             disabled={option.disabled}
                             className={cn(
-                              'w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors',
-                              'focus:outline-none',
-                              isSelected && 'bg-accent/10 text-accent font-medium',
-                              isFocused && !isSelected && 'bg-bg-surface',
+                              // Base styles
+                              'w-full flex items-center justify-between px-4 py-2.5 text-sm transition-all duration-150',
+                              // Focus
+                              'focus:outline-none focus:bg-primary/5',
+                              // Selected state
+                              isSelected && 'bg-primary/10 text-primary font-medium',
+                              // Focused state
+                              isFocused && !isSelected && 'bg-bg-subtle',
+                              // Disabled state
                               option.disabled && 'opacity-50 cursor-not-allowed',
-                              !isSelected && !isFocused && 'hover:bg-bg-surface'
+                              // Hover state
+                              !isSelected && !isFocused && 'hover:bg-bg-subtle/60',
                             )}
                             role="option"
                             aria-selected={isSelected}

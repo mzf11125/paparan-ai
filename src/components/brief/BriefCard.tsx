@@ -8,9 +8,11 @@ import {
   Bookmark,
   BookmarkCheck,
   Copy,
+  GitCompareArrows,
+  Check,
 } from 'lucide-react'
 import { Paparan } from '@/types/paparan'
-import { cn } from '@/utils/formatters'
+import { cn } from '@/utils/cn'
 import { toast } from '@/components/ui/Toast'
 import { useAppStore } from '@/contexts/AppContext'
 
@@ -36,8 +38,21 @@ export function BriefCard({
 }: BriefCardProps) {
   const [copied, setCopied] = useState(false)
   const displayTags = brief.tags?.slice(0, 3) || []
-  const { isInWatchlist, toggleWatchlist } = useAppStore()
+  const { isInWatchlist, toggleWatchlist, isInCompare, toggleCompare, compareIds } = useAppStore()
   const bookmarked = bookmarkedOverride ?? isInWatchlist(brief.id)
+  const inCompare  = isInCompare(brief.id)
+
+  const handleCompare = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!inCompare && compareIds.length >= 3) {
+      toast.warning('Compare full', 'You can compare up to three briefs at a time.')
+      return
+    }
+    toggleCompare(brief.id)
+    if (!inCompare) toast.success('Added to compare')
+    else            toast.info('Removed from compare')
+  }
 
   const handleCopyLink = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -45,10 +60,7 @@ export function BriefCard({
     await navigator.clipboard.writeText(url)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
-    toast.success('Link copied to clipboard', {
-      title: 'Brief Link',
-      duration: 3000,
-    })
+    toast.success('Link copied to clipboard')
     onShare?.(brief.id)
   }
 
@@ -57,15 +69,9 @@ export function BriefCard({
     toggleWatchlist(brief.id)
     // Show toast notification
     if (!bookmarked) {
-      toast.success('Brief added to your watchlist', {
-        title: 'Watchlist',
-        duration: 3000,
-      })
+      toast.success('Added to watchlist')
     } else {
-      toast.info('Brief removed from watchlist', {
-        title: 'Watchlist',
-        duration: 2500,
-      })
+      toast.info('Removed from watchlist')
     }
   }
 
@@ -79,7 +85,11 @@ export function BriefCard({
         to={`/briefs/${brief.id}`}
         className={cn(
           'block bg-bg-elevated border border-border rounded-lg p-4',
-          'hover:border-primary hover:shadow-sm transition-all duration-200 group',
+          // Enhanced hover effects
+          'transition-all duration-200 ease-out group',
+          'hover:shadow-lg hover:-translate-y-0.5 hover:border-primary/30',
+          'active:scale-[0.99]',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
           className
         )}
       >
@@ -90,7 +100,7 @@ export function BriefCard({
                 {brief.region}
               </span>
             </div>
-            <h3 className="font-display font-semibold text-text line-clamp-1 group-hover:text-primary transition-colors">
+            <h3 className="font-display font-semibold text-text line-clamp-1 group-hover:text-primary transition-colors duration-200">
               {brief.title}
             </h3>
             <div className="flex items-center gap-3 mt-2 text-sm text-text-tertiary">
@@ -107,16 +117,16 @@ export function BriefCard({
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={handleBookmark}
-              className="p-1.5 rounded hover:bg-bg-surface transition-colors"
+              className="p-1.5 rounded-lg hover:bg-bg-surface active:scale-95 transition-all duration-200"
               aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
             >
               {bookmarked ? (
                 <BookmarkCheck className="w-4 h-4 text-primary" />
               ) : (
-                <Bookmark className="w-4 h-4 text-text-tertiary" />
+                <Bookmark className="w-4 h-4 text-text-tertiary group-hover:text-primary transition-colors" />
               )}
             </button>
-            <ArrowRight className="w-5 h-5 text-text-tertiary group-hover:text-primary transition-colors" />
+            <ArrowRight className="w-5 h-5 text-text-tertiary group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-200" />
           </div>
         </div>
       </NavLink>
@@ -131,10 +141,11 @@ export function BriefCard({
         'rounded-2xl overflow-hidden',
         'backdrop-blur-sm',
         'shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)]',
-        'hover:shadow-[0_4px_24px_rgba(81,131,235,0.12),0_1px_3px_rgba(0,0,0,0.06)]',
-        'hover:border-[#5183EB]/30',
-        'transition-all duration-300 ease-out',
-        'hover:-translate-y-0.5',
+        // Enhanced hover effects
+        'transition-all duration-200 ease-out',
+        'hover:shadow-[0_8px_32px_rgba(37,99,235,0.15),0_2px_8px_rgba(0,0,0,0.08)]',
+        'hover:border-primary/40 hover:-translate-y-1',
+        'active:scale-[0.99] active:shadow-inner',
         className
       )}
     >
@@ -157,7 +168,7 @@ export function BriefCard({
             </time>
             <button
               onClick={handleBookmark}
-              className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 active:scale-95 transition-all duration-200"
               title={bookmarked ? 'Remove bookmark' : 'Bookmark'}
             >
               {bookmarked
@@ -218,7 +229,7 @@ export function BriefCard({
         <div className="flex items-center gap-0.5">
           <button
             onClick={handleCopyLink}
-            className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+            className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 active:scale-95 transition-all duration-200"
             title={copied ? 'Copied!' : 'Copy link'}
           >
             <Copy className="w-3.5 h-3.5" />
@@ -226,16 +237,28 @@ export function BriefCard({
           <NavLink
             to={`/editor/${brief.id}`}
             onClick={e => e.stopPropagation()}
-            className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+            className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 active:scale-95 transition-all duration-200"
             title="Edit"
           >
             <Edit className="w-3.5 h-3.5" />
           </NavLink>
+          <button
+            onClick={handleCompare}
+            className={cn(
+              'p-1.5 rounded-lg active:scale-95 transition-all duration-200',
+              inCompare
+                ? 'bg-primary/10 text-primary'
+                : 'hover:bg-white dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+            )}
+            title={inCompare ? 'In compare' : 'Add to compare'}
+          >
+            {inCompare ? <Check className="w-3.5 h-3.5" /> : <GitCompareArrows className="w-3.5 h-3.5" />}
+          </button>
         </div>
 
         <NavLink
           to={`/briefs/${brief.id}`}
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#5183EB] hover:bg-[#3d6fd4] text-white text-[12px] font-semibold rounded-xl transition-all duration-200 hover:shadow-[0_4px_12px_rgba(81,131,235,0.35)] hover:-translate-y-px"
+          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#5183EB] hover:bg-[#3d6fd4] text-white text-[12px] font-semibold rounded-xl transition-all duration-200 hover:shadow-[0_4px_12px_rgba(81,131,235,0.35)] hover:-translate-y-px active:scale-95"
         >
           Read Brief
           <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />

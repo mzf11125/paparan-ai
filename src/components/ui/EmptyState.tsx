@@ -1,40 +1,80 @@
-import { LucideIcon } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/utils/formatters'
+
+type EmptyStateTone = 'primary' | 'accent' | 'gold' | 'success' | 'warning' | 'error' | 'neutral'
 
 interface EmptyStateProps {
   icon?: LucideIcon | React.ComponentType<{ className?: string }>
+  /** Decorative colour for the icon background */
+  tone?: EmptyStateTone
+  eyebrow?: string
   title: string
   description?: string
   action?: {
     label: string
     onClick: () => void
+    variant?: 'primary' | 'accent' | 'gold' | 'success' | 'outline'
   }
   className?: string
 }
 
+const TONE_CLASSES: Record<EmptyStateTone, string> = {
+  primary: 'bg-primary/10 text-primary',
+  accent:  'bg-accent/10 text-accent',
+  gold:    'bg-gold/10 text-gold',
+  success: 'bg-success/10 text-success',
+  warning: 'bg-warning/10 text-warning',
+  error:   'bg-error/10 text-error',
+  neutral: 'bg-bg-subtle text-text-tertiary',
+}
+
 export function EmptyState({
   icon: Icon,
+  tone = 'primary',
+  eyebrow,
   title,
   description,
   action,
-  className
+  className,
 }: EmptyStateProps) {
   return (
-    <div className={cn('flex flex-col items-center justify-center py-16 px-4', className)}>
+    <div className={cn('flex flex-col items-center justify-center py-16 px-4 text-center', className)}>
       {Icon && (
-        <div className="w-16 h-16 bg-bg-surface rounded-full flex items-center justify-center mb-4">
-          <Icon className="w-8 h-8 text-text-tertiary" />
+        <div className={cn(
+          'w-14 h-14 rounded-2xl flex items-center justify-center mb-5 motion-safe:animate-float',
+          TONE_CLASSES[tone],
+        )}>
+          <Icon className="w-6 h-6" aria-hidden="true" />
         </div>
       )}
-      <h3 className="text-lg font-semibold text-text mb-2">{title}</h3>
-      {description && <p className="text-text-secondary text-center max-w-md mb-6">{description}</p>}
+      {eyebrow && <p className="editorial-eyebrow text-text-muted mb-2">{eyebrow}</p>}
+      <h3 className="font-display font-semibold text-text text-lg mb-2">{title}</h3>
+      {description && (
+        <p className="text-sm text-text-secondary font-ui leading-relaxed max-w-sm mb-0">{description}</p>
+      )}
       {action && (
-        <button
-          onClick={action.onClick}
-          className="px-6 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg font-medium transition-colors"
-        >
-          {action.label}
-        </button>
+        <div className="mt-6">
+          <button
+            onClick={action.onClick}
+            className={cn(
+              'inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold font-ui',
+              'transition-[transform,box-shadow,background-color] duration-150 ease-out',
+              'hover:-translate-y-px active:scale-[0.97]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+              action.variant === 'outline'
+                ? 'border border-border text-text-secondary hover:text-text hover:border-border-strong'
+                : action.variant === 'accent'
+                ? 'bg-accent text-white hover:bg-accent-hover hover:shadow-glow-accent'
+                : action.variant === 'gold'
+                ? 'bg-gold text-bg-elevated hover:bg-gold-hover hover:shadow-glow-gold'
+                : action.variant === 'success'
+                ? 'bg-success-bright text-white hover:shadow-glow-success'
+                : 'bg-primary text-white hover:bg-primary-hover hover:shadow-glow-primary',
+            )}
+          >
+            {action.label}
+          </button>
+        </div>
       )}
     </div>
   )

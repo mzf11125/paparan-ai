@@ -3,7 +3,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal'
 
 const TESTIMONIALS = [
   {
-    quote: 'Paparan redefined how we track and interpret legislative and regulatory activity. Its AI-powered insights help our teams craft sharper narratives and strategic guidance across industries.',
+    quote: 'PaparanBrief redefined how we track and interpret legislative and regulatory activity. Its AI-powered insights help our teams craft sharper narratives and strategic guidance across industries.',
     name: 'Ahmad Razif',
     title: 'Managing Director',
     org: 'Regional Policy Advisors',
@@ -17,13 +17,38 @@ const TESTIMONIALS = [
     initials: 'SN',
   },
   {
-    quote: 'Paparan has reshaped how we track the evolving policy landscape. Our team can quickly understand what matters most and act with greater speed and confidence.',
+    quote: 'PaparanBrief has reshaped how we track the evolving policy landscape. Our team can quickly understand what matters most and act with greater speed and confidence.',
     name: 'James Lim',
     title: 'Head of Global Public Policy',
     org: 'ASEAN Affairs Council',
     initials: 'JL',
   },
 ]
+
+type Testimonial = (typeof TESTIMONIALS)[number]
+
+function TestimonialCard({ quote, name, title, org, initials, index }: Testimonial & { index: number }) {
+  const ref = useScrollReveal()
+  return (
+    <div
+      ref={ref}
+      className="reveal-on-scroll bg-bg-elevated rounded-2xl p-7 border border-border border-t-2 border-t-primary shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col"
+      style={{ transitionDelay: `${index * 100}ms` }}
+    >
+      <Quote className="w-7 h-7 mb-4 shrink-0 text-primary-light" aria-hidden="true" />
+      <p className="text-text-secondary text-sm leading-relaxed font-serif italic flex-1">"{quote}"</p>
+      <div className="mt-6 pt-5 border-t border-border flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
+          <span className="text-xs font-bold text-white">{initials}</span>
+        </div>
+        <div>
+          <div className="font-semibold text-text text-sm">{name}</div>
+          <div className="text-xs text-text-tertiary mt-0.5">{title} · {org}</div>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export function TestimonialsSection() {
   return (
@@ -39,25 +64,8 @@ export function TestimonialsSection() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {TESTIMONIALS.map(({ quote, name, title, org, initials }, i) => (
-            <div
-              key={name}
-              ref={useScrollReveal()}
-              className="reveal-on-scroll bg-bg-elevated rounded-2xl p-7 border border-border shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col"
-              style={{ borderTop: '3px solid #60a5fa', transitionDelay: `${i * 100}ms` }}
-            >
-              <Quote className="w-7 h-7 mb-4 shrink-0 text-primary-light" aria-hidden="true" />
-              <p className="text-text-secondary text-sm leading-relaxed font-serif italic flex-1">"{quote}"</p>
-              <div className="mt-6 pt-5 border-t border-border flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center shrink-0">
-                  <span className="text-xs font-bold text-white">{initials}</span>
-                </div>
-                <div>
-                  <div className="font-semibold text-text text-sm">{name}</div>
-                  <div className="text-xs text-text-tertiary mt-0.5">{title} · {org}</div>
-                </div>
-              </div>
-            </div>
+          {TESTIMONIALS.map((testimonial, i) => (
+            <TestimonialCard key={testimonial.name} {...testimonial} index={i} />
           ))}
         </div>
       </div>

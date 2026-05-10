@@ -3,7 +3,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text)
     return true
-  } catch (err) {
+  } catch {
     // Fallback for older browsers
     try {
       const textArea = document.createElement('textarea')
@@ -37,7 +37,7 @@ export function formatBriefAsText(brief: {
   actions: Array<{ text: string; priority: string }>
   sources: Array<{ title: string; url?: string }>
 }): string {
-  let text = `PAPARAN — ${brief.title}\n`
+  let text = `PAPARANBRIEF — ${brief.title}\n`
   text += `${brief.region} • ${brief.date}\n`
   text += `${'='.repeat(50)}\n\n`
 

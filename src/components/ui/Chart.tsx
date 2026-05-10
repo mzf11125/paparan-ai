@@ -1,5 +1,5 @@
 import React from 'react'
-import { cn } from '@/utils/formatters'
+import { cn } from '@/utils/cn'
 
 // Chart wrapper with consistent styling
 interface ChartWrapperProps {
@@ -12,7 +12,7 @@ interface ChartWrapperProps {
 
 export function ChartWrapper({ title, subtitle, children, className = '', actions }: ChartWrapperProps) {
   return (
-    <div className={cn('bg-bg-elevated border border-border rounded-radius-xl p-6', className)}>
+    <div className={cn('bg-bg-elevated border border-border rounded-xl p-6', className)}>
       {(title || actions) && (
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -41,7 +41,7 @@ interface SparklineChartProps {
 export function SparklineChart({
   data,
   height = 40,
-  color = '#C8A96A',
+  color = 'var(--color-primary)',
   showArea = true,
   showDots = false,
   className = '',
@@ -114,7 +114,15 @@ interface DonutChartProps {
   className?: string
 }
 
-const defaultColors = ['#C8A96A', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444']
+// Token-driven data viz palette — institutional blue + accents
+const defaultColors = [
+  'var(--color-primary)',
+  'var(--color-accent)',
+  'var(--color-gold)',
+  'var(--color-success)',
+  'var(--color-warning)',
+  'var(--color-error)',
+]
 
 export function DonutChart({
   data,
@@ -212,7 +220,7 @@ export function BarChart({
       <div className={cn('space-y-3', className)} style={{ height }}>
         {data.map((item) => {
           const percentage = (item.value / maxValue) * 100
-          const color = item.color || '#C8A96A'
+          const color = item.color || 'var(--color-primary)'
 
           return (
             <div key={item.label} className="flex items-center gap-3">
@@ -241,7 +249,7 @@ export function BarChart({
     <div className={cn('flex items-end gap-2', className)} style={{ height }}>
       {data.map((item) => {
         const percentage = (item.value / maxValue) * 100
-        const color = item.color || '#C8A96A'
+        const color = item.color || 'var(--color-primary)'
 
         return (
           <div key={item.label} className="flex-1 flex flex-col items-center gap-2">
@@ -280,7 +288,7 @@ export function ProgressRing({
   max = 100,
   size = 120,
   strokeWidth = 8,
-  color = '#C8A96A',
+  color = 'var(--color-primary)',
   label,
   className = '',
 }: ProgressRingProps) {
@@ -298,7 +306,7 @@ export function ProgressRing({
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#E8E4DC"
+          stroke="var(--color-border-strong)"
           strokeWidth={strokeWidth}
         />
         {/* Progress circle */}
@@ -339,19 +347,19 @@ export function MetricWithChart({
   value,
   change,
   data,
-  color = '#C8A96A',
+  color = 'var(--color-primary)',
   className = '',
 }: MetricWithChartProps) {
   return (
-    <div className={cn('bg-bg-elevated border border-border rounded-radius-xl p-4', className)}>
+    <div className={cn('bg-bg-elevated border border-border rounded-xl p-4', className)}>
       <p className="text-sm text-text-tertiary">{label}</p>
       <div className="flex items-end justify-between mt-2">
         <div>
-          <p className="text-2xl font-display font-bold text-text">{value}</p>
+          <p className="text-2xl font-display font-semibold text-text tabular">{value}</p>
           {change !== undefined && (
             <p className={cn(
-              'text-sm mt-1',
-              change > 0 ? 'text-green' : change < 0 ? 'text-red' : 'text-text-tertiary'
+              'text-sm mt-1 tabular',
+              change > 0 ? 'text-success' : change < 0 ? 'text-error' : 'text-text-tertiary',
             )}>
               {change > 0 ? '+' : ''}{change}%
             </p>

@@ -52,6 +52,8 @@ export interface Paparan {
   confidence_score?: string;
   diplomat_meta?: Record<string, unknown> | null;
   previous_report_id?: string | null;
+  spatial_context?: string;
+  conflict_context?: string;
 }
 
 export type FilterType = "all" | "high";
